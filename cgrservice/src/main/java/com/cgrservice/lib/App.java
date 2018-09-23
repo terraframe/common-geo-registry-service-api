@@ -1,4 +1,4 @@
-package com.cgrservice.app;
+package com.cgrservice.lib;
 
 /**
  * Hello world!
