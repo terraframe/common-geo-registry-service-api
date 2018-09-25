@@ -1,4 +1,4 @@
-package com.cgrservice.lib;
+package com.cgr.adapter;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
