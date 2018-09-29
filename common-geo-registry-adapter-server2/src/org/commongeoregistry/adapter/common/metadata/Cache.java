@@ -16,10 +16,12 @@ import org.commongeoregistry.adapter.server.GeoObject;
 public class Cache
 {
   private Map<String, GeoObjectType> geoGeoObjectTypeMap;
+  private Map<String, HierarchyType> hierarchyTypeMap;
   
   private Cache()
   {
     this.geoGeoObjectTypeMap = new ConcurrentHashMap<String, GeoObjectType>();
+    this.hierarchyTypeMap = new ConcurrentHashMap<String, HierarchyType>();
   }
   
   /**
@@ -28,6 +30,15 @@ public class Cache
   private static class Singleton
   {
     private static final Cache INSTANCE = new Cache();
+  }
+ 
+  /** 
+   * Clears the metadata cache.
+   */
+  public static void clear()
+  {
+    Singleton.INSTANCE.geoGeoObjectTypeMap = new ConcurrentHashMap<String, GeoObjectType>();
+    Singleton.INSTANCE.hierarchyTypeMap = new ConcurrentHashMap<String, HierarchyType>();
   }
   
   public static void addGeoObjectType(GeoObjectType _geoObjectType) 
@@ -45,7 +56,18 @@ public class Cache
     Singleton.INSTANCE.geoGeoObjectTypeMap.remove(_code);
   }
   
+  public static void addHierarchyType(HierarchyType _hierarchyType) 
+  {
+    Singleton.INSTANCE.hierarchyTypeMap.put(_hierarchyType.getCode(), _hierarchyType);
+  }
   
+  public static Optional<HierarchyType> getHierachyType(String _code) 
+  {
+    return Optional.of(Singleton.INSTANCE.hierarchyTypeMap.get(_code));
+  }
   
-  
+  public static void removeHierarchyType(String _code)
+  {
+    Singleton.INSTANCE.hierarchyTypeMap.remove(_code);
+  }
 }
