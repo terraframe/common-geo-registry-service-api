@@ -8,9 +8,9 @@ public class AttributeTermType extends AttributePrimitiveType
 {
   private Term rootTerm;
   
-  public AttributeTermType(String _code, String _localizedLabel, String _localizedDescription, String _type, Term _rootTerm)
+  public AttributeTermType(String _name, String _localizedLabel, String _localizedDescription, String _type, Term _rootTerm)
   {
-    super(_code, _localizedLabel, _localizedDescription, _type);
+    super(_name, _localizedLabel, _localizedDescription, _type);
     
     this.rootTerm = _rootTerm;
   }

@@ -1,10 +1,17 @@
 package org.commongeoregistry.adapter.server;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Term
+public class Term implements Serializable
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 8658638930185089125L;
+
   private String code;
   
   private String localizedLabel;
@@ -19,7 +26,7 @@ public class Term
     this.localizedLabel = _localizedLabel;
     this.localizedDescription = _localizedDescription;
     
-    this.children = new LinkedList<Term>();
+    this.children = Collections.synchronizedList(new LinkedList<Term>());
   }
   
   public String getCode()

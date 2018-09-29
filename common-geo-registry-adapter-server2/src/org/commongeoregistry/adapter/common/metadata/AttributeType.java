@@ -2,7 +2,7 @@ package org.commongeoregistry.adapter.common.metadata;
 
 public abstract class AttributeType
 {
-  private String code;
+  private String name;
 
   private String localizedLabel;
 
@@ -10,9 +10,9 @@ public abstract class AttributeType
 
   private String type;                // Attribute Type Constant
 
-  public AttributeType(String _code, String _localizedLabel, String _localizedDescription, String _type)
+  public AttributeType(String _name, String _localizedLabel, String _localizedDescription, String _type)
   {
-    this.code = _code;
+    this.name = _name;
     this.localizedLabel = _localizedLabel;
     this.localizedDescription = _localizedDescription;
     this.type = _type;
@@ -20,7 +20,7 @@ public abstract class AttributeType
 
   public String getName()
   {
-    return this.code;
+    return this.name;
   }
   
   public String getType()
