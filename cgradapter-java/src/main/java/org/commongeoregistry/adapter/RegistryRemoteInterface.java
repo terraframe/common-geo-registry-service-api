@@ -1,4 +1,4 @@
-package org.commongeoregistry.adapter.server;
+package org.commongeoregistry.adapter;
 
 
 /**
@@ -8,7 +8,7 @@ package org.commongeoregistry.adapter.server;
  * @author nathan
  *
  */
-public class RegistryInterface extends Registry
+public class RegistryRemoteInterface extends RegistryInterface
 {
   /**
    * 
@@ -18,7 +18,7 @@ public class RegistryInterface extends Registry
   // The URL of the Common Geo-Registry
   private String cgrURL;
   
-  public RegistryInterface(String _cgrURL)
+  public RegistryRemoteInterface(String _cgrURL)
   {
     this.cgrURL = _cgrURL;
   }

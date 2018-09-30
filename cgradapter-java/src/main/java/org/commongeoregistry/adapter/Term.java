@@ -1,4 +1,4 @@
-package org.commongeoregistry.adapter.server;
+package org.commongeoregistry.adapter;
 
 import java.io.Serializable;
 import java.util.Collections;

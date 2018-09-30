@@ -1,4 +1,4 @@
-package org.commongeoregistry.adapter.common.metadata;
+package org.commongeoregistry.adapter.metadata;
 
 import java.io.Serializable;
 import java.util.Collections;

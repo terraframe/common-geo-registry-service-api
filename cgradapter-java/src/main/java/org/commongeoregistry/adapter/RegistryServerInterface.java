@@ -1,4 +1,4 @@
-package org.commongeoregistry.adapter.server;
+package org.commongeoregistry.adapter;
 
 /**
  * This class is used to manage the metadata and the {@link GeoObject}s that are managed by an implementation of 
@@ -9,14 +9,14 @@ package org.commongeoregistry.adapter.server;
  * @author nathan
  *
  */
-public class RegistryServer extends Registry
+public class RegistryServerInterface extends RegistryInterface
 {
   /**
    * 
    */
   private static final long serialVersionUID = -3343727858910300438L;
 
-  public RegistryServer()
+  public RegistryServerInterface()
   {
     super();
   }

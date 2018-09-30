@@ -1,10 +1,10 @@
-package org.commongeoregistry.adapter.server;
+package org.commongeoregistry.adapter;
 
 import java.io.Serializable;
 
-import org.commongeoregistry.adapter.common.metadata.MetadataCache;
+import org.commongeoregistry.adapter.metadata.MetadataCache;
 
-public abstract class Registry implements Serializable
+public abstract class RegistryInterface implements Serializable
 {
   /**
    * 
@@ -13,7 +13,7 @@ public abstract class Registry implements Serializable
   
   private MetadataCache metadataCache;
   
-  public Registry()
+  public RegistryInterface()
   {
     this.metadataCache = new MetadataCache();
   }

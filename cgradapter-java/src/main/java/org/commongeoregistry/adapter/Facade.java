@@ -1,6 +1,6 @@
-package org.commongeoregistry.adapter.server;
+package org.commongeoregistry.adapter;
 
-import org.commongeoregistry.adapter.common.metadata.GeoObjectType;
+import org.commongeoregistry.adapter.metadata.GeoObjectType;
 
 public interface Facade
 {
