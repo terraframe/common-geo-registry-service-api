@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.commongeoregistry.adapter.constants.GeometryType;
+import org.commongeoregistry.adapter.metadata.GeoObjectType;
 
 public class GeoObject implements Serializable
 {
@@ -14,7 +15,7 @@ public class GeoObject implements Serializable
   private static final long serialVersionUID = 7686140708200106783L;
 
   
-  private String typeCode;
+  private GeoObjectType geoObjectType;
   
   private GeometryType geometryType;
   
@@ -23,9 +24,9 @@ public class GeoObject implements Serializable
   private Map<String, Attribute> attributeMap;
   
   
-  public GeoObject(String _typeCode, GeometryType _geometryType, Map<String, Attribute> _attributeMap)
+  public GeoObject(GeoObjectType _geoObjectType, GeometryType _geometryType, Map<String, Attribute> _attributeMap)
   {
-    this.typeCode = _typeCode;
+    this.geoObjectType = _geoObjectType;
     
     this.geometryType = _geometryType;
     
@@ -34,9 +35,9 @@ public class GeoObject implements Serializable
     this.attributeMap = _attributeMap;
   }
   
-  public String getTypeCode()
+  public GeoObjectType getTypeCode()
   {
-    return this.typeCode;
+    return this.geoObjectType;
   }
   
   public GeometryType getGeometryType()

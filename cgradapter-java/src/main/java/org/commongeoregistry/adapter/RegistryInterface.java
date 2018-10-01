@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
-import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.Attribute;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.metadata.AttributeType;
@@ -49,10 +48,10 @@ public abstract class RegistryInterface implements Serializable
       attributeMap.put(attribute.getName(), attribute);
     }
     
-    GeoObject geoObject = new GeoObject(_geoObjectTypeCode, geoObjectType.getGeometryType(), attributeMap);
+    GeoObject geoObject = new GeoObject(geoObjectType, geoObjectType.getGeometryType(), attributeMap);
     
     // Set some default values
-    geoObject.getAttribute(DefaultAttribute.CODE.getName()).setValue(_geoObjectTypeCode);
+    geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(_geoObjectTypeCode);
     
     geoObject.getAttribute(DefaultAttribute.STATUS.getName()).setValue(DefaultTerms.GeoObjectStatusTerm.NEW.getTerm());
     

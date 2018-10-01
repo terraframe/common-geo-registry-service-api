@@ -87,6 +87,9 @@ public class GeoObjectType implements Serializable
     AttributeCharacterType code = (AttributeCharacterType)DefaultAttribute.CODE.createAttributeType();
     defaultAttributeMap.put(DefaultAttribute.CODE.getName(), code);
     
+    AttributeCharacterType type = (AttributeCharacterType)DefaultAttribute.TYPE.createAttributeType();
+    defaultAttributeMap.put(DefaultAttribute.TYPE.getName(), type);
+    
     AttributeTermType status = (AttributeTermType)DefaultAttribute.STATUS.createAttributeType();
     
     Term rootStatusTerm = DefaultTerms.buildGeoObjectStatusTree();

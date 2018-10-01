@@ -10,6 +10,8 @@ public enum DefaultAttribute
 
   CODE("code",     "Code",   "Human readable unique identifier.", AttributeCharacterType.TYPE),
   
+  TYPE("type",     "Type",   "The type of the GeoObject.", AttributeCharacterType.TYPE),
+  
   STATUS("status", "Status", "The status of the GeoObject", AttributeTermType.TYPE);
 
   
