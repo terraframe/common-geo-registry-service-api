@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.commongeoregistry.adapter.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.GeoObject;
 
 /**
  * This is a singleton instance that caches {@link GeoObjectType} objects for creating {@link GeoObject}s and 

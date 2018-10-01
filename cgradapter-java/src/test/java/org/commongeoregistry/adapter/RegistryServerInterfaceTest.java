@@ -3,11 +3,15 @@ package org.commongeoregistry.adapter;
 import java.util.List;
 import java.util.Optional;
 
-import org.commongeoregistry.adapter.constants.DefaultAttributes;
+import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms.GeoObjectStatusTerm;
+import org.commongeoregistry.adapter.constants.GeometryType;
+import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
+import org.commongeoregistry.adapter.metadata.HierarchyType;
+import org.commongeoregistry.adapter.metadata.HierarchyType.HierarchyNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -31,8 +35,12 @@ public class RegistryServerInterfaceTest
   
   private static String                  HEALTH_FACILITY            = "HEALTH_FACILITY";
   
-  private static String                  HEALTH_FACILITY_ATTRIBUTE  = "HealthFacilityType";
+  private static String                  HEALTH_FACILITY_ATTRIBUTE  = "healthFacilityType";
 
+  private static String                  GEOPOLITICAL               = "GEOPOLITICAL";
+
+  private static String                  HEALTH_ADMINISTRATIVE      = "HEALTH_ADMINISTRATIVE";
+  
   
   private static RegistryServerInterface registryServerInterface;
   
@@ -46,32 +54,56 @@ public class RegistryServerInterfaceTest
   {
     registryServerInterface = new RegistryServerInterface();
     
-    GeoObjectType province = new GeoObjectType(PROVINCE, "Province", "");
+    // Define GeoObject Types
+    GeoObjectType province = new GeoObjectType(PROVINCE, GeometryType.POLYGON, "Province", "");
     registryServerInterface.getMetadataCache().addGeoObjectType(province);
     
-    GeoObjectType district = new GeoObjectType(DISTRICT, "District", "");
+    GeoObjectType district = new GeoObjectType(DISTRICT, GeometryType.POLYGON, "District", "");
     registryServerInterface.getMetadataCache().addGeoObjectType(district);
     
-    GeoObjectType commune = new GeoObjectType(COMMUNE, "Commune", "");
+    GeoObjectType commune = new GeoObjectType(COMMUNE, GeometryType.POLYGON, "Commune", "");
     registryServerInterface.getMetadataCache().addGeoObjectType(commune);
     
-    GeoObjectType village = new GeoObjectType(VILLAGE, "Village", "");
+    GeoObjectType village = new GeoObjectType(VILLAGE, GeometryType.POLYGON, "Village", "");
     registryServerInterface.getMetadataCache().addGeoObjectType(village);
     
-    GeoObjectType household = new GeoObjectType(HOUSEHOLD, "Household", "");
+    GeoObjectType household = new GeoObjectType(HOUSEHOLD, GeometryType.POLYGON, "Household", "");
     registryServerInterface.getMetadataCache().addGeoObjectType(household);
     
-    GeoObjectType focusArea = new GeoObjectType(FOCUS_AREA, "Focus Area", "");
+    GeoObjectType focusArea = new GeoObjectType(FOCUS_AREA, GeometryType.POLYGON, "Focus Area", "");
     registryServerInterface.getMetadataCache().addGeoObjectType(focusArea);
     
-    GeoObjectType healthFacility = new GeoObjectType(HEALTH_FACILITY, "Health Facility", "");    
+    GeoObjectType healthFacility = new GeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, "Health Facility", "");    
     healthFacility.addAttribute(createHealthFacilityTypeAttribute());
     registryServerInterface.getMetadataCache().addGeoObjectType(healthFacility);
     
+    // Define Geopolitical Hierarchy Type
+    HierarchyType geoPolitical = new HierarchyType(GEOPOLITICAL, "Geopolitical", "Geopolitical Hierarchy");   
+    HierarchyNode geoProvinceNode = new HierarchyType.HierarchyNode(province);
+    HierarchyNode geoDistrictNode = new HierarchyType.HierarchyNode(district);
+    HierarchyNode geoCommuneNode = new HierarchyType.HierarchyNode(commune);
+    HierarchyNode geoVillageNode = new HierarchyType.HierarchyNode(village);
+    HierarchyNode geoHouseholdNode = new HierarchyType.HierarchyNode(household);
     
+    geoProvinceNode.addChild(geoDistrictNode);
+    geoDistrictNode.addChild(geoCommuneNode);
+    geoCommuneNode.addChild(geoVillageNode);
+    geoVillageNode.addChild(geoHouseholdNode);
     
+    geoPolitical.addRootGeoObjects(geoProvinceNode);
     
-    System.out.println("ClassSetUp");
+   // Define Health Administrative
+    HierarchyType healthAdministrative = new HierarchyType(HEALTH_ADMINISTRATIVE, "Health Administrative", "Health Administrative Hierarchy");
+    HierarchyNode healthProvinceNode = new HierarchyType.HierarchyNode(province);
+    HierarchyNode healthDistrictNode = new HierarchyType.HierarchyNode(district);
+    HierarchyNode healthCommuneNode = new HierarchyType.HierarchyNode(commune);
+    HierarchyNode healthFacilityNode = new HierarchyType.HierarchyNode(healthFacility);
+
+    healthProvinceNode.addChild(healthDistrictNode);
+    healthDistrictNode.addChild(healthCommuneNode);
+    healthCommuneNode.addChild(healthFacilityNode);
+    
+    healthAdministrative.addRootGeoObjects(healthProvinceNode);
   }
   
   @AfterClass
@@ -138,13 +170,13 @@ public class RegistryServerInterfaceTest
     
     GeoObjectType province = geoObjectType.get();
     
-    for (DefaultAttributes defaultAttribute : DefaultAttributes.values())
+    for (DefaultAttribute defaultAttribute : DefaultAttribute.values())
     {
       AttributeType attributeType = province.getAttribute(defaultAttribute.getName()).get();
       
       Assert.assertNotNull(defaultAttribute.getName()+"  was not defined as a default attribute", attributeType);
       
-      if (defaultAttribute.getName().equals(DefaultAttributes.STATUS.getName()))
+      if (defaultAttribute.getName().equals(DefaultAttribute.STATUS.getName()))
       {
         AttributeTermType statusAttribute = (AttributeTermType)attributeType;
         
@@ -153,6 +185,16 @@ public class RegistryServerInterfaceTest
         Assert.assertTrue(GeoObjectStatusTerm.values().length - 1 == terms.size());        
       }
     }
+  }
+  
+  
+  @Test
+  public void testCreateGeoObject()
+  {
+    GeoObject geoObject = registryServerInterface.createGeoObject(HEALTH_FACILITY);
+    
+    geoObject.printAttributes();
+    
   }
   
 //  @Test

@@ -53,4 +53,32 @@ public class Term implements Serializable
   {
     return this.children;
   }
+  
+  public String toString()
+  {
+    String toString = "Term: "+this.code+" ";
+    
+    boolean firstIteration = true;
+    for (Term child : getChildren())
+    {
+      if (firstIteration)
+      {
+        toString+="Children:{";
+        firstIteration = false;
+      }
+      else
+      {
+        toString+= ", ";
+      }
+      
+      toString+= child.toString();
+    }
+    
+    if (!firstIteration)
+    {
+      toString+="}";
+    }
+    
+    return toString;
+  }
 }

@@ -6,8 +6,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.Term;
-import org.commongeoregistry.adapter.constants.DefaultAttributes;
+import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
+import org.commongeoregistry.adapter.constants.GeometryType;
 
 public class GeoObjectType implements Serializable
 {
@@ -17,6 +18,8 @@ public class GeoObjectType implements Serializable
   private static final long          serialVersionUID          = 2857923921744440744L;
 
   private String                     code;
+  
+  private GeometryType               geometryType;
 
   private String                     localizedLabel;
 
@@ -24,11 +27,13 @@ public class GeoObjectType implements Serializable
   
   private Map<String, AttributeType> attributeMap;
 
-  public GeoObjectType(String _code, String _localizedLabel, String _localizedDescription)
+  public GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription)
   {
     this.code = _code;
     this.localizedLabel = _localizedLabel;
     this.localizedDescription = _localizedDescription;
+    
+    this.geometryType = _geometryType;
 
     this.attributeMap = buildDefaultAttributes();
   }
@@ -38,6 +43,11 @@ public class GeoObjectType implements Serializable
     return this.code;
   }
 
+  public GeometryType getGeometryType()
+  {
+    return this.geometryType;
+  }
+  
   public String getLocalizedLabel()
   {
     return this.localizedLabel;
@@ -58,6 +68,11 @@ public class GeoObjectType implements Serializable
     this.attributeMap.put(attributeType.getName(), attributeType);
   }
   
+  public Map<String, AttributeType> getAttributeMap()
+  {
+    return this.attributeMap;
+  }
+  
   /**
    * All {@link GeoObjectType}s have a standard set of attributes
    * @return
@@ -66,24 +81,20 @@ public class GeoObjectType implements Serializable
   {
     Map<String, AttributeType> defaultAttributeMap = new ConcurrentHashMap<String, AttributeType>();
         
-    AttributeCharacterType uid = (AttributeCharacterType)DefaultAttributes.UID.createAttributeType();
-    defaultAttributeMap.put(DefaultAttributes.UID.getName(), uid);
+    AttributeCharacterType uid = (AttributeCharacterType)DefaultAttribute.UID.createAttributeType();
+    defaultAttributeMap.put(DefaultAttribute.UID.getName(), uid);
     
-    AttributeCharacterType code = (AttributeCharacterType)DefaultAttributes.CODE.createAttributeType();
-    defaultAttributeMap.put(DefaultAttributes.CODE.getName(), code);
+    AttributeCharacterType code = (AttributeCharacterType)DefaultAttribute.CODE.createAttributeType();
+    defaultAttributeMap.put(DefaultAttribute.CODE.getName(), code);
     
-    AttributeCharacterType type = (AttributeCharacterType)DefaultAttributes.TYPE.createAttributeType();
-    defaultAttributeMap.put(DefaultAttributes.TYPE.getName(), type);
-    
-    AttributeTermType status = (AttributeTermType)DefaultAttributes.STATUS.createAttributeType();
+    AttributeTermType status = (AttributeTermType)DefaultAttribute.STATUS.createAttributeType();
     
     Term rootStatusTerm = DefaultTerms.buildGeoObjectStatusTree();
     
     status.setRootTerm(rootStatusTerm);
     
-    defaultAttributeMap.put(DefaultAttributes.STATUS.getName(), status);
+    defaultAttributeMap.put(DefaultAttribute.STATUS.getName(), status);
     
     return defaultAttributeMap;
-    
   }
 }

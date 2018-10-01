@@ -15,10 +15,12 @@ public class DefaultTerms
   public static Term buildGeoObjectStatusTree()
   {
     Term root = GeoObjectStatusTerm.ROOT.getTerm();
+    Term neww = GeoObjectStatusTerm.NEW.getTerm();
     Term active = GeoObjectStatusTerm.ACTIVE.getTerm();
     Term pending = GeoObjectStatusTerm.PENDING.getTerm();
     Term inactive = GeoObjectStatusTerm.INACTIVE.getTerm();
     
+    root.addChild(neww);
     root.addChild(active);
     root.addChild(pending);
     root.addChild(inactive);
@@ -29,6 +31,8 @@ public class DefaultTerms
   public enum GeoObjectStatusTerm 
   {
     ROOT("CGR:Status-Root", "GeoObject Status", "The status of a GeoObject changes during the governance lifecycle."),
+    
+    NEW("CGR:Status-New", "New", "A newly created GeoObject that has not been submitted for approval."),
     
     ACTIVE("CGR:Status-Active", "Active", "The GeoObject is a part of the master list."),
     
@@ -49,6 +53,4 @@ public class DefaultTerms
     }
    
   }
-  
-  
 }

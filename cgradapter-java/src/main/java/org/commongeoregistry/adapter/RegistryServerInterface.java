@@ -1,5 +1,7 @@
 package org.commongeoregistry.adapter;
 
+import org.commongeoregistry.adapter.dataaccess.GeoObject;
+
 /**
  * This class is used to manage the metadata and the {@link GeoObject}s that are managed by an implementation of 
  * the Common Geo-Registry. The {@link MetadataCache} is populated with the {@link GeoObjectType}s and the 

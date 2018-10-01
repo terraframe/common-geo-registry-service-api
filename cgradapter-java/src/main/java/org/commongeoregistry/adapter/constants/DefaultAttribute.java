@@ -4,13 +4,11 @@ import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 
-public enum DefaultAttributes 
+public enum DefaultAttribute 
 {
   UID("uid",       "UID",    "The internal globally unique identifier ID.", AttributeCharacterType.TYPE),
 
   CODE("code",     "Code",   "Human readable unique identifier.", AttributeCharacterType.TYPE),
-  
-  TYPE("type",     "Type",   "The type of the GeoObject.", AttributeCharacterType.TYPE),
   
   STATUS("status", "Status", "The status of the GeoObject", AttributeTermType.TYPE);
 
@@ -23,7 +21,7 @@ public enum DefaultAttributes
   
   private String type;
 
-  private DefaultAttributes(String _name, String _defaultLocalizedLabel, String _defaultLocalizedDescription, String _type)
+  private DefaultAttribute(String _name, String _defaultLocalizedLabel, String _defaultLocalizedDescription, String _type)
   {
     this.name                        = _name;
     

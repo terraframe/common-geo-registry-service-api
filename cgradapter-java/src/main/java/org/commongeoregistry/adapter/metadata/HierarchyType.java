@@ -26,7 +26,7 @@ public class HierarchyType implements Serializable
   
   private List<HierarchyNode> rootGeoObjectTypes;
 
-  protected HierarchyType(String _code, String _localizedLabel, String _localizedDescription)
+  public HierarchyType(String _code, String _localizedLabel, String _localizedDescription)
   {
     this.code = _code;
     this.localizedLabel = _localizedLabel;
@@ -54,16 +54,27 @@ public class HierarchyType implements Serializable
     return this.rootGeoObjectTypes;
   }
 
-  public class HierarchyNode
+  /** 
+   * Adds root {@link GeoObjectType} objects to the root of the hierarchy type.
+   * 
+   * @param hierarchyNode
+   */
+  public void addRootGeoObjects(HierarchyNode hierarchyNode)
+  {
+    this.rootGeoObjectTypes.add(hierarchyNode);
+  }
+  
+  
+  public static class HierarchyNode
   {
     private GeoObjectType       geoObjectType;
 
-    private List<GeoObjectType> children;
+    private List<HierarchyNode> children;
 
     public HierarchyNode(GeoObjectType _geoObjectType)
     {
       this.geoObjectType = _geoObjectType;
-      this.children = Collections.synchronizedList(new LinkedList<GeoObjectType>());
+      this.children = Collections.synchronizedList(new LinkedList<HierarchyNode>());
     }
 
     public GeoObjectType getGeoObjectType()
@@ -71,7 +82,12 @@ public class HierarchyType implements Serializable
       return this.geoObjectType;
     }
 
-    public List<GeoObjectType> getChildren()
+    public void addChild(HierarchyNode _hierarchyNode)
+    {
+      this.children.add(_hierarchyNode);
+    }
+    
+    public List<HierarchyNode> getChildren()
     {
       return this.children;
     }
