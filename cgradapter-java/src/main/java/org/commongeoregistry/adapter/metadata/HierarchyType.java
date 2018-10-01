@@ -92,4 +92,15 @@ public class HierarchyType implements Serializable
       return this.children;
     }
   }
+  
+  // TODO
+  /**
+   * Return the JSON representation of this metadata
+   * 
+   * @return
+   */
+  public String toJSON()
+  {
+    return new String();
+  }
 }

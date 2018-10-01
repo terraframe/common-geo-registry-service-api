@@ -18,7 +18,7 @@ public class GeoObject implements Serializable
   
   private GeometryType geometryType;
   
-  private String geoJSON;
+  private String geometry;
   
   private Map<String, Attribute> attributeMap;
   
@@ -29,7 +29,7 @@ public class GeoObject implements Serializable
     
     this.geometryType = _geometryType;
     
-    this.geoJSON = new String();
+    this.geometry = new String();
     
     this.attributeMap = _attributeMap;
   }
@@ -45,14 +45,14 @@ public class GeoObject implements Serializable
   }
   
   
-  public String getGeoJSON()
+  public String getGeometry()
   {
-    return this.geoJSON;
+    return this.geometry;
   }
   
-  public void setGeoJSON(String _geoJSON)
+  public void setGeometry(String _geometry)
   {
-    this.geoJSON = _geoJSON;
+    this.geometry = _geometry;
   }
   
   public Object getValue(String attributeName)
@@ -65,6 +65,17 @@ public class GeoObject implements Serializable
     return this.attributeMap.get(attributeName);
   }
   
+  // TODO
+  /**
+   * Return the GeoJSON representation of this metadata
+   * 
+   * @return
+   */
+  public String toGeoJSON()
+  {
+    return new String();
+  }
+  
   public void printAttributes()
   {
     for (Attribute attribute : attributeMap.values())
@@ -72,6 +83,6 @@ public class GeoObject implements Serializable
       System.out.println(attribute.toString());
     }
     
-    System.out.println("GeoJSON: "+this.geoJSON);
+    System.out.println("Geometry: "+this.geometry);
   }
 }
