@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttributes;
+import org.commongeoregistry.adapter.constants.DefaultTerms;
 
 public class GeoObjectType implements Serializable
 {
@@ -22,13 +24,13 @@ public class GeoObjectType implements Serializable
   
   private Map<String, AttributeType> attributeMap;
 
-  protected GeoObjectType(String _code, String _localizedLabel, String _localizedDescription)
+  public GeoObjectType(String _code, String _localizedLabel, String _localizedDescription)
   {
     this.code = _code;
     this.localizedLabel = _localizedLabel;
     this.localizedDescription = _localizedDescription;
 
-    this.attributeMap = new ConcurrentHashMap<String, AttributeType>();
+    this.attributeMap = buildDefaultAttributes();
   }
 
   public String getCode()
@@ -46,16 +48,21 @@ public class GeoObjectType implements Serializable
     return this.localizedDescription;
   }
 
-  public Optional<AttributeType> getAttributeType(String name)
+  public Optional<AttributeType> getAttribute(String name)
   {
     return Optional.of(this.attributeMap.get(name));
+  }
+  
+  public void addAttribute(AttributeType attributeType)
+  {
+    this.attributeMap.put(attributeType.getName(), attributeType);
   }
   
   /**
    * All {@link GeoObjectType}s have a standard set of attributes
    * @return
    */
-  public static Map<String, AttributeType> buildDefaultAttributes()
+  private Map<String, AttributeType> buildDefaultAttributes()
   {
     Map<String, AttributeType> defaultAttributeMap = new ConcurrentHashMap<String, AttributeType>();
         
@@ -70,13 +77,11 @@ public class GeoObjectType implements Serializable
     
     AttributeTermType status = (AttributeTermType)DefaultAttributes.STATUS.createAttributeType();
     
-    // NEED TO DEFINE THE TERM!
+    Term rootStatusTerm = DefaultTerms.buildGeoObjectStatusTree();
     
+    status.setRootTerm(rootStatusTerm);
     
     defaultAttributeMap.put(DefaultAttributes.STATUS.getName(), status);
-    
-    
-    
     
     return defaultAttributeMap;
     

@@ -51,6 +51,6 @@ public class Term implements Serializable
   
   public List<Term> getChildren()
   {
-    return this.getChildren();
+    return this.children;
   }
 }
