@@ -5,6 +5,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
@@ -106,9 +110,28 @@ public class GeoObjectType implements Serializable
    * 
    * @return
    */
-  public String toJSON()
+  public JsonObjectBuilder toJSON()
   {
-    return new String();
+    JsonObjectBuilder builder = Json.createObjectBuilder();
+    
+    builder.add("code", code);
+    
+    builder.add("localizedLabel", localizedLabel);
+    
+    builder.add("localizedDescription", localizedDescription);
+    
+    JsonArrayBuilder attrs = Json.createArrayBuilder();
+    
+    for (String key : this.attributeMap.keySet())
+    {
+      AttributeType attrType = this.attributeMap.get(key);
+      
+      attrs.add(attrType.toJSON());
+    }
+    
+    builder.add("attributes", attrs);
+    
+    return builder;
   }
   
 }

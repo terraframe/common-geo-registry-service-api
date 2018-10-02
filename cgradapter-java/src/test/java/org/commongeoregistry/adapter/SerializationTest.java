@@ -16,7 +16,8 @@ public class SerializationTest
     registryServerInterface.getMetadataCache().addGeoObjectType(province);
     
     GeoObject geoObject = registryServerInterface.createGeoObject("Province");
-    geoObject.printAttributes();
+    
+    System.out.println(geoObject.toJSON().build().toString());
     
 //    Assert.assertNotNull(PROVINCE+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(PROVINCE).get());
   }

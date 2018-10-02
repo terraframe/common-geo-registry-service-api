@@ -2,6 +2,9 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
@@ -71,6 +74,18 @@ public abstract class Attribute implements Serializable
   public String toString()
   {
     return this.getName()+": "+this.getValue();
+  }
+
+
+  public JsonObjectBuilder toJSON()
+  {
+    JsonObjectBuilder builder = Json.createObjectBuilder();
+    
+    builder.add("name", this.name);
+    
+    builder.add("type", this.type);
+    
+    return builder;
   }
   
 }

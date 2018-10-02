@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.util.Map;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.commongeoregistry.adapter.constants.GeometryType;
+import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 
 public class GeoObject implements Serializable
@@ -75,7 +77,7 @@ public class GeoObject implements Serializable
    * 
    * @return
    */
-  public JsonObject toJSON()
+  public JsonObjectBuilder toJSON()
   {
     JsonObjectBuilder builder = Json.createObjectBuilder();
     
@@ -89,14 +91,20 @@ public class GeoObject implements Serializable
     properties.add("type", this.geoObjectType.getCode());
 //    properties.add("status", );
     
+    builder.add("properties", properties);
+    
+    JsonArrayBuilder attrs = Json.createArrayBuilder();
+    
     for (String key : this.attributeMap.keySet())
     {
       Attribute attr = this.attributeMap.get(key);
       
-      properties.add(attr.getName(), attr.getValue().toString());
+      attrs.add(attr.toJSON());
     }
     
-    return builder.build();
+    builder.add("attributes", attrs);
+    
+    return builder;
   }
   
   public void printAttributes()
