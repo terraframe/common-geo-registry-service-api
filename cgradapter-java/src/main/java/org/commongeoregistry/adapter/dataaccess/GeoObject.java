@@ -91,18 +91,20 @@ public class GeoObject implements Serializable
     properties.add("type", this.geoObjectType.getCode());
 //    properties.add("status", );
     
-    builder.add("properties", properties);
     
-    JsonArrayBuilder attrs = Json.createArrayBuilder();
+    JsonObjectBuilder attrs = Json.createObjectBuilder();
     
     for (String key : this.attributeMap.keySet())
     {
       Attribute attr = this.attributeMap.get(key);
       
-      attrs.add(attr.toJSON());
+      // TODO: All these attributes are required by the CGR spec. Adding an empty string is a temporary 
+      // step for me to work on another area of the adapter. Ensure that Values are always present and
+      // handle NULLs as errors.
+      attrs.add(key, (attr.getValue() == null) ? "" : attr.getValue().toString() );
     }
     
-    builder.add("attributes", attrs);
+    builder.add("properties", attrs);
     
     return builder;
   }

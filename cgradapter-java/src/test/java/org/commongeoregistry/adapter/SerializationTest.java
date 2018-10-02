@@ -1,5 +1,6 @@
 package org.commongeoregistry.adapter;
 
+import org.commongeoregistry.adapter.RegistryServerInterface;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
