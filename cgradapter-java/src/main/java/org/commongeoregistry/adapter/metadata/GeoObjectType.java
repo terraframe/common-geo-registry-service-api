@@ -101,7 +101,6 @@ public class GeoObjectType implements Serializable
     return defaultAttributeMap;
   }
   
-  // TODO
   /**
    * Return the JSON representation of this metadata
    * 

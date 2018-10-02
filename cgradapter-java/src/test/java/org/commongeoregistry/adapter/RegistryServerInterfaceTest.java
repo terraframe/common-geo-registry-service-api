@@ -92,7 +92,7 @@ public class RegistryServerInterfaceTest
     
     geoPolitical.addRootGeoObjects(geoProvinceNode);
     
-   // Define Health Administrative
+    // Define Health Administrative
     HierarchyType healthAdministrative = new HierarchyType(HEALTH_ADMINISTRATIVE, "Health Administrative", "Health Administrative Hierarchy");
     HierarchyNode healthProvinceNode = new HierarchyType.HierarchyNode(province);
     HierarchyNode healthDistrictNode = new HierarchyType.HierarchyNode(district);
@@ -145,7 +145,7 @@ public class RegistryServerInterfaceTest
   
   @Test
   public void testDefinedGeoTypes()
-  { 
+  {
     Assert.assertNotNull(PROVINCE+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(PROVINCE).get());
 
     Assert.assertNotNull(DISTRICT+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(DISTRICT).get());
