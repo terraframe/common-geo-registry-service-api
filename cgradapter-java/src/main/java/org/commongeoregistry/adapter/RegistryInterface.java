@@ -33,7 +33,7 @@ public abstract class RegistryInterface implements Serializable
   
   
   // TODO - Add support for a supplier provided exception.
-  public GeoObject createGeoObject(String _geoObjectTypeCode, String geom)
+  public GeoObject createGeoObject(String _geoObjectTypeCode)
   {
     GeoObjectType geoObjectType = this.getMetadataCache().getGeoObjectType(_geoObjectTypeCode).get();
     
@@ -48,7 +48,7 @@ public abstract class RegistryInterface implements Serializable
       attributeMap.put(attribute.getName(), attribute);
     }
     
-    GeoObject geoObject = new GeoObject(geoObjectType, geoObjectType.getGeometryType(), attributeMap, geom);
+    GeoObject geoObject = new GeoObject(geoObjectType, geoObjectType.getGeometryType(), attributeMap);
     
     // Set some default values
     geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(_geoObjectTypeCode);

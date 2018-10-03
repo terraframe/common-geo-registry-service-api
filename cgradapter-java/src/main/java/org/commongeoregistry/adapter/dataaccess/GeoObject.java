@@ -38,13 +38,13 @@ public class GeoObject implements Serializable
   private Map<String, Attribute> attributeMap;
 
   public GeoObject(GeoObjectType _geoObjectType, GeometryType _geometryType,
-      Map<String, Attribute> _attributeMap, String _geom)
+      Map<String, Attribute> _attributeMap)
   {
     this.geoObjectType = _geoObjectType;
 
     this.geometryType = _geometryType;
 
-    this.setGeometry(_geom);
+    this.geometry = null;
 
     this.attributeMap = _attributeMap;
   }
@@ -64,13 +64,18 @@ public class GeoObject implements Serializable
     return this.geometry;
   }
 
-  public void setGeometry(String geometry)
+  public void setGeometry(Geometry geometry)
   {
-    Geometry wkt = null;
+    this.geometry = geometry;
+  }
+  
+  public void setWKTGeometry(String wkt)
+  {
+    Geometry wktObj = null;
     WKTReader wktReader = new WKTReader();
     try
     {
-      wkt = wktReader.read(geometry);
+      wktObj = wktReader.read(wkt);
     }
     catch (ParseException e)
     {
@@ -78,19 +83,7 @@ public class GeoObject implements Serializable
       e.printStackTrace();
     }
 
-    this.geometry = wkt;
-
-    // TODO: Determine if wkt or geometry is best storage.
-    // GeometryFactory gf = new GeometryFactory();
-    // if (this.getGeometryType() == GeometryType.POLYGON)
-    // {
-    //
-    // }
-    // else if (this.getGeometryType() == GeometryType.MULTIPOLYGON)
-    // {
-    //
-    // }
-
+    this.setGeometry(wktObj);
   }
 
   public Object getValue(String attributeName)
