@@ -191,7 +191,9 @@ public class RegistryServerInterfaceTest
   @Test
   public void testCreateGeoObject()
   {
-    GeoObject geoObject = registryServerInterface.createGeoObject(HEALTH_FACILITY);
+	  
+	String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
+    GeoObject geoObject = registryServerInterface.createGeoObject(HEALTH_FACILITY, geom);
     
     geoObject.printAttributes();
     

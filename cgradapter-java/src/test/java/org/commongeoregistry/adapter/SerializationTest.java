@@ -16,9 +16,10 @@ public class SerializationTest
     GeoObjectType province = new GeoObjectType("Province", GeometryType.POLYGON, "Province", "");
     registryServerInterface.getMetadataCache().addGeoObjectType(province);
     
-    GeoObject geoObject = registryServerInterface.createGeoObject("Province");
+    String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
+    GeoObject geoObject = registryServerInterface.createGeoObject("Province", geom);
     
-    System.out.println(geoObject.toJSON().build().toString());
+    System.out.println(geoObject.toJSON().toString());
     
 //    Assert.assertNotNull(PROVINCE+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(PROVINCE).get());
   }
