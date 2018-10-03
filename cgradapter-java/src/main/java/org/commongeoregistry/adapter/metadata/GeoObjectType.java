@@ -5,14 +5,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 public class GeoObjectType implements Serializable
 {
@@ -110,17 +109,17 @@ public class GeoObjectType implements Serializable
    * 
    * @return
    */
-  public JsonObjectBuilder toJSON()
+  public JsonObject toJSON()
   {
-    JsonObjectBuilder builder = Json.createObjectBuilder();
+    JsonObject json = new JsonObject();
     
-    builder.add("code", code);
+    json.addProperty("code", code);
     
-    builder.add("localizedLabel", localizedLabel);
+    json.addProperty("localizedLabel", localizedLabel);
     
-    builder.add("localizedDescription", localizedDescription);
+    json.addProperty("localizedDescription", localizedDescription);
     
-    JsonArrayBuilder attrs = Json.createArrayBuilder();
+    JsonArray attrs = new JsonArray();
     
     for (String key : this.attributeMap.keySet())
     {
@@ -129,9 +128,9 @@ public class GeoObjectType implements Serializable
       attrs.add(attrType.toJSON());
     }
     
-    builder.add("attributes", attrs);
+    json.add("attributes", attrs);
     
-    return builder;
+    return json;
   }
   
 }

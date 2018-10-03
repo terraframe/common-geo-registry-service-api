@@ -9,6 +9,8 @@ import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 
+import com.google.gson.JsonObject;
+
 public abstract class Attribute implements Serializable
 {  
   /**
