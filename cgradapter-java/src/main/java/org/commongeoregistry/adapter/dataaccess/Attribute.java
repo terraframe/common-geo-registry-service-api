@@ -2,8 +2,7 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
 
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
+import com.google.gson.*;
 
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
@@ -77,15 +76,15 @@ public abstract class Attribute implements Serializable
   }
 
 
-  public JsonObjectBuilder toJSON()
+  public JsonObject toJSON()
   {
-    JsonObjectBuilder builder = Json.createObjectBuilder();
+    JsonObject obj = new JsonObject();
     
-    builder.add("name", this.name);
+    obj.addProperty("name", this.name);
     
-    builder.add("type", this.type);
+    obj.addProperty("type", this.type);
     
-    return builder;
+    return obj;
   }
   
 }

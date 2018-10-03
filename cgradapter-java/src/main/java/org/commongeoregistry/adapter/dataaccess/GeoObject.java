@@ -118,24 +118,38 @@ public class GeoObject implements Serializable
     
     jsonObj.add("geometry", geomObj);
     
-    jsonObj.addProperty("type", this.geoObjectType.getCode());
-
     JsonObject attrs = new JsonObject();
     for (String key : this.attributeMap.keySet())
     {
       Attribute attr = this.attributeMap.get(key);
-
-      // TODO: All these attributes are required by the CGR spec. Adding an
-      // empty string is a temporary
-      // step for me to work on another area of the adapter. Ensure that Values
-      // are always present and
-      // handle NULLs as errors.
-      // attrs.add(key, ( attr.getValue() == null ) ? "" :
-      // attr.getValue().toString());
-      attrs.addProperty(key, ( attr.getValue() == null ) ? "" : attr.getValue().toString());
+      
+      if(attr instanceof AttributeTerm)
+      {
+        attrs.add(key, attr.toJSON());
+      }
+      else
+      {
+        
+        System.out.println(attr.toJSON());
+        
+        // TODO: All these attributes are required by the CGR spec. Adding an
+        // empty string is a temporary step for me to work on another area of 
+        // the adapter. Ensure that Values are always present and handle 
+        // NULLs as errors.
+        if(attr.getValue() == null )
+        {
+          attrs.addProperty(key, ""); 
+        }
+        else
+        {
+          attrs.addProperty(key, attr.getValue().toString() );
+        }
+      }
+      
     }
 
     jsonObj.add("properties", attrs);
+    
 
     return jsonObj;
   }
