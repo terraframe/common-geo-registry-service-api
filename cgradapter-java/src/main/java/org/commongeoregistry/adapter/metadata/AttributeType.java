@@ -1,7 +1,6 @@
 package org.commongeoregistry.adapter.metadata;
 
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
+import com.google.gson.JsonObject;
 
 public abstract class AttributeType
 {
@@ -65,18 +64,18 @@ public abstract class AttributeType
     return attributeType;
   }
 
-  public JsonObjectBuilder toJSON()
+  public JsonObject toJSON()
   {
-    JsonObjectBuilder builder = Json.createObjectBuilder();
+    JsonObject json = new JsonObject();
     
-    builder.add("name", this.name);
+    json.addProperty("name", this.name);
     
-    builder.add("type", this.type);
+    json.addProperty("type", this.type);
     
-    builder.add("localizedLabel", this.localizedLabel);
+    json.addProperty("localizedLabel", this.localizedLabel);
     
-    builder.add("localizedDescription", this.localizedDescription);
+    json.addProperty("localizedDescription", this.localizedDescription);
     
-    return builder;
+    return json;
   }
 }
