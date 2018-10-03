@@ -1,25 +1,20 @@
 package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
-import com.google.gson.*;
-
+import org.commongeoregistry.adapter.RegistryInterface;
 import org.commongeoregistry.adapter.constants.GeometryType;
-import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
-import org.wololo.geojson.GeoJSONFactory;
 import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class GeoObject implements Serializable
 {
@@ -49,7 +44,7 @@ public class GeoObject implements Serializable
     this.attributeMap = _attributeMap;
   }
 
-  public GeoObjectType getTypeCode()
+  public GeoObjectType getType()
   {
     return this.geoObjectType;
   }
@@ -95,7 +90,50 @@ public class GeoObject implements Serializable
   {
     return this.attributeMap.get(attributeName);
   }
-
+  
+  public void setCode(String code)
+  {
+    this.attributeMap.get("code").setValue(code);
+  }
+  
+  public String getCode()
+  {
+    return (String) this.attributeMap.get("code").getValue();
+  }
+  
+  public void setUid(String uid)
+  {
+    this.attributeMap.get("uid").setValue(uid);
+  }
+  
+  public String getUid()
+  {
+    return (String) this.attributeMap.get("uid").getValue();
+  }
+  
+  public static GeoObject fromJSON(RegistryInterface registry, String sJson)
+  {
+    JsonParser parser = new JsonParser();
+    
+    JsonObject oJson = parser.parse(sJson).getAsJsonObject();
+    JsonObject oJsonProps = oJson.getAsJsonObject("properties");
+    
+    GeoObject geoObj = registry.createGeoObject(oJsonProps.get("type").getAsString());
+    geoObj.setCode(oJsonProps.get("code").getAsString());
+    geoObj.setUid(oJsonProps.get("uid").getAsString());
+    
+    JsonElement oGeom = oJson.get("geometry");
+    if (oGeom != null)
+    {
+      GeoJSONReader reader = new GeoJSONReader();
+      Geometry jtsGeom = reader.read(oGeom.toString());
+      
+      geoObj.setGeometry(jtsGeom);
+    }
+    
+    return geoObj;
+  }
+  
   /**
    * Return the JSON representation of this metadata
    * 
@@ -110,13 +148,16 @@ public class GeoObject implements Serializable
     // Spec reference: https://tools.ietf.org/html/rfc7946#section-3.3
     jsonObj.addProperty("type", "Feature");
 
-    GeoJSONWriter gw = new GeoJSONWriter();
-    org.wololo.geojson.Geometry gJSON = gw.write(this.getGeometry());
-    
-    JsonParser parser = new JsonParser();
-    JsonObject geomObj = parser.parse(gJSON.toString()).getAsJsonObject();
-    
-    jsonObj.add("geometry", geomObj);
+    if (this.getGeometry() != null)
+    {
+      GeoJSONWriter gw = new GeoJSONWriter();
+      org.wololo.geojson.Geometry gJSON = gw.write(this.getGeometry());
+      
+      JsonParser parser = new JsonParser();
+      JsonObject geomObj = parser.parse(gJSON.toString()).getAsJsonObject();
+      
+      jsonObj.add("geometry", geomObj);
+    }
     
     JsonObject attrs = new JsonObject();
     for (String key : this.attributeMap.keySet())
@@ -130,7 +171,7 @@ public class GeoObject implements Serializable
       else
       {
         
-        System.out.println(attr.toJSON());
+//        System.out.println(attr.toJSON());
         
         // TODO: All these attributes are required by the CGR spec. Adding an
         // empty string is a temporary step for me to work on another area of 
