@@ -26,10 +26,8 @@ public class SerializationTest
     geoObject.setUid("CO");
     
     String sJson = geoObject.toJSON().toString();
-    System.out.println(sJson);
     GeoObject geoObject2 = GeoObject.fromJSON(registryServerInterface, sJson);
     String sJson2 = geoObject2.toJSON().toString();
-    System.out.println(sJson2);
     
     Assert.equals(sJson, sJson2);
   }
@@ -48,10 +46,23 @@ public class SerializationTest
     GeoObject geoObject = registryServerInterface.createGeoObject("State");
     
     String sJson = geoObject.toJSON().toString();
-    System.out.println(sJson);
     GeoObject geoObject2 = GeoObject.fromJSON(registryServerInterface, sJson);
     String sJson2 = geoObject2.toJSON().toString();
-    System.out.println(sJson2);
+    
+    Assert.equals(sJson, sJson2);
+  }
+  
+  @Test
+  public void testGeoObjectType()
+  {
+    RegistryServerInterface registryServerInterface = new RegistryServerInterface();
+    
+    GeoObjectType state = new GeoObjectType("State", GeometryType.POLYGON, "State", "");
+    registryServerInterface.getMetadataCache().addGeoObjectType(state);
+    
+    String sJson = state.toJSON().toString();
+    GeoObjectType state2 = GeoObjectType.fromJSON(sJson);
+    String sJson2 = state2.toJSON().toString();
     
     Assert.equals(sJson, sJson2);
   }

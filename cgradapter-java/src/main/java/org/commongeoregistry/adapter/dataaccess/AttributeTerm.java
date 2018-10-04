@@ -7,6 +7,7 @@ import java.util.List;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class AttributeTerm extends Attribute
@@ -58,11 +59,20 @@ public class AttributeTerm extends Attribute
   }
 
   @Override
-  public JsonObject toJSON()
+  public void toJSON(JsonObject geoObjProps)
   {
-    return this.getTerms().get(0).toJSON();
+    JsonObject joTerm = this.getTerms().get(0).toJSON();
+    
+    geoObjProps.add(this.getName(), joTerm);
+  }
+  
+  @Override
+  public void fromJSON(JsonElement jValue)
+  {
+    throw new UnsupportedOperationException();
   }
 
+  @Override
   public String toString()
   {
     String toString = this.getName() + ": ";

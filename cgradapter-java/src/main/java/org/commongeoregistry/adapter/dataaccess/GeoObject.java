@@ -119,8 +119,6 @@ public class GeoObject implements Serializable
     JsonObject oJsonProps = oJson.getAsJsonObject("properties");
     
     GeoObject geoObj = registry.createGeoObject(oJsonProps.get("type").getAsString());
-    geoObj.setCode(oJsonProps.get("code").getAsString());
-    geoObj.setUid(oJsonProps.get("uid").getAsString());
     
     JsonElement oGeom = oJson.get("geometry");
     if (oGeom != null)
@@ -129,6 +127,16 @@ public class GeoObject implements Serializable
       Geometry jtsGeom = reader.read(oGeom.toString());
       
       geoObj.setGeometry(jtsGeom);
+    }
+    
+    for (String key : geoObj.attributeMap.keySet())
+    {
+      Attribute attr = geoObj.attributeMap.get(key);
+      
+      if (oJsonProps.has(key))
+      {
+        attr.fromJSON(oJsonProps.get(key));
+      }
     }
     
     return geoObj;
@@ -159,37 +167,15 @@ public class GeoObject implements Serializable
       jsonObj.add("geometry", geomObj);
     }
     
-    JsonObject attrs = new JsonObject();
+    JsonObject props = new JsonObject();
     for (String key : this.attributeMap.keySet())
     {
       Attribute attr = this.attributeMap.get(key);
       
-      if(attr instanceof AttributeTerm)
-      {
-        attrs.add(key, attr.toJSON());
-      }
-      else
-      {
-        
-//        System.out.println(attr.toJSON());
-        
-        // TODO: All these attributes are required by the CGR spec. Adding an
-        // empty string is a temporary step for me to work on another area of 
-        // the adapter. Ensure that Values are always present and handle 
-        // NULLs as errors.
-        if(attr.getValue() == null )
-        {
-          attrs.addProperty(key, ""); 
-        }
-        else
-        {
-          attrs.addProperty(key, attr.getValue().toString() );
-        }
-      }
-      
+      attr.toJSON(props);
     }
 
-    jsonObj.add("properties", attrs);
+    jsonObj.add("properties", props);
     
 
     return jsonObj;

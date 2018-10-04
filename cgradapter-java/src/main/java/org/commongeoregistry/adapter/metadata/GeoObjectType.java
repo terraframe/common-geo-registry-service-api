@@ -9,9 +9,15 @@ import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
+import org.commongeoregistry.adapter.dataaccess.Attribute;
+import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.locationtech.jts.geom.Geometry;
+import org.wololo.jts2geojson.GeoJSONReader;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class GeoObjectType implements Serializable
 {
@@ -104,6 +110,38 @@ public class GeoObjectType implements Serializable
     return defaultAttributeMap;
   }
   
+  public static GeoObjectType fromJSON(String sJson)
+  {
+    JsonParser parser = new JsonParser();
+    
+    JsonObject oJson = parser.parse(sJson).getAsJsonObject();
+    JsonArray oJsonAttrs = oJson.getAsJsonArray("attributes");
+    
+    String code = oJson.get("code").getAsString();
+    String localizedLabel = oJson.get("localizedLabel").getAsString();
+    String localizedDescription = oJson.get("localizedDescription").getAsString();
+    GeometryType geometryType = GeometryType.valueOf(oJson.get("geometryType").getAsString());
+    
+    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription);
+    
+    for (String key : geoObjType.attributeMap.keySet())
+    {
+      AttributeType attr = geoObjType.attributeMap.get(key);
+      
+      for (int i = 0; i < oJsonAttrs.size(); ++i)
+      {
+        JsonObject joAttr = oJsonAttrs.get(i).getAsJsonObject();
+        
+        if (attr.getName().equals(joAttr.get("name").getAsString()))
+        {
+          // TODO : Attribute factory
+        }
+      }
+    }
+    
+    return geoObjType;
+  }
+  
   /**
    * Return the JSON representation of this metadata
    * 
@@ -118,6 +156,8 @@ public class GeoObjectType implements Serializable
     json.addProperty("localizedLabel", localizedLabel);
     
     json.addProperty("localizedDescription", localizedDescription);
+    
+    json.addProperty("geometryType", this.geometryType.name());
     
     JsonArray attrs = new JsonArray();
     

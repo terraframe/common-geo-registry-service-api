@@ -78,15 +78,20 @@ public abstract class Attribute implements Serializable
   }
 
 
-  public JsonObject toJSON()
+  public void toJSON(JsonObject geoObjProps)
   {
-    JsonObject obj = new JsonObject();
+    Object value = this.getValue();
+    if (value == null)
+    {
+      value = "";
+    }
     
-    obj.addProperty("name", this.name);
-    
-    obj.addProperty("type", this.type);
-    
-    return obj;
+    geoObjProps.addProperty(this.getName(), value.toString());
+  }
+  
+  public void fromJSON(JsonElement jValue)
+  {
+    this.setValue(jValue.getAsString());
   }
   
 }
