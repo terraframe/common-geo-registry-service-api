@@ -3,6 +3,7 @@ package org.commongeoregistry.adapter.dataaccess;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.commongeoregistry.adapter.RegistryInterface;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 
 import com.google.gson.JsonElement;
@@ -54,7 +55,7 @@ public class AttributeDate extends Attribute
   }
   
   @Override
-  public void fromJSON(JsonElement jValue)
+  public void fromJSON(JsonElement jValue, RegistryInterface registry)
   {
     try
     {

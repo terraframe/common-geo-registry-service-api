@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 
 /**
@@ -22,6 +23,7 @@ public class MetadataCache implements Serializable
   private static final long serialVersionUID = -8829469298178067536L;
   private Map<String, GeoObjectType> geoGeoObjectTypeMap;
   private Map<String, HierarchyType> hierarchyTypeMap;
+  private Map<String, Term> termMap;
   
   public MetadataCache()
   {
@@ -35,6 +37,17 @@ public class MetadataCache implements Serializable
   {
     this.geoGeoObjectTypeMap = new ConcurrentHashMap<String, GeoObjectType>();
     this.hierarchyTypeMap = new ConcurrentHashMap<String, HierarchyType>();
+    this.termMap = new ConcurrentHashMap<String, Term>();
+  }
+  
+  public void addTerm(Term _term) 
+  {
+    this.termMap.put(_term.getCode(), _term);
+  }
+    
+  public Optional<Term> getTerm(String _code) 
+  {
+    return Optional.of(this.termMap.get(_code));
   }
   
   public void addGeoObjectType(GeoObjectType _geoObjectType) 

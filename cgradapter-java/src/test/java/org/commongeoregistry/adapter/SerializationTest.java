@@ -14,7 +14,7 @@ public class SerializationTest
   {
     RegistryServerInterface registryServerInterface = new RegistryServerInterface();
     
-    GeoObjectType province = new GeoObjectType("State", GeometryType.POLYGON, "State", "");
+    GeoObjectType province = new GeoObjectType("State", GeometryType.POLYGON, "State", "", registryServerInterface);
     registryServerInterface.getMetadataCache().addGeoObjectType(province);
     
     String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
@@ -30,6 +30,8 @@ public class SerializationTest
     String sJson2 = geoObject2.toJSON().toString();
     
     Assert.equals(sJson, sJson2);
+    
+    System.out.println(sJson);
   }
   
   /**
@@ -40,7 +42,7 @@ public class SerializationTest
   {
     RegistryServerInterface registryServerInterface = new RegistryServerInterface();
     
-    GeoObjectType province = new GeoObjectType("State", GeometryType.POLYGON, "State", "");
+    GeoObjectType province = new GeoObjectType("State", GeometryType.POLYGON, "State", "", registryServerInterface);
     registryServerInterface.getMetadataCache().addGeoObjectType(province);
     
     GeoObject geoObject = registryServerInterface.createGeoObject("State");
@@ -57,11 +59,11 @@ public class SerializationTest
   {
     RegistryServerInterface registryServerInterface = new RegistryServerInterface();
     
-    GeoObjectType state = new GeoObjectType("State", GeometryType.POLYGON, "State", "");
+    GeoObjectType state = new GeoObjectType("State", GeometryType.POLYGON, "State", "", registryServerInterface);
     registryServerInterface.getMetadataCache().addGeoObjectType(state);
     
     String sJson = state.toJSON().toString();
-    GeoObjectType state2 = GeoObjectType.fromJSON(sJson);
+    GeoObjectType state2 = GeoObjectType.fromJSON(sJson, registryServerInterface);
     String sJson2 = state2.toJSON().toString();
     
     Assert.equals(sJson, sJson2);

@@ -135,7 +135,7 @@ public class GeoObject implements Serializable
       
       if (oJsonProps.has(key))
       {
-        attr.fromJSON(oJsonProps.get(key));
+        attr.fromJSON(oJsonProps.get(key), registry);
       }
     }
     

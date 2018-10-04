@@ -2,13 +2,13 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
 
-import com.google.gson.*;
-
+import org.commongeoregistry.adapter.RegistryInterface;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public abstract class Attribute implements Serializable
@@ -22,7 +22,6 @@ public abstract class Attribute implements Serializable
   
   private String type;
   
-
   public Attribute(String _name, String _type)
   {
     this.name = _name;
@@ -77,7 +76,6 @@ public abstract class Attribute implements Serializable
     return this.getName()+": "+this.getValue();
   }
 
-
   public void toJSON(JsonObject geoObjProps)
   {
     Object value = this.getValue();
@@ -89,7 +87,7 @@ public abstract class Attribute implements Serializable
     geoObjProps.addProperty(this.getName(), value.toString());
   }
   
-  public void fromJSON(JsonElement jValue)
+  public void fromJSON(JsonElement jValue, RegistryInterface registry)
   {
     this.setValue(jValue.getAsString());
   }

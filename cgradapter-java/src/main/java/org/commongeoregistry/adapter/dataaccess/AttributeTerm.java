@@ -3,7 +3,9 @@ package org.commongeoregistry.adapter.dataaccess;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
+import org.commongeoregistry.adapter.RegistryInterface;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 
@@ -25,7 +27,6 @@ public class AttributeTerm extends Attribute
     super(_name, AttributeTermType.TYPE);
 
     this.terms = Collections.synchronizedList(new LinkedList<Term>());
-    ;
   }
 
   public List<Term> getTerms()
@@ -67,9 +68,23 @@ public class AttributeTerm extends Attribute
   }
   
   @Override
-  public void fromJSON(JsonElement jValue)
+  public void fromJSON(JsonElement jValue, RegistryInterface registry)
   {
-    throw new UnsupportedOperationException();
+    JsonObject jTerm = jValue.getAsJsonObject();
+    String code = jTerm.get("code").getAsString();
+    
+    Optional<Term> opTerm = registry.getMetadataCache().getTerm(code);
+    
+    if (opTerm.isPresent())
+    {
+      this.terms = Collections.synchronizedList(new LinkedList<Term>());
+      
+      this.terms.add(opTerm.get());
+    }
+    else
+    {
+      throw new RuntimeException("Unable to find term with code [" + code + "].");
+    }
   }
 
   @Override

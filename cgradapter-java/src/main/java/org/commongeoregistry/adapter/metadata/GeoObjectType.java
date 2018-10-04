@@ -5,17 +5,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.commongeoregistry.adapter.RegistryInterface;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
-import org.commongeoregistry.adapter.dataaccess.Attribute;
-import org.commongeoregistry.adapter.dataaccess.GeoObject;
-import org.locationtech.jts.geom.Geometry;
-import org.wololo.jts2geojson.GeoJSONReader;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -36,7 +32,7 @@ public class GeoObjectType implements Serializable
   
   private Map<String, AttributeType> attributeMap;
 
-  public GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription)
+  public GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryInterface registry)
   {
     this.code = _code;
     this.localizedLabel = _localizedLabel;
@@ -44,7 +40,7 @@ public class GeoObjectType implements Serializable
     
     this.geometryType = _geometryType;
 
-    this.attributeMap = buildDefaultAttributes();
+    this.attributeMap = buildDefaultAttributes(registry);
   }
 
   public String getCode()
@@ -86,7 +82,7 @@ public class GeoObjectType implements Serializable
    * All {@link GeoObjectType}s have a standard set of attributes
    * @return
    */
-  private Map<String, AttributeType> buildDefaultAttributes()
+  private Map<String, AttributeType> buildDefaultAttributes(RegistryInterface registry)
   {
     Map<String, AttributeType> defaultAttributeMap = new ConcurrentHashMap<String, AttributeType>();
         
@@ -100,9 +96,7 @@ public class GeoObjectType implements Serializable
     defaultAttributeMap.put(DefaultAttribute.TYPE.getName(), type);
     
     AttributeTermType status = (AttributeTermType)DefaultAttribute.STATUS.createAttributeType();
-    
-    Term rootStatusTerm = DefaultTerms.buildGeoObjectStatusTree();
-    
+    Term rootStatusTerm = registry.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get();
     status.setRootTerm(rootStatusTerm);
     
     defaultAttributeMap.put(DefaultAttribute.STATUS.getName(), status);
@@ -110,7 +104,7 @@ public class GeoObjectType implements Serializable
     return defaultAttributeMap;
   }
   
-  public static GeoObjectType fromJSON(String sJson)
+  public static GeoObjectType fromJSON(String sJson, RegistryInterface registry)
   {
     JsonParser parser = new JsonParser();
     
@@ -122,7 +116,7 @@ public class GeoObjectType implements Serializable
     String localizedDescription = oJson.get("localizedDescription").getAsString();
     GeometryType geometryType = GeometryType.valueOf(oJson.get("geometryType").getAsString());
     
-    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription);
+    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription, registry);
     
     for (String key : geoObjType.attributeMap.keySet())
     {
