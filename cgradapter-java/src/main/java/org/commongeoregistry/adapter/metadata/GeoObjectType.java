@@ -118,20 +118,16 @@ public class GeoObjectType implements Serializable
     
     GeoObjectType geoObjType = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription, registry);
     
-    for (String key : geoObjType.attributeMap.keySet())
+    Map<String, AttributeType> attributeMap = new ConcurrentHashMap<String, AttributeType>();
+    for (int i = 0; i < oJsonAttrs.size(); ++i)
     {
-      AttributeType attr = geoObjType.attributeMap.get(key);
+      JsonObject joAttr = oJsonAttrs.get(i).getAsJsonObject();
+      String name = joAttr.get("name").getAsString();
       
-      for (int i = 0; i < oJsonAttrs.size(); ++i)
-      {
-        JsonObject joAttr = oJsonAttrs.get(i).getAsJsonObject();
-        
-        if (attr.getName().equals(joAttr.get("name").getAsString()))
-        {
-          // TODO : Attribute factory
-        }
-      }
+      AttributeType attrType = AttributeType.factory(name, joAttr.get("localizedLabel").getAsString(), joAttr.get("localizedDescription").getAsString(), joAttr.get("type").getAsString());
+      attributeMap.put(name, attrType);
     }
+    geoObjType.attributeMap = attributeMap;
     
     return geoObjType;
   }
@@ -151,7 +147,7 @@ public class GeoObjectType implements Serializable
     
     json.addProperty("localizedDescription", localizedDescription);
     
-    json.addProperty("geometryType", this.geometryType.name());
+    json.addProperty("geometryType", this.geometryType.name()); // TODO: PROPOSED but not yet approved. Required for fromJSON reconstruction.
     
     JsonArray attrs = new JsonArray();
     

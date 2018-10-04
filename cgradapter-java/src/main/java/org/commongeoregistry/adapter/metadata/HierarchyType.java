@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 /**
  * Describes a hierarchy type.
  * 
@@ -91,16 +94,51 @@ public class HierarchyType implements Serializable
     {
       return this.children;
     }
+
+    public JsonObject toJSON()
+    {
+      JsonObject jsonObj = new JsonObject();
+
+      jsonObj.addProperty("geoObjectType", geoObjectType.getCode());
+      
+      JsonArray jaChildren = new JsonArray();
+      for (int i = 0; i < children.size(); ++i)
+      {
+        HierarchyNode hnode = children.get(i);
+        
+        jaChildren.add(hnode.toJSON());
+      }
+      jsonObj.add("children", jaChildren);
+      
+      return jsonObj;
+    }
   }
   
-  // TODO
   /**
    * Return the JSON representation of this metadata
    * 
    * @return
    */
-  public String toJSON()
+  public JsonObject toJSON()
   {
-    return new String();
+    JsonObject jsonObj = new JsonObject();
+
+    jsonObj.addProperty("code", code);
+
+    jsonObj.addProperty("localizedLabel", localizedLabel);
+    
+    jsonObj.addProperty("localizedDescription", localizedDescription);
+    
+    JsonArray jaRoots = new JsonArray();
+    for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
+    {
+      HierarchyNode hnode = rootGeoObjectTypes.get(i);
+      
+      jaRoots.add(hnode.toJSON());
+    }
+
+    jsonObj.add("rootGeoObjectTypes", jaRoots);
+    
+    return jsonObj;
   }
 }
