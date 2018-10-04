@@ -85,6 +85,11 @@ public class GeoObject implements Serializable
   {
     return this.attributeMap.get(attributeName).getValue();
   }
+  
+  public void setValue(String attributeName, Object value)
+  {
+    this.attributeMap.get(attributeName).setValue(value);
+  }
 
   public Attribute getAttribute(String attributeName)
   {

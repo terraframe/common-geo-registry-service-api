@@ -19,7 +19,7 @@ public class AttributeDate extends Attribute
   
   private Date date;
   
-  private static final String FORMAT = "yyyy-MM-dd";
+  private static final String FORMAT = "yyyy-MM-dd G HH-mm-ss-SS Z";
   
   public AttributeDate(String _name)
   {
