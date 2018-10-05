@@ -20,28 +20,6 @@ import org.junit.Test;
 
 public class RegistryServerInterfaceTest
 {
-  
-  private static String                  PROVINCE                   = "PROVINCE";
-  
-  private static String                  DISTRICT                   = "DISTRICT";
-  
-  private static String                  COMMUNE                    = "COMMUNE";
-  
-  private static String                  VILLAGE                    = "VILLAGE";
-  
-  private static String                  HOUSEHOLD                  = "HOUSEHOLD";
-  
-  private static String                  FOCUS_AREA                 = "FOCUS_AREA";
-  
-  private static String                  HEALTH_FACILITY            = "HEALTH_FACILITY";
-  
-  private static String                  HEALTH_FACILITY_ATTRIBUTE  = "healthFacilityType";
-
-  private static String                  GEOPOLITICAL               = "GEOPOLITICAL";
-
-  private static String                  HEALTH_ADMINISTRATIVE      = "HEALTH_ADMINISTRATIVE";
-  
-  
   private static RegistryServerInterface registryServerInterface;
   
   public RegistryServerInterfaceTest()
@@ -54,56 +32,7 @@ public class RegistryServerInterfaceTest
   {
     registryServerInterface = new RegistryServerInterface();
     
-    // Define GeoObject Types
-    GeoObjectType province = new GeoObjectType(PROVINCE, GeometryType.POLYGON, "Province", "", registryServerInterface);
-    registryServerInterface.getMetadataCache().addGeoObjectType(province);
-    
-    GeoObjectType district = new GeoObjectType(DISTRICT, GeometryType.POLYGON, "District", "", registryServerInterface);
-    registryServerInterface.getMetadataCache().addGeoObjectType(district);
-    
-    GeoObjectType commune = new GeoObjectType(COMMUNE, GeometryType.POLYGON, "Commune", "", registryServerInterface);
-    registryServerInterface.getMetadataCache().addGeoObjectType(commune);
-    
-    GeoObjectType village = new GeoObjectType(VILLAGE, GeometryType.POLYGON, "Village", "", registryServerInterface);
-    registryServerInterface.getMetadataCache().addGeoObjectType(village);
-    
-    GeoObjectType household = new GeoObjectType(HOUSEHOLD, GeometryType.POLYGON, "Household", "", registryServerInterface);
-    registryServerInterface.getMetadataCache().addGeoObjectType(household);
-    
-    GeoObjectType focusArea = new GeoObjectType(FOCUS_AREA, GeometryType.POLYGON, "Focus Area", "", registryServerInterface);
-    registryServerInterface.getMetadataCache().addGeoObjectType(focusArea);
-    
-    GeoObjectType healthFacility = new GeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, "Health Facility", "", registryServerInterface);    
-    healthFacility.addAttribute(createHealthFacilityTypeAttribute(registryServerInterface));
-    registryServerInterface.getMetadataCache().addGeoObjectType(healthFacility);
-    
-    // Define Geopolitical Hierarchy Type
-    HierarchyType geoPolitical = new HierarchyType(GEOPOLITICAL, "Geopolitical", "Geopolitical Hierarchy");   
-    HierarchyNode geoProvinceNode = new HierarchyType.HierarchyNode(province);
-    HierarchyNode geoDistrictNode = new HierarchyType.HierarchyNode(district);
-    HierarchyNode geoCommuneNode = new HierarchyType.HierarchyNode(commune);
-    HierarchyNode geoVillageNode = new HierarchyType.HierarchyNode(village);
-    HierarchyNode geoHouseholdNode = new HierarchyType.HierarchyNode(household);
-    
-    geoProvinceNode.addChild(geoDistrictNode);
-    geoDistrictNode.addChild(geoCommuneNode);
-    geoCommuneNode.addChild(geoVillageNode);
-    geoVillageNode.addChild(geoHouseholdNode);
-    
-    geoPolitical.addRootGeoObjects(geoProvinceNode);
-    
-    // Define Health Administrative
-    HierarchyType healthAdministrative = new HierarchyType(HEALTH_ADMINISTRATIVE, "Health Administrative", "Health Administrative Hierarchy");
-    HierarchyNode healthProvinceNode = new HierarchyType.HierarchyNode(province);
-    HierarchyNode healthDistrictNode = new HierarchyType.HierarchyNode(district);
-    HierarchyNode healthCommuneNode = new HierarchyType.HierarchyNode(commune);
-    HierarchyNode healthFacilityNode = new HierarchyType.HierarchyNode(healthFacility);
-
-    healthProvinceNode.addChild(healthDistrictNode);
-    healthDistrictNode.addChild(healthCommuneNode);
-    healthCommuneNode.addChild(healthFacilityNode);
-    
-    healthAdministrative.addRootGeoObjects(healthProvinceNode);
+    TestFixture.defineExampleHierarchies(registryServerInterface);
   }
   
   @AfterClass
@@ -112,61 +41,30 @@ public class RegistryServerInterfaceTest
     registryServerInterface.getMetadataCache().clear();
   }
   
-  private static AttributeTermType createHealthFacilityTypeAttribute(RegistryInterface registry)
-  {
-    AttributeTermType attrType = 
-        (AttributeTermType)AttributeType.factory(HEALTH_FACILITY_ATTRIBUTE, "Health Facility Type", "The type of health facility", AttributeTermType.TYPE);
-
-    Term rootTerm = createHealthFacilityTerms(registry);
-    
-    attrType.setRootTerm(rootTerm);
-    
-    return attrType;
-  }
-  
-  private static Term createHealthFacilityTerms(RegistryInterface registry)
-  {
-    Term rootTerm = new Term("CM:Health-Facility-Types", "Health Facility Types", "The types of health facilities within a country", registry);
-    Term dispensary = new Term("CM:Dispensary", "Dispensary", "", registry);
-    Term privateClinic = new Term("CM:Private-Clinic", "Private Clinic", "", registry);
-    Term publicClinic = new Term("CM:Public-Clinic", "Public Clinic", "", registry);
-    Term matWard = new Term("CM:Maternity-Ward", "Maternity Ward", "", registry);
-    Term nursing = new Term("CM:Nursing-Home", "Nursing Home", "", registry);
-    
-    rootTerm.addChild(dispensary);
-    rootTerm.addChild(privateClinic);
-    rootTerm.addChild(publicClinic);
-    rootTerm.addChild(matWard);
-    rootTerm.addChild(nursing);
-    
-    return rootTerm;
-  }
-  
-  
   @Test
   public void testDefinedGeoTypes()
   {
-    Assert.assertNotNull(PROVINCE+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(PROVINCE).get());
+    Assert.assertNotNull(TestFixture.PROVINCE+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.PROVINCE).get());
 
-    Assert.assertNotNull(DISTRICT+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(DISTRICT).get());
+    Assert.assertNotNull(TestFixture.DISTRICT+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.DISTRICT).get());
     
-    Assert.assertNotNull(COMMUNE+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(COMMUNE).get());
+    Assert.assertNotNull(TestFixture.COMMUNE+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.COMMUNE).get());
     
-    Assert.assertNotNull(VILLAGE+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(VILLAGE).get());
+    Assert.assertNotNull(TestFixture.VILLAGE+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.VILLAGE).get());
     
-    Assert.assertNotNull(HOUSEHOLD+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(HOUSEHOLD).get());
+    Assert.assertNotNull(TestFixture.HOUSEHOLD+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.HOUSEHOLD).get());
     
-    Assert.assertNotNull(FOCUS_AREA+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(FOCUS_AREA).get());
+    Assert.assertNotNull(TestFixture.FOCUS_AREA+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.FOCUS_AREA).get());
     
-    Assert.assertNotNull(HEALTH_FACILITY+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(HEALTH_FACILITY).get());
+    Assert.assertNotNull(TestFixture.HEALTH_FACILITY+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.HEALTH_FACILITY).get());
   }
   
   @Test
   public void testDefaultAttributes()
   { 
-    Optional<GeoObjectType> geoObjectType = registryServerInterface.getMetadataCache().getGeoObjectType(PROVINCE);
+    Optional<GeoObjectType> geoObjectType = registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.PROVINCE);
     
-    Assert.assertNotNull(PROVINCE+" was not found in the cache", geoObjectType.get());
+    Assert.assertNotNull(TestFixture.PROVINCE+" was not found in the cache", geoObjectType.get());
     
     GeoObjectType province = geoObjectType.get();
     
@@ -194,7 +92,7 @@ public class RegistryServerInterfaceTest
 	  
 	String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
     
-	GeoObject geoObject = registryServerInterface.createGeoObject(HEALTH_FACILITY);
+	GeoObject geoObject = registryServerInterface.createGeoObject(TestFixture.HEALTH_FACILITY);
     geoObject.setWKTGeometry(geom);
     
     geoObject.printAttributes();

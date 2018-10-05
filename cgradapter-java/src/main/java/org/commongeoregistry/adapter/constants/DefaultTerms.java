@@ -2,6 +2,7 @@ package org.commongeoregistry.adapter.constants;
 
 import org.commongeoregistry.adapter.RegistryInterface;
 import org.commongeoregistry.adapter.Term;
+import org.commongeoregistry.adapter.metadata.MetadataFactory;
 
 
 /**
@@ -53,7 +54,7 @@ public class DefaultTerms
     
     public Term construct(RegistryInterface registry)
     {
-      return new Term(this.code, this.localizedLabel, this.localizedDescription, registry);
+      return MetadataFactory.newTerm(this.code, this.localizedLabel, this.localizedDescription, registry);
     }
   }
 }
