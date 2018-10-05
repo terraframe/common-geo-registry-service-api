@@ -12,6 +12,7 @@ import org.locationtech.jts.io.WKTReader;
 import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -173,6 +174,33 @@ public class GeoObject implements Serializable
       Attribute attr = this.attributeMap.get(key);
       
       attr.toJSON(props);
+      
+//      if(attr instanceof AttributeTerm)
+//      {
+//        attrs.add(key, attr.toJSON());
+//      }
+//      else
+//      {
+//        
+//        System.out.println(attr.toJSON());
+//        
+//        // TODO: All these attributes are required by the CGR spec. Adding an
+//        // empty string is a temporary step for me to work on another area of 
+//        // the adapter. Ensure that Values are always present and handle 
+//        // NULLs as errors.
+//        if(attr.getValue() == null )
+//        {
+//          attrs.addProperty(key, ""); 
+//        }
+//        else
+//        {
+//          attrs.addProperty(key, attr.getValue().toString() );
+//        }
+//      }
+      
+//      JsonParser attrParser = new JsonParser();
+//      JsonObject geomObj = attrParser.parse(attr.toJSON().toString()).getAsJsonObject();
+      
     }
 
     jsonObj.add("properties", props);
