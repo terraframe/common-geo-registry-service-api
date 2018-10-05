@@ -1,8 +1,10 @@
 package org.commongeoregistry.adapter.dataaccess;
 
-import java.util.Date;
-
+import org.commongeoregistry.adapter.RegistryInterface;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class AttributeInteger extends Attribute
 {
@@ -36,6 +38,16 @@ public class AttributeInteger extends Attribute
   public Integer getValue()
   {
     return this.integer;
+  }
+  
+  public void toJSON(JsonObject geoObjProps)
+  {
+    geoObjProps.addProperty(this.getName(), this.integer); // TODO : Null values??
+  }
+  
+  public void fromJSON(JsonElement jValue, RegistryInterface registry)
+  {
+    this.setValue(jValue.getAsInt());
   }
 
 }
