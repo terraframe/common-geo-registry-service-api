@@ -212,10 +212,8 @@ public class SerializationTest
     ctTwo.addParent(ptOne);
     
     String ptOneJson = ptOne.toJSON().toString();
-    System.out.println(ptOneJson);
     TreeNode ptOne2 = TreeNode.fromJSON(ptOneJson, registry);
     String ptOne2Json = ptOne2.toJSON().toString();
-    System.out.println(ptOne2Json);
     
     Assert.equals(ptOneJson, ptOne2Json);
     Assert.equals(ptOne.getChildren().size(), ptOne2.getChildren().size());

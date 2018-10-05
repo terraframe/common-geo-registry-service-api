@@ -42,7 +42,7 @@ public class AttributeInteger extends Attribute
   
   public void toJSON(JsonObject geoObjProps)
   {
-    geoObjProps.addProperty(this.getName(), this.integer); // TODO : Null values??
+    geoObjProps.addProperty(this.getName(), this.integer);
   }
   
   public void fromJSON(JsonElement jValue, RegistryInterface registry)
