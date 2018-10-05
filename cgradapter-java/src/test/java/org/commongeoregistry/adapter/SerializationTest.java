@@ -6,6 +6,7 @@ import java.util.List;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.TreeNode;
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
@@ -14,7 +15,6 @@ import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 import org.commongeoregistry.adapter.metadata.MetadataFactory;
-import org.commongeoregistry.adapter.metadata.HierarchyType.HierarchyNode;
 import org.junit.Test;
 import org.locationtech.jts.util.Assert;
 
@@ -163,7 +163,65 @@ public class SerializationTest
     HierarchyType geoPolitical = registry.getMetadataCache().getHierachyType(TestFixture.GEOPOLITICAL).get();
     
     String geoPoliticalJson = geoPolitical.toJSON().toString();
-    System.out.println(geoPoliticalJson);
-//    HierarchyType HierarchyType.fromJSON(geoPoliticalJson);
+    HierarchyType geoPolitical2 = HierarchyType.fromJSON(geoPoliticalJson, registry);
+    String geoPoliticalJson2 = geoPolitical2.toJSON().toString();
+    
+    Assert.equals(geoPoliticalJson, geoPoliticalJson2);
+    Assert.equals(geoPolitical.getCode(), geoPolitical2.getCode());
+    Assert.equals(geoPolitical.getLocalizedDescription(), geoPolitical2.getLocalizedDescription());
+    Assert.equals(geoPolitical.getLocalizedLabel(), geoPolitical2.getLocalizedLabel());
+    Assert.equals(geoPolitical.getRootGeoObjectTypes().size(), geoPolitical2.getRootGeoObjectTypes().size());
+    Assert.equals(geoPolitical.getRootGeoObjectTypes().get(0).getChildren().size(), geoPolitical2.getRootGeoObjectTypes().get(0).getChildren().size());
+  }
+  
+  @Test
+  public void testTreeNode()
+  {
+    RegistryServerInterface registry = new RegistryServerInterface();
+    
+    TestFixture.defineExampleHierarchies(registry);
+    HierarchyType geoPolitical = registry.getMetadataCache().getHierachyType(TestFixture.GEOPOLITICAL).get();
+    
+    GeoObject pOne = registry.createGeoObject(TestFixture.PROVINCE);
+    pOne.setCode("pOne");
+    pOne.setUid("pOne");
+    TreeNode ptOne = new TreeNode(pOne, geoPolitical);
+    
+    GeoObject dOne = registry.createGeoObject(TestFixture.DISTRICT);
+    dOne.setCode("dOne");
+    dOne.setUid("dOne");
+    TreeNode dtOne = new TreeNode(dOne, geoPolitical);
+    ptOne.addChild(dtOne);
+    
+    GeoObject cOne = registry.createGeoObject(TestFixture.COMMUNE);
+    cOne.setCode("cOne");
+    cOne.setUid("cOne");
+    TreeNode ctOne = new TreeNode(cOne, geoPolitical);
+    dtOne.addChild(ctOne);
+    
+    GeoObject dTwo = registry.createGeoObject(TestFixture.DISTRICT);
+    dTwo.setCode("dTwo");
+    dTwo.setUid("dTwo");
+    TreeNode dtTwo = new TreeNode(dTwo, geoPolitical);
+    ptOne.addChild(dtTwo);
+    
+    GeoObject cTwo = registry.createGeoObject(TestFixture.COMMUNE);
+    cTwo.setCode("cTwo");
+    cTwo.setUid("cTwo");
+    TreeNode ctTwo = new TreeNode(cTwo, geoPolitical);
+    ctTwo.addParent(ptOne);
+    
+    String ptOneJson = ptOne.toJSON().toString();
+    System.out.println(ptOneJson);
+    TreeNode ptOne2 = TreeNode.fromJSON(ptOneJson, registry);
+    String ptOne2Json = ptOne2.toJSON().toString();
+    System.out.println(ptOne2Json);
+    
+    Assert.equals(ptOneJson, ptOne2Json);
+    Assert.equals(ptOne.getChildren().size(), ptOne2.getChildren().size());
+    Assert.equals(ptOne.getChildren().get(0).getChildren().size(), ptOne2.getChildren().get(0).getChildren().size());
+    Assert.equals(ptOne.getChildren().get(0).getChildren().get(0).getChildren().size(), ptOne2.getChildren().get(0).getChildren().get(0).getChildren().size());
+    Assert.equals(ptOne.getHierachyType(), ptOne2.getHierachyType());
+    Assert.equals(ptOne.getChildren().get(0).getHierachyType(), ptOne2.getChildren().get(0).getHierachyType());
   }
 }
