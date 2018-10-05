@@ -1,9 +1,30 @@
 package org.commongeoregistry.adapter.metadata;
 
+import java.io.Serializable;
+
 import com.google.gson.JsonObject;
 
-public abstract class AttributeType
+/**
+ * Primary abstraction for attribute metadata on {@link GeoObjectType}.
+ * 
+ * @author nathan
+ *
+ */
+public abstract class AttributeType implements Serializable
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID                = -2037233821367602621L;
+  
+  public static final String JSON_NAME                      = "name";
+  
+  public static final String JSON_LOCALIZED_LABEL           = "localizedLabel";
+  
+  public static final String JSON_LOCALIZED_DESCRIPTION     = "localizedDescription";
+  
+  public static final String JSON_TYPE                      = "type";
+
   private String name;
 
   private String localizedLabel;
@@ -11,6 +32,8 @@ public abstract class AttributeType
   private String localizedDescription;
 
   private String type;                // Attribute Type Constant
+  
+  //TODO add a boolean for if the attribute is required or not
 
   public AttributeType(String _name, String _localizedLabel, String _localizedDescription, String _type)
   {
@@ -35,7 +58,7 @@ public abstract class AttributeType
     return this.localizedLabel;
   }
   
-  public String localizedDescription()
+  public String getLocalizedDescription()
   {
     return this.localizedDescription;
   }
@@ -68,13 +91,13 @@ public abstract class AttributeType
   {
     JsonObject json = new JsonObject();
     
-    json.addProperty("name", this.name);
+    json.addProperty(JSON_NAME, this.getName());
     
-    json.addProperty("type", this.type);
+    json.addProperty(JSON_TYPE, this.getType());
     
-    json.addProperty("localizedLabel", this.localizedLabel);
+    json.addProperty(JSON_LOCALIZED_LABEL, this.getLocalizedLabel());
     
-    json.addProperty("localizedDescription", this.localizedDescription);
+    json.addProperty(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription());
     
     return json;
   }
