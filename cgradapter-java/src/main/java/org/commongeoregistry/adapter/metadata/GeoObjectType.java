@@ -5,10 +5,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.commongeoregistry.adapter.RegistryInterface;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class GeoObjectType implements Serializable
 {
@@ -27,7 +32,7 @@ public class GeoObjectType implements Serializable
   
   private Map<String, AttributeType> attributeMap;
 
-  public GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription)
+  public GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryInterface registry)
   {
     this.code = _code;
     this.localizedLabel = _localizedLabel;
@@ -35,7 +40,7 @@ public class GeoObjectType implements Serializable
     
     this.geometryType = _geometryType;
 
-    this.attributeMap = buildDefaultAttributes();
+    this.attributeMap = buildDefaultAttributes(registry);
   }
 
   public String getCode()
@@ -77,7 +82,7 @@ public class GeoObjectType implements Serializable
    * All {@link GeoObjectType}s have a standard set of attributes
    * @return
    */
-  private Map<String, AttributeType> buildDefaultAttributes()
+  private Map<String, AttributeType> buildDefaultAttributes(RegistryInterface registry)
   {
     Map<String, AttributeType> defaultAttributeMap = new ConcurrentHashMap<String, AttributeType>();
         
@@ -91,9 +96,7 @@ public class GeoObjectType implements Serializable
     defaultAttributeMap.put(DefaultAttribute.TYPE.getName(), type);
     
     AttributeTermType status = (AttributeTermType)DefaultAttribute.STATUS.createAttributeType();
-    
-    Term rootStatusTerm = DefaultTerms.buildGeoObjectStatusTree();
-    
+    Term rootStatusTerm = registry.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get();
     status.setRootTerm(rootStatusTerm);
     
     defaultAttributeMap.put(DefaultAttribute.STATUS.getName(), status);
@@ -101,15 +104,63 @@ public class GeoObjectType implements Serializable
     return defaultAttributeMap;
   }
   
-  // TODO
+  public static GeoObjectType fromJSON(String sJson, RegistryInterface registry)
+  {
+    JsonParser parser = new JsonParser();
+    
+    JsonObject oJson = parser.parse(sJson).getAsJsonObject();
+    JsonArray oJsonAttrs = oJson.getAsJsonArray("attributes");
+    
+    String code = oJson.get("code").getAsString();
+    String localizedLabel = oJson.get("localizedLabel").getAsString();
+    String localizedDescription = oJson.get("localizedDescription").getAsString();
+    GeometryType geometryType = GeometryType.valueOf(oJson.get("geometryType").getAsString());
+    
+    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription, registry);
+    
+    Map<String, AttributeType> attributeMap = new ConcurrentHashMap<String, AttributeType>();
+    for (int i = 0; i < oJsonAttrs.size(); ++i)
+    {
+      JsonObject joAttr = oJsonAttrs.get(i).getAsJsonObject();
+      String name = joAttr.get("name").getAsString();
+      
+      AttributeType attrType = AttributeType.factory(name, joAttr.get("localizedLabel").getAsString(), joAttr.get("localizedDescription").getAsString(), joAttr.get("type").getAsString());
+      attributeMap.put(name, attrType);
+    }
+    geoObjType.attributeMap = attributeMap;
+    
+    return geoObjType;
+  }
+  
   /**
    * Return the JSON representation of this metadata
    * 
    * @return
    */
-  public String toJSON()
+  public JsonObject toJSON()
   {
-    return new String();
+    JsonObject json = new JsonObject();
+    
+    json.addProperty("code", code);
+    
+    json.addProperty("localizedLabel", localizedLabel);
+    
+    json.addProperty("localizedDescription", localizedDescription);
+    
+    json.addProperty("geometryType", this.geometryType.name()); // TODO: PROPOSED but not yet approved. Required for fromJSON reconstruction.
+    
+    JsonArray attrs = new JsonArray();
+    
+    for (String key : this.attributeMap.keySet())
+    {
+      AttributeType attrType = this.attributeMap.get(key);
+      
+      attrs.add(attrType.toJSON());
+    }
+    
+    json.add("attributes", attrs);
+    
+    return json;
   }
   
 }

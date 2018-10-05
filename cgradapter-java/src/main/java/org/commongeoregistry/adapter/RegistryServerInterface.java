@@ -44,7 +44,7 @@ public class RegistryServerInterface extends RegistryInterface
       
       if (geoObjectType.isPresent())
       {
-        geoObjectTypesJSON.add(geoObjectType.get().toJSON());
+        geoObjectTypesJSON.add(geoObjectType.get().toJSON().toString());
       }
     }
     

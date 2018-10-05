@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
+import org.commongeoregistry.adapter.constants.DefaultTerms.GeoObjectStatusTerm;
 import org.commongeoregistry.adapter.dataaccess.Attribute;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.metadata.AttributeType;
@@ -24,6 +25,8 @@ public abstract class RegistryInterface implements Serializable
   public RegistryInterface()
   {
     this.metadataCache = new MetadataCache();
+    
+    DefaultTerms.buildGeoObjectStatusTree(this);
   }
   
   public MetadataCache getMetadataCache()
@@ -53,7 +56,8 @@ public abstract class RegistryInterface implements Serializable
     // Set some default values
     geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(_geoObjectTypeCode);
     
-    geoObject.getAttribute(DefaultAttribute.STATUS.getName()).setValue(DefaultTerms.GeoObjectStatusTerm.NEW.getTerm());
+    Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
+    geoObject.getAttribute(DefaultAttribute.STATUS.getName()).setValue(newStatus);
     
     return geoObject;
     
