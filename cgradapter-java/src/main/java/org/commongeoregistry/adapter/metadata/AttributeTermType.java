@@ -6,6 +6,11 @@ import org.commongeoregistry.adapter.Term;
 
 public class AttributeTermType extends AttributeType
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 6431580798592645011L;
+
   public static String TYPE = "term";
   
   private Term rootTerm     = null;
