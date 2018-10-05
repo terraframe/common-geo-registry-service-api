@@ -5,13 +5,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.commongeoregistry.adapter.RegistryInterface;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * Describes a hierarchy type.
- * 
- * @author nathan
  *
  */
 public class HierarchyType implements Serializable
@@ -112,6 +113,29 @@ public class HierarchyType implements Serializable
       
       return jsonObj;
     }
+    
+    public static HierarchyNode fromJSON(String sJson, RegistryInterface registry)
+    {
+      JsonParser parser = new JsonParser();
+      
+      JsonObject oJson = parser.parse(sJson).getAsJsonObject();
+      
+      GeoObjectType got = registry.getMetadataCache().getGeoObjectType(oJson.get("geoObjectType").getAsString()).get();
+      
+      HierarchyNode node = new HierarchyNode(got);
+      
+      JsonArray jaChildren = oJson.getAsJsonArray("children");
+      for (int i = 0; i < jaChildren.size(); ++i)
+      {
+        JsonObject joChild = jaChildren.get(i).getAsJsonObject();
+        
+        HierarchyNode hnChild = HierarchyNode.fromJSON(joChild.toString(), registry);
+        
+        node.addChild(hnChild);
+      }
+      
+      return node;
+    }
   }
   
   /**
@@ -140,5 +164,28 @@ public class HierarchyType implements Serializable
     jsonObj.add("rootGeoObjectTypes", jaRoots);
     
     return jsonObj;
+  }
+  
+  public static HierarchyType fromJSON(String sJson, RegistryInterface registry)
+  {
+    JsonParser parser = new JsonParser();
+    
+    JsonObject oJson = parser.parse(sJson).getAsJsonObject();
+    
+    String code = oJson.get("code").getAsString();
+    String localizedLabel = oJson.get("localizedLabel").getAsString();
+    String localizedDescription = oJson.get("localizedDescription").getAsString();
+    
+    HierarchyType ht = new HierarchyType(code, localizedLabel, localizedDescription);
+    
+    JsonArray rootGeoObjectTypes = oJson.getAsJsonArray("rootGeoObjectTypes");
+    for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
+    {
+      HierarchyNode node = HierarchyNode.fromJSON(rootGeoObjectTypes.get(i).getAsJsonObject().toString(), registry);
+      
+      ht.addRootGeoObjects(node);
+    }
+    
+    return ht;
   }
 }
