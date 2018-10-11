@@ -2,9 +2,12 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.RegistryInterface;
+import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.GeometryType;
+import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
@@ -12,7 +15,6 @@ import org.locationtech.jts.io.WKTReader;
 import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -43,6 +45,24 @@ public class GeoObject implements Serializable
     this.geometry = null;
 
     this.attributeMap = _attributeMap;
+    
+    this.getAttribute(DefaultAttribute.TYPE.getName()).setValue(_geoObjectType.getCode());
+  }
+  
+  public static Map<String, Attribute> buildAttributeMap(GeoObjectType geoObjectType)
+  {
+    Map<String, AttributeType> attributeTypeMap = geoObjectType.getAttributeMap();
+    
+    Map<String, Attribute> attributeMap = new ConcurrentHashMap<String, Attribute>();
+    
+    for (AttributeType attributeType : attributeTypeMap.values())
+    {
+      Attribute attribute = Attribute.attributeFactory(attributeType);
+      
+      attributeMap.put(attribute.getName(), attribute);
+    }
+    
+    return attributeMap;
   }
 
   public GeoObjectType getType()

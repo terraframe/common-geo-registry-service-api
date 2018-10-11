@@ -23,6 +23,7 @@ import com.google.gson.JsonParser;
  * integrity constraints on the user 
  * 
  * @author nathan
+ * @author rrowlands
  *
  */
 public class GeoObjectType implements Serializable
@@ -230,7 +231,6 @@ public class GeoObjectType implements Serializable
     
     return defaultAttributeMap;
   }
-  
   
   /**
    * Creates a {@link GeoObjectType} from the given JSON string.

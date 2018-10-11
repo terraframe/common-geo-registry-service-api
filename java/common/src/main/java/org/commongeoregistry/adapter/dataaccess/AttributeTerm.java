@@ -62,7 +62,13 @@ public class AttributeTerm extends Attribute
   @Override
   public void toJSON(JsonObject geoObjProps)
   {
-    JsonObject joTerm = this.getTerms().get(0).toJSON();
+    List<Term> terms = this.getTerms();
+    
+    JsonObject joTerm = null;
+    if (terms.size() > 0)
+    {
+      joTerm = this.getTerms().get(0).toJSON();
+    }
     
     geoObjProps.add(this.getName(), joTerm);
   }

@@ -40,21 +40,12 @@ public abstract class RegistryInterface implements Serializable
   {
     GeoObjectType geoObjectType = this.getMetadataCache().getGeoObjectType(_geoObjectTypeCode).get();
     
-    Map<String, AttributeType> attributeTypeMap = geoObjectType.getAttributeMap();
-    
-    Map<String, Attribute> attributeMap = new ConcurrentHashMap<String, Attribute>();
-    
-    for (AttributeType attributeType : attributeTypeMap.values())
-    {
-      Attribute attribute = Attribute.attributeFactory(attributeType);
-      
-      attributeMap.put(attribute.getName(), attribute);
-    }
+    Map<String, Attribute> attributeMap = GeoObject.buildAttributeMap(geoObjectType);
     
     GeoObject geoObject = new GeoObject(geoObjectType, geoObjectType.getGeometryType(), attributeMap);
     
     // Set some default values
-    geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(_geoObjectTypeCode);
+//    geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(_geoObjectTypeCode);
     
     Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
     geoObject.getAttribute(DefaultAttribute.STATUS.getName()).setValue(newStatus);
