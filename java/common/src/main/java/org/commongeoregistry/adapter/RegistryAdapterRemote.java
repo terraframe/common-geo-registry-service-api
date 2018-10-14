@@ -74,6 +74,8 @@ public class RegistryAdapterRemote extends RegistryAdapter
     this.getMetadataCache().clear();
     
     // Make the RESTFul call
+    
+    // Populate the cache
   }
   
   /**

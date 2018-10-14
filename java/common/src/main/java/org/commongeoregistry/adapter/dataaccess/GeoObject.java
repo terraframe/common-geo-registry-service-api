@@ -294,9 +294,9 @@ public class GeoObject implements Serializable
   }
   
   /**
-   * Return the JSON representation of this metadata
+   * Return the JSON representation of this [@link GeoObject}
    * 
-   * @return
+   * @return JSON representation of this [@link GeoObject}
    */
   public JsonObject toJSON()
   {
