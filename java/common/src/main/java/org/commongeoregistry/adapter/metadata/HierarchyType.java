@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.commongeoregistry.adapter.RegistryInterface;
+import org.commongeoregistry.adapter.RegistryAdapter;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -179,7 +179,7 @@ public class HierarchyType implements Serializable
      * @param registry
      * @return JSON for the Hierarchy Node.
      */
-    protected static HierarchyNode fromJSON(String sJson, RegistryInterface registry)
+    protected static HierarchyNode fromJSON(String sJson, RegistryAdapter registry)
     {
       JsonParser parser = new JsonParser();
       
@@ -238,7 +238,7 @@ public class HierarchyType implements Serializable
    * @param _registry
    * @return
    */
-  public static HierarchyType fromJSON(String _sJson, RegistryInterface _registry)
+  public static HierarchyType fromJSON(String _sJson, RegistryAdapter _registry)
   {
     JsonParser parser = new JsonParser();
     

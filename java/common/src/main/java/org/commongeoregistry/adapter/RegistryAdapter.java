@@ -2,18 +2,16 @@ package org.commongeoregistry.adapter;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.DefaultTerms.GeoObjectStatusTerm;
 import org.commongeoregistry.adapter.dataaccess.Attribute;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
-import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.MetadataCache;
 
-public abstract class RegistryInterface implements Serializable
+public abstract class RegistryAdapter implements Serializable
 {
   /**
    * 
@@ -22,7 +20,7 @@ public abstract class RegistryInterface implements Serializable
   
   private MetadataCache metadataCache;
   
-  public RegistryInterface()
+  public RegistryAdapter()
   {
     this.metadataCache = new MetadataCache();
     
@@ -36,7 +34,13 @@ public abstract class RegistryInterface implements Serializable
   
   
   // TODO - Add support for a supplier provided exception.
-  public GeoObject createGeoObject(String _geoObjectTypeCode)
+  /**
+   * Creates a new local {@link GeoObject} instance of the given type.
+   * 
+   * @param _geoObjectTypeCode
+   * @return a new local {@link GeoObject} instance of the given type.
+   */
+  public GeoObject newGeoObjectInstance(String _geoObjectTypeCode)
   {
     GeoObjectType geoObjectType = this.getMetadataCache().getGeoObjectType(_geoObjectTypeCode).get();
     

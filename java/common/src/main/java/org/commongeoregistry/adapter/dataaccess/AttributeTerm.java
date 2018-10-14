@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import org.commongeoregistry.adapter.RegistryInterface;
+import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 
@@ -74,7 +74,7 @@ public class AttributeTerm extends Attribute
   }
   
   @Override
-  public void fromJSON(JsonElement jValue, RegistryInterface registry)
+  public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
     JsonObject jTerm = jValue.getAsJsonObject();
     String code = jTerm.get("code").getAsString();

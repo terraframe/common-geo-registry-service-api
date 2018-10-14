@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.commongeoregistry.adapter.RegistryInterface;
+import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
@@ -25,7 +25,19 @@ public class GeoObject implements Serializable
   /**
    * 
    */
-  private static final long      serialVersionUID = 7686140708200106783L;
+  private static final long      serialVersionUID       = 7686140708200106783L;
+  
+  public static final String     UID                    = "uid";
+  
+  public static final String     CODE                   = "code";
+  
+  public static final String     JSON_PROPERTIES        = "properties";
+  
+  public static final String     JSON_TYPE              = "type";
+  
+  public static final String     JSON_GEOMETRY          = "geometry";
+  
+  public static final String     JSON_FEATURE           = "Feature";
 
   private GeoObjectType          geoObjectType;
 
@@ -119,34 +131,34 @@ public class GeoObject implements Serializable
   
   public void setCode(String code)
   {
-    this.attributeMap.get("code").setValue(code);
+    this.attributeMap.get(CODE).setValue(code);
   }
   
   public String getCode()
   {
-    return (String) this.attributeMap.get("code").getValue();
+    return (String) this.attributeMap.get(CODE).getValue();
   }
   
   public void setUid(String uid)
   {
-    this.attributeMap.get("uid").setValue(uid);
+    this.attributeMap.get(UID).setValue(uid);
   }
   
   public String getUid()
   {
-    return (String) this.attributeMap.get("uid").getValue();
+    return (String) this.attributeMap.get(UID).getValue();
   }
   
-  public static GeoObject fromJSON(RegistryInterface registry, String sJson)
+  public static GeoObject fromJSON(RegistryAdapter registry, String sJson)
   {
     JsonParser parser = new JsonParser();
     
     JsonObject oJson = parser.parse(sJson).getAsJsonObject();
-    JsonObject oJsonProps = oJson.getAsJsonObject("properties");
+    JsonObject oJsonProps = oJson.getAsJsonObject(JSON_PROPERTIES);
     
-    GeoObject geoObj = registry.createGeoObject(oJsonProps.get("type").getAsString());
+    GeoObject geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString());
     
-    JsonElement oGeom = oJson.get("geometry");
+    JsonElement oGeom = oJson.get(JSON_GEOMETRY);
     if (oGeom != null)
     {
       GeoJSONReader reader = new GeoJSONReader();
@@ -180,7 +192,7 @@ public class GeoObject implements Serializable
     // It's assumed that GeoObjects are simple features rather than
     // FeatureCollections.
     // Spec reference: https://tools.ietf.org/html/rfc7946#section-3.3
-    jsonObj.addProperty("type", "Feature");
+    jsonObj.addProperty(JSON_TYPE, JSON_FEATURE);
 
     if (this.getGeometry() != null)
     {
@@ -190,7 +202,7 @@ public class GeoObject implements Serializable
       JsonParser parser = new JsonParser();
       JsonObject geomObj = parser.parse(gJSON.toString()).getAsJsonObject();
       
-      jsonObj.add("geometry", geomObj);
+      jsonObj.add(JSON_GEOMETRY, geomObj);
     }
     
     JsonObject props = new JsonObject();
@@ -228,7 +240,7 @@ public class GeoObject implements Serializable
       
     }
 
-    jsonObj.add("properties", props);
+    jsonObj.add(JSON_PROPERTIES, props);
     
 
     return jsonObj;

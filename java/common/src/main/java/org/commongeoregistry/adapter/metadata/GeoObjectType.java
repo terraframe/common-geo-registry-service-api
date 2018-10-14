@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.commongeoregistry.adapter.RegistryInterface;
+import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
@@ -85,9 +85,9 @@ public class GeoObjectType implements Serializable
    * @param _geometryType type of geometry for the {@link GeoObjectType} such as point, line, etc.
    * @param _localizedLabel localized label of the {@link GeoObjectType}.
    * @param _localizedDescription localized description of the {@link GeoObjectType}.
-   * @param _registry {@link RegistryInterface} from which this {@link GeoObjectType} is defined. 
+   * @param _registry {@link RegistryAdapter} from which this {@link GeoObjectType} is defined. 
    */
-  public GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryInterface _registry)
+  public GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryAdapter _registry)
   {
     this.init(_code, _geometryType, _localizedLabel, _localizedDescription);
 
@@ -102,9 +102,9 @@ public class GeoObjectType implements Serializable
    * @param _geometryType type of geometry for the {@link GeoObjectType} such as point, line, etc.
    * @param _localizedLabel localized label of the {@link GeoObjectType}.
    * @param _localizedDescription localized description of the {@link GeoObjectType}.
-   * @param _registry {@link RegistryInterface} from which this {@link GeoObjectType} is defined. 
+   * @param _registry {@link RegistryAdapter} from which this {@link GeoObjectType} is defined. 
    */
-  private GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryInterface _registry, Map<String, AttributeType> _attributeMap)
+  private GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryAdapter _registry, Map<String, AttributeType> _attributeMap)
   {
     this.init(_code, _geometryType, _localizedLabel, _localizedDescription);
 
@@ -210,7 +210,7 @@ public class GeoObjectType implements Serializable
    * 
    * @return the standard set of {@link AttributeType} defined on all{@link GeoObjectType}s.
    */
-  private Map<String, AttributeType> buildDefaultAttributes(RegistryInterface registry)
+  private Map<String, AttributeType> buildDefaultAttributes(RegistryAdapter registry)
   {
     Map<String, AttributeType> defaultAttributeMap = new ConcurrentHashMap<String, AttributeType>();
         
@@ -236,10 +236,10 @@ public class GeoObjectType implements Serializable
    * Creates a {@link GeoObjectType} from the given JSON string.
    * 
    * @param _sJson JSON string that defines the {@link GeoObjectType}.
-   * @param _registry {@link RegistryInterface} from which this {@link GeoObjectType} object comes. 
+   * @param _registry {@link RegistryAdapter} from which this {@link GeoObjectType} object comes. 
    * @return
    */
-  public static GeoObjectType fromJSON(String _sJson, RegistryInterface _registry)
+  public static GeoObjectType fromJSON(String _sJson, RegistryAdapter _registry)
   {
     JsonParser parser = new JsonParser();
     

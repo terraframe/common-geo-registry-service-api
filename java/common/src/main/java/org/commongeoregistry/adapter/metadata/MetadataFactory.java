@@ -1,12 +1,12 @@
 package org.commongeoregistry.adapter.metadata;
 
-import org.commongeoregistry.adapter.RegistryInterface;
+import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.GeometryType;
 
 public class MetadataFactory
 {
-  public static Term newTerm(String _code, String _localizedLabel, String _localizedDescription, RegistryInterface registry)
+  public static Term newTerm(String _code, String _localizedLabel, String _localizedDescription, RegistryAdapter registry)
   {
     Term t = new Term(_code, _localizedLabel, _localizedDescription, registry);
     
@@ -15,7 +15,7 @@ public class MetadataFactory
     return t;
   }
   
-  public static HierarchyType newHierarchyType(String _code, String _localizedLabel, String _localizedDescription, RegistryInterface registry)
+  public static HierarchyType newHierarchyType(String _code, String _localizedLabel, String _localizedDescription, RegistryAdapter registry)
   {
     HierarchyType ht = new HierarchyType(_code, _localizedLabel, _localizedDescription);
     
@@ -24,7 +24,7 @@ public class MetadataFactory
     return ht;
   }
   
-  public static GeoObjectType newGeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryInterface registry)
+  public static GeoObjectType newGeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryAdapter registry)
   {
     GeoObjectType got = new GeoObjectType(_code, _geometryType, _localizedLabel, _localizedDescription, registry);
     

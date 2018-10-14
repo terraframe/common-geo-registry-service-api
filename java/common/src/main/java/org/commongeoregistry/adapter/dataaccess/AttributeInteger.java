@@ -1,6 +1,6 @@
 package org.commongeoregistry.adapter.dataaccess;
 
-import org.commongeoregistry.adapter.RegistryInterface;
+import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 
 import com.google.gson.JsonElement;
@@ -45,7 +45,7 @@ public class AttributeInteger extends Attribute
     geoObjProps.addProperty(this.getName(), this.integer);
   }
   
-  public void fromJSON(JsonElement jValue, RegistryInterface registry)
+  public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
     this.setValue(jValue.getAsInt());
   }

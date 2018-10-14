@@ -30,7 +30,7 @@ public class TestFixture
 
   public static String                  HEALTH_ADMINISTRATIVE      = "HEALTH_ADMINISTRATIVE";
   
-  public static void defineExampleHierarchies(RegistryInterface registry)
+  public static void defineExampleHierarchies(RegistryAdapter registry)
   {
     // Define GeoObject Types
     GeoObjectType province = MetadataFactory.newGeoObjectType(PROVINCE, GeometryType.POLYGON, "Province", "", registry);
@@ -77,7 +77,7 @@ public class TestFixture
     healthAdministrative.addRootGeoObjects(healthProvinceNode);
   }
   
-  private static AttributeTermType createHealthFacilityTypeAttribute(RegistryInterface registry)
+  private static AttributeTermType createHealthFacilityTypeAttribute(RegistryAdapter registry)
   {
     AttributeTermType attrType = 
         (AttributeTermType)AttributeType.factory(HEALTH_FACILITY_ATTRIBUTE, "Health Facility Type", "The type of health facility", AttributeTermType.TYPE);
@@ -89,7 +89,7 @@ public class TestFixture
     return attrType;
   }
   
-  private static Term createHealthFacilityTerms(RegistryInterface registry)
+  private static Term createHealthFacilityTerms(RegistryAdapter registry)
   {
     Term rootTerm = MetadataFactory.newTerm("CM:Health-Facility-Types", "Health Facility Types", "The types of health facilities within a country", registry);
     Term dispensary = MetadataFactory.newTerm("CM:Dispensary", "Dispensary", "", registry);

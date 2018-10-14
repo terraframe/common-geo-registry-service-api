@@ -2,7 +2,7 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
 
-import org.commongeoregistry.adapter.RegistryInterface;
+import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
@@ -87,7 +87,7 @@ public abstract class Attribute implements Serializable
     geoObjProps.addProperty(this.getName(), value.toString());
   }
   
-  public void fromJSON(JsonElement jValue, RegistryInterface registry)
+  public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
     this.setValue(jValue.getAsString());
   }

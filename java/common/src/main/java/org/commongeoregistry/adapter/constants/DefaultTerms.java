@@ -1,6 +1,6 @@
 package org.commongeoregistry.adapter.constants;
 
-import org.commongeoregistry.adapter.RegistryInterface;
+import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.metadata.MetadataFactory;
 
@@ -11,7 +11,7 @@ import org.commongeoregistry.adapter.metadata.MetadataFactory;
 public class DefaultTerms
 {
 
-  public static Term buildGeoObjectStatusTree(RegistryInterface registry)
+  public static Term buildGeoObjectStatusTree(RegistryAdapter registry)
   {
     Term root = GeoObjectStatusTerm.ROOT.construct(registry);
     Term neww = GeoObjectStatusTerm.NEW.construct(registry);
@@ -52,7 +52,7 @@ public class DefaultTerms
       this.localizedDescription = _localizedDescription;
     }
     
-    public Term construct(RegistryInterface registry)
+    public Term construct(RegistryAdapter registry)
     {
       return MetadataFactory.newTerm(this.code, this.localizedLabel, this.localizedDescription, registry);
     }

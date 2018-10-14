@@ -17,14 +17,14 @@ import org.commongeoregistry.adapter.metadata.MetadataCache;
  * @author nathan
  *
  */
-public class RegistryServerInterface extends RegistryInterface
+public class RegistryAdapterServer extends RegistryAdapter
 {
   /**
    * 
    */
   private static final long serialVersionUID = -3343727858910300438L;
 
-  public RegistryServerInterface()
+  public RegistryAdapterServer()
   {
     super();
   }

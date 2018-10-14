@@ -23,7 +23,7 @@ public class Term implements Serializable
 
   private List<Term>        children;
 
-  public Term(String _code, String _localizedLabel, String _localizedDescription, RegistryInterface registry)
+  public Term(String _code, String _localizedLabel, String _localizedDescription, RegistryAdapter registry)
   {
     this.code = _code;
     this.localizedLabel = _localizedLabel;
