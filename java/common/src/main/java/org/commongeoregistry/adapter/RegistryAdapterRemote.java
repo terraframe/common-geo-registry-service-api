@@ -1,6 +1,8 @@
 package org.commongeoregistry.adapter;
 
+import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 
 import com.google.gson.JsonObject;
@@ -133,11 +135,44 @@ public class RegistryAdapterRemote extends RegistryAdapter
     
   }
   
+  /**
+   * Returns the {@link GeoObject} with the given UID and its children of the given types.
+   * 
+   * Shall we include the hierarchy types as a parameter as well?
+   * 
+   * @param parentUid UID of the parent {@link GeoObject}
+   * @param childrenTypes an array of object types.
+   * @param recursive true if all recursive children should be fetched, or false if only immediate
+   * children should be fetched.
+   * 
+   * @return {@link ChildTreeNode} containing the {@link GeoObject} with the given UID and its 
+   * children of the given types.
+   */
+  public ChildTreeNode getChildGeoObjects(String parentUid, String[] childrenTypes, Boolean recursive)
+  {
+    String opURL = this.cgrURL+"/"+GET_CHILDREN_GEO_OBJECTS;
+    
+    return null;
+  }
 
-//  
-//  private static final String  GET_CHILDREN_GEO_OBJECTS    = "getChildGeoObjects"; 
-//  
-//  private static final String  GET_PARENT_GEO_OBJECTS      = "getParentGeoObjects"; 
-
+  /**
+   * Returns the {@link GeoObject} with the given UID and its parent of the given types.
+   * 
+   * Shall we include the hierarchy types as a parameter as well?
+   * 
+   * @param childUid UID of the child {@link GeoObject}
+   * @param parentTypes an array of object types.
+   * @param recursive true if all recursive parents should be fetched, or false if only immediate
+   * recursive should be fetched.
+   * 
+   * @return {@link ParentTreeNode} containing the {@link GeoObject} with the given UID and its 
+   * children of the given types.
+   */
+  public ParentTreeNode getParentGeoObjects(String childUid, String[] parentTypes, Boolean recursive)
+  {
+    String opURL = this.cgrURL+"/"+GET_PARENT_GEO_OBJECTS;
+    
+    return null;
+  }
 
 }

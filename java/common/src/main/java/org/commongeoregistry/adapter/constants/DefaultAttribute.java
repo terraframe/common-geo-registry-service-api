@@ -6,13 +6,15 @@ import org.commongeoregistry.adapter.metadata.AttributeType;
 
 public enum DefaultAttribute 
 {
-  UID("uid",       "UID",    "The internal globally unique identifier ID.", AttributeCharacterType.TYPE),
+  UID("uid",       "UID",       "The internal globally unique identifier ID", AttributeCharacterType.TYPE),
 
-  CODE("code",     "Code",   "Human readable unique identifier.", AttributeCharacterType.TYPE),
+  CODE("code",     "Code",      "Human readable unique identified", AttributeCharacterType.TYPE),
   
-  TYPE("type",     "Type",   "The type of the GeoObject.", AttributeCharacterType.TYPE),
+  LOCALIZED_DISPLAY_LABEL("localizedDisplayLabel", "Localized Display Label",   "Localized locaiton ", AttributeCharacterType.TYPE),
   
-  STATUS("status", "Status", "The status of the GeoObject", AttributeTermType.TYPE);
+  TYPE("type",     "Type",      "The type of the GeoObject", AttributeCharacterType.TYPE),
+  
+  STATUS("status", "Status",    "The status of the GeoObject", AttributeTermType.TYPE);
 
   
   private String name;

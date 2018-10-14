@@ -19,4 +19,11 @@ public class RegistryAdapterAndroid extends RegistryAdapterRemote
   {
     super(_cgrURL);
   }
+  
+  //
+  
+  
+  // 
+  
+  // 
 }

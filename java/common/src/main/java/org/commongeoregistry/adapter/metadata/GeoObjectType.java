@@ -220,6 +220,9 @@ public class GeoObjectType implements Serializable
     AttributeCharacterType code = (AttributeCharacterType)DefaultAttribute.CODE.createAttributeType();
     defaultAttributeMap.put(DefaultAttribute.CODE.getName(), code);
     
+    AttributeCharacterType displayLabel = (AttributeCharacterType)DefaultAttribute.LOCALIZED_DISPLAY_LABEL.createAttributeType();
+    defaultAttributeMap.put(DefaultAttribute.LOCALIZED_DISPLAY_LABEL.getName(), displayLabel);
+    
     AttributeCharacterType type = (AttributeCharacterType)DefaultAttribute.TYPE.createAttributeType();
     defaultAttributeMap.put(DefaultAttribute.TYPE.getName(), type);
     
