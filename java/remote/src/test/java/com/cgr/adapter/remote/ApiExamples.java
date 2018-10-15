@@ -87,8 +87,8 @@ public class ApiExamples
         {
           AttributeTermType attributeTermType = (AttributeTermType)attributeType;
           
-          // Assuming this is a single dimetnional list instead of a tree (which the abstraction supports but
-          // we will assume single dimention for now.
+          // Assuming this is a single dimension list instead of a tree (which the abstraction supports but
+          // we will assume single dimension for now.
           List<Term> terms = attributeTermType.getTerms();
           
           for (Term term: terms)
