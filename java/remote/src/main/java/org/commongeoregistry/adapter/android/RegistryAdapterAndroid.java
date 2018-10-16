@@ -15,7 +15,7 @@ public class RegistryAdapterAndroid extends RegistryAdapterRemote
   /**
    * 
    * 
-   * @param _cgrURL URL to the ommon geo-registry
+   * @param _cgrURL URL to the common geo-registry
    */
   public RegistryAdapterAndroid(String _cgrURL)
   {
