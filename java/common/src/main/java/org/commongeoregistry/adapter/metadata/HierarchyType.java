@@ -139,7 +139,7 @@ public class HierarchyType implements Serializable
     }
     
     /**
-     * Returns the child nodes of this current node..
+     * Returns the child nodes of this current node.
      * 
      * @return child nodes of this current node.
      */
@@ -174,7 +174,7 @@ public class HierarchyType implements Serializable
     
     /**
      * Generates JSON for the Hierarchy Node.
-     * s
+     * 
      * @param sJson
      * @param registry
      * @return JSON for the Hierarchy Node.
