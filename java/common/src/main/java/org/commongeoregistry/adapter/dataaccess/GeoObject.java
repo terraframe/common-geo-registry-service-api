@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
+import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
@@ -251,6 +252,20 @@ public class GeoObject implements Serializable
     this.attributeMap.get(LOCALIZED_DISPLAY_LABEL).setValue(_displayLabel);
   } 
   
+  /**
+   * Returns the status 
+   * 
+   * @return
+   */
+  public Term getStatus()
+  {
+    return (Term) this.attributeMap.get(DefaultAttribute.STATUS).getValue();
+  }
+  
+  public void setStatus(Term status)
+  {
+    this.attributeMap.get(DefaultAttribute.STATUS).setValue(status);
+  }
   
   /**
    * Creates a {@link GeoObject} from the given JSON.

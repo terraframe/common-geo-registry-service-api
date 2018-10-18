@@ -221,6 +221,8 @@ public class SerializationTest
     
     String ptOne2Json = ptOne2.toJSON().toString();
     
+    System.out.println(ptOneJson);
+    System.out.println(ptOne2Json);
     Assert.equals(ptOneJson, ptOne2Json);
     Assert.equals(ptOne.getChildren().size(), ptOne2.getChildren().size());
     Assert.equals(ptOne.getChildren().get(0).getChildren().size(), ptOne2.getChildren().get(0).getChildren().size());

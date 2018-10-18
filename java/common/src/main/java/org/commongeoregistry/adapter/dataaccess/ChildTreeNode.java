@@ -8,8 +8,10 @@ import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonNull;
 
 /**
  * This object is used to model a tree of {@link GeoObject}s representing children relationships 
@@ -102,18 +104,25 @@ public class ChildTreeNode extends TreeNode
     
     GeoObject geoObj = GeoObject.fromJSON(_registry, oJson.get(JSON_GEO_OBJECT).getAsJsonObject().toString());
     
-    HierarchyType hierarchyType = _registry.getMetadataCache().getHierachyType(oJson.get(JSON_HIERARCHY_TYPE).getAsString()).get();
+    HierarchyType hierarchyType = null;
+    if (oJson.has(JSON_HIERARCHY_TYPE))
+    {
+      hierarchyType = _registry.getMetadataCache().getHierachyType(oJson.get(JSON_HIERARCHY_TYPE).getAsString()).get();
+    }
     
     ChildTreeNode tn = new ChildTreeNode(geoObj, hierarchyType);
     
-    JsonArray jaChildren = oJson.get(JSON_CHILDREN).getAsJsonArray();
-    for (int i = 0; i < jaChildren.size(); ++i)
+    if (oJson.has(JSON_CHILDREN))
     {
-      JsonObject joChild = jaChildren.get(i).getAsJsonObject();
-      
-      ChildTreeNode tnChild = ChildTreeNode.fromJSON(joChild.toString(), _registry);
-      
-      tn.addChild(tnChild);
+      JsonArray jaChildren = oJson.get(JSON_CHILDREN).getAsJsonArray();
+      for (int i = 0; i < jaChildren.size(); ++i)
+      {
+        JsonObject joChild = jaChildren.get(i).getAsJsonObject();
+        
+        ChildTreeNode tnChild = ChildTreeNode.fromJSON(joChild.toString(), _registry);
+        
+        tn.addChild(tnChild);
+      }
     }
     
     return tn;

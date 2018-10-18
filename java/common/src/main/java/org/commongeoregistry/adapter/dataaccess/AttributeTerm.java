@@ -76,6 +76,12 @@ public class AttributeTerm extends Attribute
   @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
+    if (!jValue.isJsonObject()) // They may have passed us a JsonNull
+    {
+      this.clearTerms();
+      return;
+    }
+    
     JsonObject jTerm = jValue.getAsJsonObject();
     String code = jTerm.get("code").getAsString();
     

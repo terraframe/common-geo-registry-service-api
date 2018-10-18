@@ -24,15 +24,11 @@ public abstract class TreeNode implements Serializable
   
   private HierarchyType hierarchyType;
   
-  private List<TreeNode> parents;
-  
   public TreeNode(GeoObject _geoObject, HierarchyType _hierarchyType)
   {
     this.geoObject = _geoObject;
     
     this.hierarchyType = _hierarchyType;
-    
-    this.parents = Collections.synchronizedList(new LinkedList<TreeNode>());
   }
 
   public GeoObject getGeoObject() 
@@ -44,11 +40,6 @@ public abstract class TreeNode implements Serializable
   {
     return this.hierarchyType;
   }
-  
-  public void addParent(TreeNode parent)
-  {
-    this.parents.add(parent);
-  }
 
   public JsonObject toJSON()
   {
@@ -56,18 +47,12 @@ public abstract class TreeNode implements Serializable
     
     json.add(JSON_GEO_OBJECT, this.geoObject.toJSON());
     
-    json.addProperty(JSON_HIERARCHY_TYPE, this.hierarchyType.getCode());
+    if (this.hierarchyType != null) // The hierarchyType is null on the root node
+    {
+      json.addProperty(JSON_HIERARCHY_TYPE, this.hierarchyType.getCode());
+    }
     
     json = this.relationshipsToJSON(json);
-    
-//    JsonArray jaParents = new JsonArray();
-//    for (int i = 0; i < this.parents.size(); ++i)
-//    {
-//      TreeNode parent = this.parents.get(i);
-//      
-//      jaParents.add(parent.toJSON());
-//    }
-//    json.add("parents", jaParents);
     
     return json;
   }

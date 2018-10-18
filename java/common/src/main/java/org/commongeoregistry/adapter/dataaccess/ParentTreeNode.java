@@ -8,6 +8,8 @@ import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -94,18 +96,25 @@ public class ParentTreeNode extends TreeNode
     
     GeoObject geoObj = GeoObject.fromJSON(registry, oJson.get(JSON_GEO_OBJECT).getAsJsonObject().toString());
     
-    HierarchyType hierarchyType = registry.getMetadataCache().getHierachyType(oJson.get(JSON_HIERARCHY_TYPE).getAsString()).get();
+    HierarchyType hierarchyType = null;
+    if (oJson.has(JSON_HIERARCHY_TYPE))
+    {
+      hierarchyType = registry.getMetadataCache().getHierachyType(oJson.get(JSON_HIERARCHY_TYPE).getAsString()).get();
+    }
     
     ParentTreeNode tn = new ParentTreeNode(geoObj, hierarchyType);
     
-    JsonArray jaParents = oJson.get(JSON_PARENTS).getAsJsonArray();
-    for (int i = 0; i < jaParents.size(); ++i)
+    if (oJson.has(JSON_PARENTS))
     {
-      JsonObject joParent = jaParents.get(i).getAsJsonObject();
-      
-      ParentTreeNode tnParent = ParentTreeNode.fromJSON(joParent.toString(), registry);
-      
-      tn.addParent(tnParent);
+      JsonArray jaParents = oJson.get(JSON_PARENTS).getAsJsonArray();
+      for (int i = 0; i < jaParents.size(); ++i)
+      {
+        JsonObject joParent = jaParents.get(i).getAsJsonObject();
+        
+        ParentTreeNode tnParent = ParentTreeNode.fromJSON(joParent.toString(), registry);
+        
+        tn.addParent(tnParent);
+      }
     }
     
     return tn;

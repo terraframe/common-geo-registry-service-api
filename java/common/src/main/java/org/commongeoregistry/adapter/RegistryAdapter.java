@@ -32,7 +32,6 @@ public abstract class RegistryAdapter implements Serializable
     return this.metadataCache;
   }
   
-  
   // TODO - Add support for a supplier provided exception.
   /**
    * Creates a new local {@link GeoObject} instance of the given type.

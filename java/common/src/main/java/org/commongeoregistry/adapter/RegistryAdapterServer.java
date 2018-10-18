@@ -15,6 +15,7 @@ import org.commongeoregistry.adapter.metadata.MetadataCache;
  * implementation of the CommonGeoRegistry
  * 
  * @author nathan
+ * @author rrowlands
  *
  */
 public class RegistryAdapterServer extends RegistryAdapter
