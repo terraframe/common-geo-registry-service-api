@@ -132,7 +132,7 @@ public class GeoObjectType implements Serializable
   
 
   /**
-   * Returns the unique identifier that his human readable.
+   * Returns the code which is the human readable unique identifier.
    * 
    * @return Code value.
    */
@@ -178,7 +178,7 @@ public class GeoObjectType implements Serializable
    * 
    * @pre Attribute with the given name is defined on this {@link GeoObjectType}.
    * 
-   * @return Name of the attribute.s
+   * @return Name of the attributes.
    */
   public Optional<AttributeType> getAttribute(String _name)
   {

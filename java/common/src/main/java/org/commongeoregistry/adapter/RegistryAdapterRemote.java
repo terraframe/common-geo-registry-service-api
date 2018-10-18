@@ -54,7 +54,7 @@ public class RegistryAdapterRemote extends RegistryAdapter
   /**
    * 
    * 
-   * @param _cgrURL URL to the ommon geo-registry
+   * @param _cgrURL URL to the common geo-registry
    */
   public RegistryAdapterRemote(String _cgrURL)
   {

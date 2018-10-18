@@ -32,27 +32,41 @@ public class ApiExamples
     
     // Create a new and empty instance of a {@link GeoObject} to populate with values by the mobile host.
     // Pass in the code of the {@link GeoObjectType}/
-    GeoObject geoObject = registryAdapter.newGeoObjectInstance("HEALTH_FACILITY");
+    GeoObject newGeoObject = registryAdapter.newGeoObjectInstance("HEALTH_FACILITY");
     
     // Set a value on an attribute
-    geoObject.setValue("numberOfBeds", 100);
+    newGeoObject.setValue("numberOfBeds", 100);
         
     // Set the geometry (using JTS library)
     Coordinate newCoord = new Coordinate(0,0);
     Point point = new GeometryFactory().createPoint(newCoord);
-    geoObject.setGeometry(point);
+    newGeoObject.setGeometry(point);
     
-    registryAdapter.getLocalCache().cache(geoObject);
+    registryAdapter.getLocalCache().cache(newGeoObject);
     
+    // We need to come up with the way that the mobile host application will get the identifier of the location that it wishes
+    // to cache offline. Should it be the cached code?
+    GeoObject someDistrict = registryAdapter.getGeoObject("UID-123456");
+    
+    
+    // This is how you get the GeoJSON of the GeoObject to pass to the Geospatial Widget.
+    String districtGeoJSON = someDistrict.toJSON().toString();
     
     // Get a hierarchy of a {@link GeoObject} and their relationships with other {@link GeoObject}s. This will be used
-    // to cache a set of {@link GeoObject}s for offline use.
-    // We need to come up with the way that the mobile host application will get the identifier of the location that it wishes
-    // to cache offline.
-    ChildTreeNode childTreeNode = registryAdapter.getChildGeoObjects("UID-123456", new String[] {"VILLAGE", "HOUSEHOLD", "HEALTH_FACILITY"}, true);
-    
+    // to cache a set of {@link GeoObject}s for offline use.  
+    ChildTreeNode childTreeNode = registryAdapter.getChildGeoObjects(someDistrict.getUid(), new String[] {"VILLAGE", "HOUSEHOLD", "HEALTH_FACILITY"}, true);
+   
     // Persist the tree of objects into the local cache.
     registryAdapter.getLocalCache().cache(childTreeNode);
+    
+    // Iterate over the hierarchy
+    for (ChildTreeNode node : childTreeNode.getChildren())
+    {
+      GeoObject childGeoObject = node.getGeoObject();
+      
+      // Recursively traverse the hierarchy...
+      node.getChildren();
+    }
     
     // Fetch a tree of objects from the local cache, such as the households in a village. These will
     // Need to have been fetched from the CGR and cached when online (see example above).
@@ -107,9 +121,11 @@ public class ApiExamples
       }
     }
     
-    // Define exception methodology and exception types
-    // Do we want an "isRequired" property on {@link AttributeType}
+    // Topics for discussion:
     
+    // Define exception methodology and exception types
+    
+    // Do we want an "isRequired" property on {@link AttributeType}
     
   }
   
