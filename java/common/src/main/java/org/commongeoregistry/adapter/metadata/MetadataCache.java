@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
+import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 
 /**
@@ -24,20 +26,23 @@ public class MetadataCache implements Serializable
   private Map<String, GeoObjectType> geoGeoObjectTypeMap;
   private Map<String, HierarchyType> hierarchyTypeMap;
   private Map<String, Term> termMap;
+  private RegistryAdapter adapter;
   
-  public MetadataCache()
+  public MetadataCache(RegistryAdapter adapter)
   {
-    this.clear();
+    this.adapter = adapter;
   }
   
   /** 
    * Clears the metadata cache.
    */
-  public void clear()
+  public void rebuild()
   {
     this.geoGeoObjectTypeMap = new ConcurrentHashMap<String, GeoObjectType>();
     this.hierarchyTypeMap = new ConcurrentHashMap<String, HierarchyType>();
     this.termMap = new ConcurrentHashMap<String, Term>();
+    
+    DefaultTerms.buildGeoObjectStatusTree(adapter);
   }
   
   public void addTerm(Term _term) 

@@ -8,7 +8,7 @@ public class MetadataFactory
 {
   public static Term newTerm(String _code, String _localizedLabel, String _localizedDescription, RegistryAdapter registry)
   {
-    Term t = new Term(_code, _localizedLabel, _localizedDescription, registry);
+    Term t = new Term(_code, _localizedLabel, _localizedDescription);
     
     registry.getMetadataCache().addTerm(t);
     

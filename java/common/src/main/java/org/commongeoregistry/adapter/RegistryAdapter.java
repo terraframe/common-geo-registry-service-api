@@ -22,9 +22,8 @@ public abstract class RegistryAdapter implements Serializable
   
   public RegistryAdapter()
   {
-    this.metadataCache = new MetadataCache();
-    
-    DefaultTerms.buildGeoObjectStatusTree(this);
+    this.metadataCache = new MetadataCache(this);
+    this.metadataCache.rebuild();
   }
   
   public MetadataCache getMetadataCache()

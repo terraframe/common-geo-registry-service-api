@@ -23,15 +23,13 @@ public class Term implements Serializable
 
   private List<Term>        children;
 
-  public Term(String _code, String _localizedLabel, String _localizedDescription, RegistryAdapter registry)
+  public Term(String _code, String _localizedLabel, String _localizedDescription)
   {
     this.code = _code;
     this.localizedLabel = _localizedLabel;
     this.localizedDescription = _localizedDescription;
 
     this.children = Collections.synchronizedList(new LinkedList<Term>());
-    
-    registry.getMetadataCache().addTerm(this);
   }
   
   public String getCode()

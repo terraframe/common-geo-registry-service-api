@@ -1,10 +1,15 @@
 package org.commongeoregistry.adapter;
 
+import org.apache.commons.httpclient.NameValuePair;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
+import org.commongeoregistry.adapter.http.AbstractConnector;
+import org.commongeoregistry.adapter.http.HTTPResponse;
+import org.commongeoregistry.adapter.http.ResponseProcessor;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 
@@ -13,6 +18,7 @@ import com.google.gson.JsonObject;
  * and will pull over the metadata for each {@link GeoObjectType}.
  * 
  * @author nathan
+ * @author rrowlands
  *
  */
 public class RegistryAdapterRemote extends RegistryAdapter
@@ -47,18 +53,16 @@ public class RegistryAdapterRemote extends RegistryAdapter
   private static final String  GET_GEO_OBJECT_TYPES        = "getGeoObjectTypes"; 
   
   
- 
-  // The URL of the Common Geo-Registry
-  private String cgrURL;
+  private AbstractConnector connector;
   
   /**
    * 
    * 
    * @param _cgrURL URL to the common geo-registry
    */
-  public RegistryAdapterRemote(String _cgrURL)
+  public RegistryAdapterRemote(AbstractConnector connector)
   {
-    this.cgrURL = _cgrURL;
+    this.connector = connector;
   }
   
   
@@ -69,13 +73,19 @@ public class RegistryAdapterRemote extends RegistryAdapter
    */
   public void refreshMetadataCache()
   {
-    String opURL = this.cgrURL+"/"+GET_GEO_OBJECT_TYPES;
+    this.getMetadataCache().rebuild();
     
-    this.getMetadataCache().clear();
+    HTTPResponse resp = this.connector.httpGet(GET_GEO_OBJECT_TYPES, new NameValuePair[]{});
+    ResponseProcessor.validateStatusCode(resp);
     
-    // Make the RESTFul call
+    JsonArray jArr = resp.getAsJsonArray();
     
-    // Populate the cache
+    for (int i = 0; i < jArr.size(); ++i)
+    {
+      JsonObject jObj = jArr.get(i).getAsJsonObject();
+      GeoObjectType got = GeoObjectType.fromJSON(jObj.toString(), this);
+      this.getMetadataCache().addGeoObjectType(got);
+    }
   }
   
   /**
@@ -87,12 +97,10 @@ public class RegistryAdapterRemote extends RegistryAdapter
    */
   public GeoObject getGeoObject(String _uid)
   {
-    String opURL = this.cgrURL+"/"+GET_GEO_OBJECT;
+    HTTPResponse resp = this.connector.httpGet(GET_GEO_OBJECT, new NameValuePair[]{});
+    ResponseProcessor.validateStatusCode(resp);
     
-    // make the restful URL call
-    String geoJSON = "";
-    
-    GeoObject geoObject = GeoObject.fromJSON(this, geoJSON);
+    GeoObject geoObject = GeoObject.fromJSON(this, resp.getAsString());
     
     return geoObject;
   }
@@ -107,13 +115,12 @@ public class RegistryAdapterRemote extends RegistryAdapter
    */
   public void createGeoObject(GeoObject _geoObject)
   {
-    String opURL = this.cgrURL+"/"+CREATE_GEO_OBJECT;
-    
     JsonObject jsonObject = _geoObject.toJSON();
     
     String geoJSON = jsonObject.toString();
     
-    // make the RESTful call.
+    HTTPResponse resp = this.connector.httpPost(CREATE_GEO_OBJECT, geoJSON);
+    ResponseProcessor.validateStatusCode(resp);
   }
   
   
@@ -127,14 +134,12 @@ public class RegistryAdapterRemote extends RegistryAdapter
    */
   public void updateGeoObject(GeoObject _geoObject)
   {
-    String opURL = this.cgrURL+"/"+UPDATE_GEO_OBJECT;
-    
     JsonObject jsonObject = _geoObject.toJSON();
     
     String geoJSON = jsonObject.toString();
     
-    // make the RESTful call.
-    
+    HTTPResponse resp = this.connector.httpPost(UPDATE_GEO_OBJECT, geoJSON);
+    ResponseProcessor.validateStatusCode(resp);
   }
   
   /**
@@ -152,9 +157,12 @@ public class RegistryAdapterRemote extends RegistryAdapter
    */
   public ChildTreeNode getChildGeoObjects(String parentUid, String[] childrenTypes, Boolean recursive)
   {
-    String opURL = this.cgrURL+"/"+GET_CHILDREN_GEO_OBJECTS;
+    HTTPResponse resp = this.connector.httpGet(GET_CHILDREN_GEO_OBJECTS, new NameValuePair[]{});
+    ResponseProcessor.validateStatusCode(resp);
     
-    return null;
+    ChildTreeNode tn = ChildTreeNode.fromJSON(resp.getAsString(), this);
+    
+    return tn;
   }
 
   /**
@@ -172,9 +180,12 @@ public class RegistryAdapterRemote extends RegistryAdapter
    */
   public ParentTreeNode getParentGeoObjects(String childUid, String[] parentTypes, Boolean recursive)
   {
-    String opURL = this.cgrURL+"/"+GET_PARENT_GEO_OBJECTS;
+    HTTPResponse resp = this.connector.httpGet(GET_PARENT_GEO_OBJECTS, new NameValuePair[]{});
+    ResponseProcessor.validateStatusCode(resp);
     
-    return null;
+    ParentTreeNode tn = ParentTreeNode.fromJSON(resp.getAsString(), this);
+    
+    return tn;
   }
 
 }

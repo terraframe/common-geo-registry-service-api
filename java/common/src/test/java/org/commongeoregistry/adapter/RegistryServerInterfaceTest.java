@@ -35,7 +35,7 @@ public class RegistryServerInterfaceTest
   @AfterClass
   public static void classTeardown()
   {
-    registryServerInterface.getMetadataCache().clear();
+    registryServerInterface.getMetadataCache().rebuild();
   }
   
   @Test
