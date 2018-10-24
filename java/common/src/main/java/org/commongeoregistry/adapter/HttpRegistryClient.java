@@ -1,6 +1,8 @@
 package org.commongeoregistry.adapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
@@ -260,5 +262,39 @@ public class HttpRegistryClient extends RegistryAdapter
     ParentTreeNode tn = ParentTreeNode.fromJSON(resp.getAsString(), this);
 
     return tn;
+  }
+
+  /**
+   * Get list of valid UIDs for use in creating new GeoObjects. The Common
+   * Geo-Registry will only accept newly created GeoObjects with a UID that was
+   * issued from the Common GeoRegistry.
+   * 
+   * @param numberOfUids
+   * 
+   * @return An array of UIDs.
+   */
+  public List<String> getGeoObjectUids(Integer numberOfUids)
+  {
+    if (numberOfUids == null)
+    {
+      throw new RequiredParameterException("Method [getGeoObjectUids] requires a parameter value for the parameter named [numberOfUids]", "numberOfUids");
+    }
+
+    HashMap<String, String> params = new HashMap<String, String>();
+    params.put("numberOfUids", numberOfUids.toString());
+
+    HttpResponse resp = this.connector.httpGet(GET_GEO_OBJECT_UIDS, params);
+    ResponseProcessor.validateStatusCode(resp);
+
+    JsonArray values = resp.getAsJsonArray();
+
+    List<String> list = new ArrayList<String>(values.size());
+
+    for (int i = 0; i < values.size(); i++)
+    {
+      list.add(values.get(i).getAsString());
+    }
+
+    return list;
   }
 }

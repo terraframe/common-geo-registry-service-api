@@ -1,5 +1,6 @@
 package org.commongeoregistry.adapter;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -430,4 +431,54 @@ public class HttpRegistryClientTest
     client.getParentGeoObjects("Abc", new String[] {}, true);
   }
 
+  @Test
+  public void testGetGeoObjectUids()
+  {
+    MockHttpConnector connector = new MockHttpConnector();
+    HttpRegistryClient client = new HttpRegistryClient(connector);
+
+    /*
+     * Setup mock objects
+     */
+    JsonArray values = new JsonArray();
+    values.add("uid1");
+    values.add("uid2");
+    values.add("uid3");
+
+    connector.setResponse(new HttpResponse(values.toString(), 200));
+
+    /*
+     * Invoke method
+     */
+    List<String> list = client.getGeoObjectUids(values.size());
+
+    /*
+     * Validate response
+     */
+    Assert.assertEquals(values.size(), list.size());
+
+    /*
+     * Validate request
+     */
+    Assert.assertEquals(HttpRegistryClient.GET_GEO_OBJECT_UIDS, connector.getUrl());
+
+    Map<String, String> params = connector.getParams();
+
+    Assert.assertNotNull(params);
+    Assert.assertEquals(1, params.size());
+
+    Assert.assertTrue(params.containsKey("numberOfUids"));
+    Assert.assertEquals(Integer.toString(values.size()), params.get("numberOfUids"));
+  }
+
+  @Test(expected = RequiredParameterException.class)
+  public void testGetGeoObjectUidsMissingParentUID()
+  {
+    /*
+     * Invoke method
+     */
+    MockHttpConnector connector = new MockHttpConnector();
+    HttpRegistryClient client = new HttpRegistryClient(connector);
+    client.getGeoObjectUids(null);
+  }
 }
