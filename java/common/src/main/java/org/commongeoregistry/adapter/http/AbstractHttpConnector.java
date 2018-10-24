@@ -18,39 +18,26 @@
  */
 package org.commongeoregistry.adapter.http;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractHttpConnector
+public abstract class AbstractHttpConnector implements Connector
 {
-  Logger     logger = LoggerFactory.getLogger(AbstractHttpConnector.class);
+  Logger         logger = LoggerFactory.getLogger(AbstractHttpConnector.class);
 
-  HttpClient client;
-
-  String     serverurl;
-
-  String     username;
-
-  String     password;
-
-  abstract public HttpResponse httpGet(String url, NameValuePair[] params);
-
-  abstract public HttpResponse httpPost(String url, String body);
-
-  public void setCredentials(String username, String password)
-  {
-    this.username = username;
-    this.password = password;
-  }
+  private String serverurl;
 
   public String getServerUrl()
   {
@@ -67,81 +54,126 @@ public abstract class AbstractHttpConnector
     this.serverurl = url;
   }
 
-  synchronized public void initialize()
+  /*
+   * (non-Javadoc)
+   * 
+   * @see org.commongeoregistry.adapter.http.Connector#httpGet(java.lang.String,
+   * java.util.Map)
+   */
+  @Override
+  public HttpResponse httpGet(String url, Map<String, String> params)
   {
-    this.client = new HttpClient();
-  }
-
-  public boolean isInitialized()
-  {
-    return client != null;
-  }
-
-  public void readConfigFromDB()
-  {
-    // DHIS2Configuration config = DHIS2Configuration.getByKey("DEFAULT");
-    // this.setServerUrl(config.getUrl());
-    // this.setCredentials(config.getUsername(), config.getPazzword());
-  }
-
-  public HttpResponse httpRequest(HttpClient client, HttpMethod method)
-  {
-    String sResponse = null;
     try
     {
-      this.logger.info("Sending request to " + method.getURI());
+      StringBuilder builder = new StringBuilder();
+      builder.append(this.getServerUrl());
+      builder.append(url);
 
-      // Execute the method.
-      int statusCode = client.executeMethod(method);
-
-      // Follow Redirects
-      if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY || statusCode == HttpStatus.SC_MOVED_PERMANENTLY || statusCode == HttpStatus.SC_TEMPORARY_REDIRECT || statusCode == HttpStatus.SC_SEE_OTHER)
+      if (params.size() > 0)
       {
-        this.logger.info("Redirected [" + statusCode + "] to [" + method.getResponseHeader("location").getValue() + "].");
+        Set<Entry<String, String>> entries = params.entrySet();
 
-        method.setURI(new URI(method.getResponseHeader("location").getValue(), true, method.getParams().getUriCharset()));
-        method.releaseConnection();
+        int count = 0;
+        for (Entry<String, String> entry : entries)
+        {
+          builder.append( ( count == 0 ? "?" : "&" ));
+          builder.append(URLEncoder.encode(entry.getKey(), "utf-8"));
+          builder.append("=");
+          builder.append(URLEncoder.encode(entry.getValue(), "utf-8"));
 
-        return this.httpRequest(client, method);
+          count++;
+        }
       }
 
-      // TODO : we might blow the memory stack here, read this as a stream
-      // somehow if possible.
-      Header contentTypeHeader = method.getResponseHeader("Content-Type");
+      URL obj = new URL(builder.toString());
+      HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-      if (contentTypeHeader == null)
+      try
       {
-        sResponse = new String(method.getResponseBody(), "UTF-8");
-      }
-      else
-      {
-        sResponse = method.getResponseBodyAsString();
-      }
+        con.setRequestMethod("GET");
+        con.setRequestProperty("Accept", "application/json");
 
-      if (sResponse.length() < 1000)
-      {
-        this.logger.info("Response string = '" + sResponse + "'.");
-      }
-      else
-      {
-        this.logger.info("Receieved a very large response.");
-      }
+        con.connect();
 
-      HttpResponse resp = new HttpResponse(sResponse, statusCode);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())))
+        {
+          String inputLine;
+          StringBuffer response = new StringBuffer();
 
-      return resp;
-    }
-    catch (HttpException e)
-    {
-      throw new RuntimeException(e);
+          while ( ( inputLine = in.readLine() ) != null)
+          {
+            response.append(inputLine);
+          }
+
+          return new HttpResponse(response.toString(), con.getResponseCode());
+        }
+      }
+      finally
+      {
+        con.disconnect();
+      }
     }
     catch (IOException e)
     {
       throw new RuntimeException(e);
     }
-    finally
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.commongeoregistry.adapter.http.Connector#httpPost(java.lang.String,
+   * java.lang.String)
+   */
+  @Override
+  public HttpResponse httpPost(String url, String body)
+  {
+    try
     {
-      method.releaseConnection();
+      StringBuilder builder = new StringBuilder();
+      builder.append(this.getServerUrl());
+      builder.append(url);
+
+      URL obj = new URL(builder.toString());
+      HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+      try
+      {
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestMethod("POST");
+        con.setDoOutput(true);
+        con.setChunkedStreamingMode(0);
+
+        con.connect();
+
+        /*
+         * Post the data
+         */
+        OutputStream out = new BufferedOutputStream(con.getOutputStream());
+        out.write(body.getBytes("utf-8"));
+
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())))
+        {
+          String inputLine;
+          StringBuffer response = new StringBuffer();
+
+          while ( ( inputLine = in.readLine() ) != null)
+          {
+            response.append(inputLine);
+          }
+
+          return new HttpResponse(response.toString(), con.getResponseCode());
+        }
+      }
+      finally
+      {
+        con.disconnect();
+      }
+    }
+    catch (IOException e)
+    {
+      throw new RuntimeException(e);
     }
   }
 }

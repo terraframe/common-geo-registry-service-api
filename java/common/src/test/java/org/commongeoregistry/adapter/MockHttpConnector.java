@@ -1,18 +1,19 @@
 package org.commongeoregistry.adapter;
 
-import org.apache.commons.httpclient.NameValuePair;
+import java.util.Map;
+
 import org.commongeoregistry.adapter.http.AbstractHttpConnector;
 import org.commongeoregistry.adapter.http.HttpResponse;
 
 public class MockHttpConnector extends AbstractHttpConnector
 {
-  private String          url;
+  private String              url;
 
-  private NameValuePair[] params;
+  private Map<String, String> params;
 
-  private String          body;
+  private String              body;
 
-  private HttpResponse    response;
+  private HttpResponse        response;
 
   public MockHttpConnector()
   {
@@ -30,7 +31,7 @@ public class MockHttpConnector extends AbstractHttpConnector
     return url;
   }
 
-  public NameValuePair[] getParams()
+  public Map<String, String> getParams()
   {
     return params;
   }
@@ -58,7 +59,7 @@ public class MockHttpConnector extends AbstractHttpConnector
   }
 
   @Override
-  public HttpResponse httpGet(String url, NameValuePair[] params)
+  public HttpResponse httpGet(String url, Map<String, String> params)
   {
     this.clear();
 

@@ -1,10 +1,11 @@
 package org.commongeoregistry.adapter;
 
-import org.apache.commons.httpclient.NameValuePair;
+import java.util.HashMap;
+
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
-import org.commongeoregistry.adapter.http.AbstractHttpConnector;
+import org.commongeoregistry.adapter.http.Connector;
 import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseProcessor;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
@@ -26,29 +27,29 @@ public class HttpRegistryClient extends RegistryAdapter
   /**
    * 
    */
-  private static final long     serialVersionUID         = -8311449977719450035L;
+  private static final long serialVersionUID         = -8311449977719450035L;
 
-  static final String           GET_GEO_OBJECT           = "getGeoObject";
+  static final String       GET_GEO_OBJECT           = "getGeoObject";
 
-  static final String           CREATE_GEO_OBJECT        = "createGeoObject";
+  static final String       CREATE_GEO_OBJECT        = "createGeoObject";
 
-  static final String           UPDATE_GEO_OBJECT        = "updateGeoObject";
+  static final String       UPDATE_GEO_OBJECT        = "updateGeoObject";
 
   /**
    * Relationships.
    */
-  static final String           GET_CHILDREN_GEO_OBJECTS = "getChildGeoObjects";
+  static final String       GET_CHILDREN_GEO_OBJECTS = "getChildGeoObjects";
 
-  static final String           GET_PARENT_GEO_OBJECTS   = "getParentGeoObjects";
+  static final String       GET_PARENT_GEO_OBJECTS   = "getParentGeoObjects";
 
   /**
    * Metadata
    */
-  static final String           GET_GEO_OBJECT_UIDS      = "getGeoObjectUids";
+  static final String       GET_GEO_OBJECT_UIDS      = "getGeoObjectUids";
 
-  static final String           GET_GEO_OBJECT_TYPES     = "getGeoObjectTypes";
+  static final String       GET_GEO_OBJECT_TYPES     = "getGeoObjectTypes";
 
-  private AbstractHttpConnector connector;
+  private Connector         connector;
 
   /**
    * 
@@ -56,7 +57,7 @@ public class HttpRegistryClient extends RegistryAdapter
    * @param _cgrURL
    *          URL to the common geo-registry
    */
-  public HttpRegistryClient(AbstractHttpConnector connector)
+  public HttpRegistryClient(Connector connector)
   {
     this.connector = connector;
   }
@@ -70,7 +71,7 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     this.getMetadataCache().rebuild();
 
-    HttpResponse resp = this.connector.httpGet(GET_GEO_OBJECT_TYPES, new NameValuePair[] {});
+    HttpResponse resp = this.connector.httpGet(GET_GEO_OBJECT_TYPES, new HashMap<String, String>());
     ResponseProcessor.validateStatusCode(resp);
 
     JsonArray jArr = resp.getAsJsonArray();
@@ -98,7 +99,10 @@ public class HttpRegistryClient extends RegistryAdapter
       throw new RequiredParameterException("Method [getGeoObject] requires a parameter value for the parameter named [uid]", "uid");
     }
 
-    HttpResponse resp = this.connector.httpGet(GET_GEO_OBJECT, new NameValuePair[] { new NameValuePair("uid", _uid) });
+    HashMap<String, String> params = new HashMap<String, String>();
+    params.put("uid", _uid);
+
+    HttpResponse resp = this.connector.httpGet(GET_GEO_OBJECT, params);
     ResponseProcessor.validateStatusCode(resp);
 
     GeoObject geoObject = GeoObject.fromJSON(this, resp.getAsString());
@@ -191,9 +195,12 @@ public class HttpRegistryClient extends RegistryAdapter
       serialized.add(childType);
     }
 
-    NameValuePair[] parameters = new NameValuePair[] { new NameValuePair("parentUid", parentUid), new NameValuePair("childrenTypes", serialized.toString()), new NameValuePair("recursive", recursive.toString()) };
+    HashMap<String, String> params = new HashMap<String, String>();
+    params.put("parentUid", parentUid);
+    params.put("childrenTypes", serialized.toString());
+    params.put("recursive", recursive.toString());
 
-    HttpResponse resp = this.connector.httpGet(GET_CHILDREN_GEO_OBJECTS, parameters);
+    HttpResponse resp = this.connector.httpGet(GET_CHILDREN_GEO_OBJECTS, params);
     ResponseProcessor.validateStatusCode(resp);
 
     ChildTreeNode tn = ChildTreeNode.fromJSON(resp.getAsString(), this);
@@ -242,9 +249,12 @@ public class HttpRegistryClient extends RegistryAdapter
       serialized.add(parentType);
     }
 
-    NameValuePair[] parameters = new NameValuePair[] { new NameValuePair("childUid", childUid), new NameValuePair("parentTypes", serialized.toString()), new NameValuePair("recursive", recursive.toString()) };
+    HashMap<String, String> params = new HashMap<String, String>();
+    params.put("childUid", childUid);
+    params.put("parentTypes", serialized.toString());
+    params.put("recursive", recursive.toString());
 
-    HttpResponse resp = this.connector.httpGet(GET_PARENT_GEO_OBJECTS, parameters);
+    HttpResponse resp = this.connector.httpGet(GET_PARENT_GEO_OBJECTS, params);
     ResponseProcessor.validateStatusCode(resp);
 
     ParentTreeNode tn = ParentTreeNode.fromJSON(resp.getAsString(), this);

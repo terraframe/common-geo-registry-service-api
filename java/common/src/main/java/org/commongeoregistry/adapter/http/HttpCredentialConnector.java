@@ -18,7 +18,8 @@
  */
 package org.commongeoregistry.adapter.http;
 
-import java.io.UnsupportedEncodingException;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -30,18 +31,18 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
-
-import com.google.gson.JsonObject;
-
 public class HttpCredentialConnector extends AbstractHttpConnector
 {
+  private String username;
+
+  private String password;
+
+  public void setCredentials(String username, String password)
+  {
+    this.username = username;
+    this.password = password;
+  }
+
   synchronized public void initialize()
   {
     class DefaultTrustManager implements X509TrustManager
@@ -77,49 +78,15 @@ public class HttpCredentialConnector extends AbstractHttpConnector
       throw new RuntimeException(e);
     }
 
-    super.initialize();
-
-    client.getParams().setAuthenticationPreemptive(true);
-    Credentials defaultcreds = new UsernamePasswordCredentials(username, password);
-    client.getState().setCredentials(AuthScope.ANY, defaultcreds);
-  }
-
-  public HttpResponse httpGet(String url, NameValuePair[] params)
-  {
-    if (!isInitialized())
+    /*
+     * Set the default authenticator for the VM
+     */
+    Authenticator.setDefault(new Authenticator()
     {
-      initialize();
-    }
-
-    GetMethod get = new GetMethod(this.getServerUrl() + url);
-
-    get.setRequestHeader("Accept", "application/json");
-
-    get.setQueryString(params);
-
-    return this.httpRequest(this.client, get);
-  }
-
-  public HttpResponse httpPost(String url, String body)
-  {
-    if (!isInitialized())
-    {
-      initialize();
-    }
-
-    try
-    {
-      PostMethod post = new PostMethod(this.serverurl + url);
-
-      post.setRequestHeader("Content-Type", "application/json");
-
-      post.setRequestEntity(new StringRequestEntity(body, null, null));
-
-      return this.httpRequest(this.client, post);
-    }
-    catch (UnsupportedEncodingException e)
-    {
-      throw new RuntimeException(e);
-    }
+      protected PasswordAuthentication getPasswordAuthentication()
+      {
+        return new PasswordAuthentication(username, password.toCharArray());
+      }
+    });
   }
 }

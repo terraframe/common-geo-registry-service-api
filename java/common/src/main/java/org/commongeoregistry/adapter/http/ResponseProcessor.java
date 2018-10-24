@@ -1,6 +1,6 @@
 package org.commongeoregistry.adapter.http;
 
-import org.apache.commons.httpclient.HttpStatus;
+import java.net.HttpURLConnection;
 
 public class ResponseProcessor
 {
@@ -8,7 +8,7 @@ public class ResponseProcessor
   {
     int statusCode = resp.getStatusCode();
 
-    if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED)
+    if (statusCode != HttpURLConnection.HTTP_OK && statusCode != HttpURLConnection.HTTP_CREATED)
     {
       throw new ResponseException("Invalid status code [" + statusCode + "].", statusCode);
     }
