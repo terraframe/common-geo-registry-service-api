@@ -3,23 +3,22 @@
  *
  * This file is part of Runway SDK(tm).
  *
- * Runway SDK(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Runway SDK(tm) is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- * Runway SDK(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Runway SDK(tm) is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Runway SDK(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Runway SDK(tm). If not, see <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.http;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -31,64 +30,61 @@ import org.apache.commons.httpclient.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-abstract public class AbstractConnector
+public abstract class AbstractHttpConnector
 {
+  Logger     logger = LoggerFactory.getLogger(AbstractHttpConnector.class);
+
   HttpClient client;
-  
-  Logger logger = LoggerFactory.getLogger(AbstractConnector.class);
-  
-  String serverurl;
-  
-  String username;
-  
-  String password;
-  
+
+  String     serverurl;
+
+  String     username;
+
+  String     password;
+
+  abstract public HttpResponse httpGet(String url, NameValuePair[] params);
+
+  abstract public HttpResponse httpPost(String url, String body);
+
   public void setCredentials(String username, String password)
   {
     this.username = username;
     this.password = password;
   }
-  
+
   public String getServerUrl()
   {
     return serverurl;
   }
-  
+
   public void setServerUrl(String url)
   {
     if (!url.endsWith("/"))
     {
       url = url + "/";
     }
-    
+
     this.serverurl = url;
   }
-  
+
   synchronized public void initialize()
   {
     this.client = new HttpClient();
   }
-  
+
   public boolean isInitialized()
   {
     return client != null;
   }
-  
-  abstract public HTTPResponse httpGet(String url, NameValuePair[] params);
-  
-  abstract public HTTPResponse httpPost(String url, String body);
-  
+
   public void readConfigFromDB()
   {
-//    DHIS2Configuration config = DHIS2Configuration.getByKey("DEFAULT");
-//    this.setServerUrl(config.getUrl());
-//    this.setCredentials(config.getUsername(), config.getPazzword());
+    // DHIS2Configuration config = DHIS2Configuration.getByKey("DEFAULT");
+    // this.setServerUrl(config.getUrl());
+    // this.setCredentials(config.getUsername(), config.getPazzword());
   }
-  
-  public HTTPResponse httpRequest(HttpClient client, HttpMethod method)
+
+  public HttpResponse httpRequest(HttpClient client, HttpMethod method)
   {
     String sResponse = null;
     try
@@ -97,18 +93,22 @@ abstract public class AbstractConnector
 
       // Execute the method.
       int statusCode = client.executeMethod(method);
-      
+
       // Follow Redirects
       if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY || statusCode == HttpStatus.SC_MOVED_PERMANENTLY || statusCode == HttpStatus.SC_TEMPORARY_REDIRECT || statusCode == HttpStatus.SC_SEE_OTHER)
       {
         this.logger.info("Redirected [" + statusCode + "] to [" + method.getResponseHeader("location").getValue() + "].");
+
         method.setURI(new URI(method.getResponseHeader("location").getValue(), true, method.getParams().getUriCharset()));
         method.releaseConnection();
-        return httpRequest(client, method);
+
+        return this.httpRequest(client, method);
       }
-      
-      // TODO : we might blow the memory stack here, read this as a stream somehow if possible.
+
+      // TODO : we might blow the memory stack here, read this as a stream
+      // somehow if possible.
       Header contentTypeHeader = method.getResponseHeader("Content-Type");
+
       if (contentTypeHeader == null)
       {
         sResponse = new String(method.getResponseBody(), "UTF-8");
@@ -117,7 +117,7 @@ abstract public class AbstractConnector
       {
         sResponse = method.getResponseBodyAsString();
       }
-      
+
       if (sResponse.length() < 1000)
       {
         this.logger.info("Response string = '" + sResponse + "'.");
@@ -127,7 +127,7 @@ abstract public class AbstractConnector
         this.logger.info("Receieved a very large response.");
       }
 
-      HTTPResponse resp = new HTTPResponse(sResponse, statusCode);
+      HttpResponse resp = new HttpResponse(sResponse, statusCode);
 
       return resp;
     }
