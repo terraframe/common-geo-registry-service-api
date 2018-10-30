@@ -29,29 +29,29 @@ public class HttpRegistryClient extends RegistryAdapter
   /**
    * 
    */
-  private static final long serialVersionUID         = -8311449977719450035L;
+  private static final long  serialVersionUID         = -8311449977719450035L;
 
-  static final String       GET_GEO_OBJECT           = "getGeoObject";
+  public static final String GET_GEO_OBJECT           = "getGeoObject";
 
-  static final String       CREATE_GEO_OBJECT        = "createGeoObject";
+  public static final String CREATE_GEO_OBJECT        = "createGeoObject";
 
-  static final String       UPDATE_GEO_OBJECT        = "updateGeoObject";
+  public static final String UPDATE_GEO_OBJECT        = "updateGeoObject";
 
   /**
    * Relationships.
    */
-  static final String       GET_CHILDREN_GEO_OBJECTS = "getChildGeoObjects";
+  public static final String GET_CHILDREN_GEO_OBJECTS = "getChildGeoObjects";
 
-  static final String       GET_PARENT_GEO_OBJECTS   = "getParentGeoObjects";
+  public static final String GET_PARENT_GEO_OBJECTS   = "getParentGeoObjects";
 
   /**
    * Metadata
    */
-  static final String       GET_GEO_OBJECT_UIDS      = "getGeoObjectUids";
+  public static final String GET_GEO_OBJECT_UIDS      = "getGeoObjectUids";
 
-  static final String       GET_GEO_OBJECT_TYPES     = "getGeoObjectTypes";
+  public static final String GET_GEO_OBJECT_TYPES     = "getGeoObjectTypes";
 
-  private Connector         connector;
+  private Connector          connector;
 
   /**
    * 
@@ -98,7 +98,7 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     if (_uid == null)
     {
-      throw new RequiredParameterException("Method [getGeoObject] requires a parameter value for the parameter named [uid]", "uid");
+      throw new RequiredParameterException(GET_GEO_OBJECT, "uid");
     }
 
     HashMap<String, String> params = new HashMap<String, String>();
@@ -123,7 +123,7 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     if (_geoObject == null)
     {
-      throw new RequiredParameterException("Method [createGeoObject] requires a parameter value for the parameter named [geoObject]", "geoObject");
+      throw new RequiredParameterException(CREATE_GEO_OBJECT, "geoObject");
     }
 
     JsonObject jsonObject = _geoObject.toJSON();
@@ -145,7 +145,7 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     if (_geoObject == null)
     {
-      throw new RequiredParameterException("Method [updateGeoObject] requires a parameter value for the parameter named [geoObject]", "geoObject");
+      throw new RequiredParameterException(UPDATE_GEO_OBJECT, "geoObject");
     }
 
     JsonObject jsonObject = _geoObject.toJSON();
@@ -177,17 +177,17 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     if (parentUid == null)
     {
-      throw new RequiredParameterException("Method [getChildGeoObjects] requires a parameter value for the parameter named [parentUid]", "parentUid");
+      throw new RequiredParameterException(GET_CHILDREN_GEO_OBJECTS, "parentUid");
     }
 
     if (childrenTypes == null || childrenTypes.length == 0)
     {
-      throw new RequiredParameterException("Method [getChildGeoObjects] requires a parameter value for the parameter named [childrenTypes]", "childrenTypes");
+      throw new RequiredParameterException(GET_CHILDREN_GEO_OBJECTS, "childrenTypes");
     }
 
     if (recursive == null)
     {
-      throw new RequiredParameterException("Method [getChildGeoObjects] requires a parameter value for the parameter named [geoObject]", "recursive");
+      throw new RequiredParameterException(GET_CHILDREN_GEO_OBJECTS, "recursive");
     }
 
     JsonArray serialized = new JsonArray();
@@ -231,17 +231,17 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     if (childUid == null)
     {
-      throw new RequiredParameterException("Method [getParentGeoObjects] requires a parameter value for the parameter named [childUid]", "childUid");
+      throw new RequiredParameterException(GET_PARENT_GEO_OBJECTS, "childUid");
     }
 
     if (parentTypes == null || parentTypes.length == 0)
     {
-      throw new RequiredParameterException("Method [getParentGeoObjects] requires a parameter value for the parameter named [parentTypes]", "parentTypes");
+      throw new RequiredParameterException(GET_PARENT_GEO_OBJECTS, "parentTypes");
     }
 
     if (recursive == null)
     {
-      throw new RequiredParameterException("Method [getParentGeoObjects] requires a parameter value for the parameter named [geoObject]", "recursive");
+      throw new RequiredParameterException(GET_PARENT_GEO_OBJECTS, "recursive");
     }
 
     JsonArray serialized = new JsonArray();
@@ -277,7 +277,7 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     if (numberOfUids == null)
     {
-      throw new RequiredParameterException("Method [getGeoObjectUids] requires a parameter value for the parameter named [numberOfUids]", "numberOfUids");
+      throw new RequiredParameterException(GET_GEO_OBJECT_UIDS, "numberOfUids");
     }
 
     HashMap<String, String> params = new HashMap<String, String>();

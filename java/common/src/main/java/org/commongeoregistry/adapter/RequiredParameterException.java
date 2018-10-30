@@ -13,30 +13,9 @@ public class RequiredParameterException extends RuntimeException
 
   private String            parameter;
 
-  public RequiredParameterException(String parameter)
+  public RequiredParameterException(String methodName, String parameter)
   {
-    super();
-
-    this.parameter = parameter;
-  }
-
-  public RequiredParameterException(String message, Throwable cause, String parameter)
-  {
-    super(message, cause);
-
-    this.parameter = parameter;
-  }
-
-  public RequiredParameterException(String message, String parameter)
-  {
-    super(message);
-
-    this.parameter = parameter;
-  }
-
-  public RequiredParameterException(Throwable cause, String parameter)
-  {
-    super(cause);
+    super("Method [" + methodName + "] requires a parameter value for the parameter named [" + parameter + "]");
 
     this.parameter = parameter;
   }

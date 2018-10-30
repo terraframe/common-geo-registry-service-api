@@ -30,13 +30,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public abstract class AbstractHttpConnector implements Connector
 {
-  Logger         logger = LoggerFactory.getLogger(AbstractHttpConnector.class);
-
   private String serverurl;
 
   public String getServerUrl()
