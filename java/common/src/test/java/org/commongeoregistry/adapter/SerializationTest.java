@@ -178,9 +178,8 @@ public class SerializationTest
     Assert.equals(geoPolitical.getRootGeoObjectTypes().get(0).getChildren().size(), geoPolitical2.getRootGeoObjectTypes().get(0).getChildren().size());
   }
  
-// TODO Fix this test.
   @Test
-  public void testTreeNode()
+  public void testChildTreeNode()
   {
     RegistryAdapterServer registry = new RegistryAdapterServer();
     
@@ -210,24 +209,72 @@ public class SerializationTest
     ChildTreeNode dtTwo = new ChildTreeNode(dTwo, geoPolitical);
     ptOne.addChild(dtTwo);
     
-//    GeoObject cTwo = registry.newGeoObjectInstance(TestFixture.COMMUNE);
-//    cTwo.setCode("cTwo");
-//    cTwo.setUid("cTwo");
-//    ParentTreeNode ctTwo = new ParentTreeNode(cTwo, geoPolitical);
-//    ctTwo.addParent(ptOne);
+    GeoObject cTwo = registry.newGeoObjectInstance(TestFixture.COMMUNE);
+    cTwo.setCode("cTwo");
+    cTwo.setUid("cTwo");
+    ChildTreeNode ctTwo = new ChildTreeNode(cTwo, geoPolitical);
+    ptOne.addChild(ctTwo);
     
     String ptOneJson = ptOne.toJSON().toString();
     ChildTreeNode ptOne2 = ChildTreeNode.fromJSON(ptOneJson, registry);
     
     String ptOne2Json = ptOne2.toJSON().toString();
     
-    System.out.println(ptOneJson);
-    System.out.println(ptOne2Json);
     Assert.equals(ptOneJson, ptOne2Json);
     Assert.equals(ptOne.getChildren().size(), ptOne2.getChildren().size());
     Assert.equals(ptOne.getChildren().get(0).getChildren().size(), ptOne2.getChildren().get(0).getChildren().size());
     Assert.equals(ptOne.getChildren().get(0).getChildren().get(0).getChildren().size(), ptOne2.getChildren().get(0).getChildren().get(0).getChildren().size());
     Assert.equals(ptOne.getHierachyType(), ptOne2.getHierachyType());
     Assert.equals(ptOne.getChildren().get(0).getHierachyType(), ptOne2.getChildren().get(0).getHierachyType());
+  }
+  
+  @Test
+  public void testParentTreeNode()
+  {
+    RegistryAdapterServer registry = new RegistryAdapterServer();
+    
+    TestFixture.defineExampleHierarchies(registry);
+    HierarchyType geoPolitical = registry.getMetadataCache().getHierachyType(TestFixture.GEOPOLITICAL).get();
+    
+    GeoObject cOne = registry.newGeoObjectInstance(TestFixture.COMMUNE);
+    cOne.setCode("cOne");
+    cOne.setUid("cOne");
+    ParentTreeNode ctOne = new ParentTreeNode(cOne, geoPolitical);
+    
+    GeoObject dOne = registry.newGeoObjectInstance(TestFixture.DISTRICT);
+    dOne.setCode("dOne");
+    dOne.setUid("dOne");
+    ParentTreeNode dtOne = new ParentTreeNode(dOne, geoPolitical);
+    ctOne.addParent(dtOne);
+    
+    GeoObject dTwo = registry.newGeoObjectInstance(TestFixture.DISTRICT);
+    dTwo.setCode("dTwo");
+    dTwo.setUid("dTwo");
+    ParentTreeNode dtTwo = new ParentTreeNode(dTwo, geoPolitical);
+    ctOne.addParent(dtTwo);
+    
+    GeoObject pOne = registry.newGeoObjectInstance(TestFixture.PROVINCE);
+    pOne.setCode("pOne");
+    pOne.setUid("pOne");
+    ParentTreeNode ptOne = new ParentTreeNode(pOne, geoPolitical);
+    dtOne.addParent(ptOne);
+    
+    GeoObject pTwo = registry.newGeoObjectInstance(TestFixture.PROVINCE);
+    pTwo.setCode("pTwo");
+    pTwo.setUid("pTwo");
+    ParentTreeNode ptTwo = new ParentTreeNode(pTwo, geoPolitical);
+    dtTwo.addParent(ptTwo);
+    
+    String ctOneJson = ctOne.toJSON().toString();
+    ParentTreeNode ctOne2 = ParentTreeNode.fromJSON(ctOneJson, registry);
+    
+    String ctOne2Json = ctOne2.toJSON().toString();
+    
+    Assert.equals(ctOneJson, ctOne2Json);
+    Assert.equals(ctOne.getParents().size(), ctOne2.getParents().size());
+    Assert.equals(ctOne.getParents().get(0).getParents().size(), ctOne2.getParents().get(0).getParents().size());
+    Assert.equals(ctOne.getParents().get(0).getParents().get(0).getParents().size(), ctOne2.getParents().get(0).getParents().get(0).getParents().size());
+    Assert.equals(ctOne.getHierachyType(), ctOne2.getHierachyType());
+    Assert.equals(ctOne.getParents().get(0).getHierachyType(), ctOne2.getParents().get(0).getHierachyType());
   }
 }
