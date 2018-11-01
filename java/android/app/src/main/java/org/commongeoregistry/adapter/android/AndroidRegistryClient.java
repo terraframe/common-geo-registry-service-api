@@ -5,6 +5,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import org.commongeoregistry.adapter.HttpRegistryClient;
+import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
+import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.http.AbstractHttpConnector;
 import org.commongeoregistry.adapter.http.Connector;
 
