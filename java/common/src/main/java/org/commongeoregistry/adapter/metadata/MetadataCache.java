@@ -84,4 +84,14 @@ public class MetadataCache implements Serializable
   {
     this.hierarchyTypeMap.remove(_code);
   }
+
+  public GeoObjectType[] getAllGeoObjectTypes()
+  {
+    return this.geoGeoObjectTypeMap.values().toArray(new GeoObjectType[this.geoGeoObjectTypeMap.values().size()]);
+  }
+
+  public HierarchyType[] getAllHierarchyTypes()
+  {
+    return this.hierarchyTypeMap.values().toArray(new HierarchyType[this.hierarchyTypeMap.values().size()]);
+  }
 }
