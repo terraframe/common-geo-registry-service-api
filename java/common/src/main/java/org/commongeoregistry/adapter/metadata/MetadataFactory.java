@@ -6,27 +6,27 @@ import org.commongeoregistry.adapter.constants.GeometryType;
 
 public class MetadataFactory
 {
-  public static Term newTerm(String _code, String _localizedLabel, String _localizedDescription, RegistryAdapter registry)
+  public static Term newTerm(String code, String localizedLabel, String localizedDescription, RegistryAdapter registry)
   {
-    Term t = new Term(_code, _localizedLabel, _localizedDescription);
+    Term t = new Term(code, localizedLabel, localizedDescription);
     
     registry.getMetadataCache().addTerm(t);
     
     return t;
   }
   
-  public static HierarchyType newHierarchyType(String _code, String _localizedLabel, String _localizedDescription, RegistryAdapter registry)
+  public static HierarchyType newHierarchyType(String code, String localizedLabel, String localizedDescription, RegistryAdapter registry)
   {
-    HierarchyType ht = new HierarchyType(_code, _localizedLabel, _localizedDescription);
+    HierarchyType ht = new HierarchyType(code, localizedLabel, localizedDescription);
     
     registry.getMetadataCache().addHierarchyType(ht);
     
     return ht;
   }
   
-  public static GeoObjectType newGeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryAdapter registry)
+  public static GeoObjectType newGeoObjectType(String code, GeometryType geometryType, String localizedLabel, String localizedDescription, Boolean isLeaf, RegistryAdapter registry)
   {
-    GeoObjectType got = new GeoObjectType(_code, _geometryType, _localizedLabel, _localizedDescription, registry);
+    GeoObjectType got = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription, isLeaf, registry);
     
     registry.getMetadataCache().addGeoObjectType(got);
     

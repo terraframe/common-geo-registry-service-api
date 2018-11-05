@@ -53,22 +53,22 @@ public class GeoObject implements Serializable
   /**
    * Use the factory method on the {@link RegistryAdapter} to create new instances of a {@link GeoObject}
    * 
-   * @param _geoObjectType
-   * @param _geometryType
-   * @param _attributeMap
+   * @param geoObjectType
+   * @param geometryType
+   * @param attributeMap
    */
-  public GeoObject(GeoObjectType _geoObjectType, GeometryType _geometryType,
-      Map<String, Attribute> _attributeMap)
+  public GeoObject(GeoObjectType geoObjectType, GeometryType geometryType,
+      Map<String, Attribute> attributeMap)
   {
-    this.geoObjectType = _geoObjectType;
+    this.geoObjectType = geoObjectType;
 
-    this.geometryType = _geometryType;
+    this.geometryType = geometryType;
 
     this.geometry = null;
 
-    this.attributeMap = _attributeMap;
+    this.attributeMap = attributeMap;
     
-    this.getAttribute(DefaultAttribute.TYPE.getName()).setValue(_geoObjectType.getCode());
+    this.getAttribute(DefaultAttribute.TYPE.getName()).setValue(geoObjectType.getCode());
   }
   
   /**
@@ -162,24 +162,24 @@ public class GeoObject implements Serializable
    * @pre attribute with the given name is defined on the {@link GeoObjectType}
    * that defines this {@link GeoObject}.
    * 
-   * @param _attributeName
+   * @param attributeName
    * 
    * @return  value of the attribute with the given name.
    */
-  public Object getValue(String _attributeName)
+  public Object getValue(String attributeName)
   {
-    return this.attributeMap.get(_attributeName).getValue();
+    return this.attributeMap.get(attributeName).getValue();
   }
   
   /**
    * Sets the value of the {@link attribute} object with the given name.
    * 
-   * @param _attributeName
+   * @param attributeName
    * @param _value
    */
-  public void setValue(String _attributeName, Object _value)
+  public void setValue(String attributeName, Object _value)
   {
-    this.attributeMap.get(_attributeName).setValue(_value);
+    this.attributeMap.get(attributeName).setValue(_value);
   }
 
   /**
@@ -188,23 +188,23 @@ public class GeoObject implements Serializable
    * @pre attribute with the given name is defined on the {@link GeoObjectType}
    * that defines this {@link GeoObject}.
    * 
-   * @param _attributeName
+   * @param attributeName
    * 
    * @return
    */
-  public Attribute getAttribute(String _attributeName)
+  public Attribute getAttribute(String attributeName)
   {
-    return this.attributeMap.get(_attributeName);
+    return this.attributeMap.get(attributeName);
   }
   
   /**
    * Sets the code of this {@link GeoObject}.
    * 
-   * @param _code 
+   * @param code 
    */
-  public void setCode(String _code)
+  public void setCode(String code)
   {
-    this.attributeMap.get(CODE).setValue(_code);
+    this.attributeMap.get(CODE).setValue(code);
   }
   
   /**
@@ -220,11 +220,11 @@ public class GeoObject implements Serializable
   /**
    * Sets the UID of this {@link GeoObject}.
    * 
-   * @param _uid
+   * @param uid
    */
-  public void setUid(String _uid)
+  public void setUid(String uid)
   {
-    this.attributeMap.get(UID).setValue(_uid);
+    this.attributeMap.get(UID).setValue(uid);
   }
   
   /**

@@ -39,9 +39,9 @@ public class ChildTreeNode extends TreeNode
    * @param _geoObject
    * @param _hierarchyType
    */
-  public ChildTreeNode(GeoObject _geoObject, HierarchyType _hierarchyType)
+  public ChildTreeNode(GeoObject geoObject, HierarchyType hierarchyType)
   {
-    super(_geoObject, _hierarchyType);
+    super(geoObject, hierarchyType);
     
     this.children = Collections.synchronizedList(new LinkedList<ChildTreeNode>());
   }
@@ -61,9 +61,9 @@ public class ChildTreeNode extends TreeNode
    * 
    * @param _child
    */
-  public void addChild(ChildTreeNode _child)
+  public void addChild(ChildTreeNode child)
   {
-    this.children.add(_child);
+    this.children.add(child);
   }
   
   /**
@@ -74,7 +74,7 @@ public class ChildTreeNode extends TreeNode
    * @return JSON being constructed
    */
   @Override
-  protected JsonObject relationshipsToJSON(JsonObject _json)
+  protected JsonObject relationshipsToJSON(JsonObject json)
   {
     JsonArray jaChildren = new JsonArray();
     for (int i = 0; i < this.children.size(); ++i)
@@ -84,9 +84,9 @@ public class ChildTreeNode extends TreeNode
       jaChildren.add(child.toJSON());
     }
     
-    _json.add(JSON_CHILDREN, jaChildren);
+    json.add(JSON_CHILDREN, jaChildren);
     
-    return _json;
+    return json;
   }
   
   /**
@@ -96,18 +96,18 @@ public class ChildTreeNode extends TreeNode
    * @param _registry Adapter class containing cached metadata.
    * @return
    */
-  public static ChildTreeNode fromJSON(String sJson, RegistryAdapter _registry)
+  public static ChildTreeNode fromJSON(String sJson, RegistryAdapter registry)
   {
     JsonParser parser = new JsonParser();
     
     JsonObject oJson = parser.parse(sJson).getAsJsonObject();
     
-    GeoObject geoObj = GeoObject.fromJSON(_registry, oJson.get(JSON_GEO_OBJECT).getAsJsonObject().toString());
+    GeoObject geoObj = GeoObject.fromJSON(registry, oJson.get(JSON_GEO_OBJECT).getAsJsonObject().toString());
     
     HierarchyType hierarchyType = null;
     if (oJson.has(JSON_HIERARCHY_TYPE))
     {
-      hierarchyType = _registry.getMetadataCache().getHierachyType(oJson.get(JSON_HIERARCHY_TYPE).getAsString()).get();
+      hierarchyType = registry.getMetadataCache().getHierachyType(oJson.get(JSON_HIERARCHY_TYPE).getAsString()).get();
     }
     
     ChildTreeNode tn = new ChildTreeNode(geoObj, hierarchyType);
@@ -119,7 +119,7 @@ public class ChildTreeNode extends TreeNode
       {
         JsonObject joChild = jaChildren.get(i).getAsJsonObject();
         
-        ChildTreeNode tnChild = ChildTreeNode.fromJSON(joChild.toString(), _registry);
+        ChildTreeNode tnChild = ChildTreeNode.fromJSON(joChild.toString(), registry);
         
         tn.addChild(tnChild);
       }

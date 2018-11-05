@@ -44,6 +44,7 @@ public class GeoObjectType implements Serializable
   
   public static final String         JSON_GEOMETRY_TYPE             = "geometryType";
  
+  public static final String         JSON_IS_LEAF                        = "isLeaf";
   
   /**
    * Unique but human readable identifier. It could be VILLAGE or HOUSEHOLD.
@@ -68,6 +69,13 @@ public class GeoObjectType implements Serializable
   private String                     localizedDescription;
   
   /**
+   * Indicates whether the type that can only be added as a leaf to a hierarchy. Certain types, like households and structures, if added to a tree
+   * would cause the tree to grow to a very large size. Rather, instances of these types in the back-end will reference parent nodes in the tre.
+   */
+  private Boolean                    isLeaf;
+  
+
+  /**
    * Collection of {@link AttributeType} metadata attributes.
    * 
    * key: {@code AttributeType#getName()}
@@ -81,32 +89,34 @@ public class GeoObjectType implements Serializable
    * 
    * 
    * 
-   * @param _code unique identifier that his human readable.
-   * @param _geometryType type of geometry for the {@link GeoObjectType} such as point, line, etc.
-   * @param _localizedLabel localized label of the {@link GeoObjectType}.
-   * @param _localizedDescription localized description of the {@link GeoObjectType}.
-   * @param _registry {@link RegistryAdapter} from which this {@link GeoObjectType} is defined. 
+   * @param code unique identifier that his human readable.
+   * @param geometryType type of geometry for the {@link GeoObjectType} such as point, line, etc.
+   * @param localizedLabel localized label of the {@link GeoObjectType}.
+   * @param localizedDescription localized description of the {@link GeoObjectType}.
+   * @param isLeaf True if the type is a leaf, false otherwise.
+   * @param registry {@link RegistryAdapter} from which this {@link GeoObjectType} is defined. 
    */
-  public GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryAdapter _registry)
+  public GeoObjectType(String code, GeometryType geometryType, String localizedLabel, String localizedDescription, Boolean isLeaf, RegistryAdapter registry)
   {
-    this.init(_code, _geometryType, _localizedLabel, _localizedDescription);
+    this.init(code, geometryType, localizedLabel, localizedDescription, isLeaf);
 
-    this.attributeMap = buildDefaultAttributes(_registry);
+    this.attributeMap = buildDefaultAttributes(registry);
   }
 
   /**
    * 
    * 
    * 
-   * @param _code unique identifier that his human readable.
-   * @param _geometryType type of geometry for the {@link GeoObjectType} such as point, line, etc.
-   * @param _localizedLabel localized label of the {@link GeoObjectType}.
-   * @param _localizedDescription localized description of the {@link GeoObjectType}.
-   * @param _registry {@link RegistryAdapter} from which this {@link GeoObjectType} is defined. 
+   * @param code unique identifier that his human readable.
+   * @param geometryType type of geometry for the {@link GeoObjectType} such as point, line, etc.
+   * @param localizedLabel localized label of the {@link GeoObjectType}.
+   * @param localizedDescription localized description of the {@link GeoObjectType}.
+   * @param isLeaf True if the type is a leaf, false otherwise.
+   * @param registry {@link RegistryAdapter} from which this {@link GeoObjectType} is defined. 
    */
-  private GeoObjectType(String _code, GeometryType _geometryType, String _localizedLabel, String _localizedDescription, RegistryAdapter _registry, Map<String, AttributeType> _attributeMap)
+  private GeoObjectType(String code, GeometryType geometryType, String localizedLabel, String localizedDescription, Boolean isLeaf, RegistryAdapter registry, Map<String, AttributeType> _attributeMap)
   {
-    this.init(_code, _geometryType, _localizedLabel, _localizedDescription);
+    this.init(code, geometryType, localizedLabel, localizedDescription, isLeaf);
 
     this.attributeMap = _attributeMap;
   }
@@ -115,19 +125,23 @@ public class GeoObjectType implements Serializable
   /**
    * Initializes member variables.
    * 
-   * @param _code
-   * @param _geometryType
-   * @param _localizedLabel
-   * @param _localizedDescription
+   * @param code
+   * @param geometryType
+   * @param localizedLabel
+   * @param localizedDescription
+   * @param isLeaf
+   * 
    */
-  private void init(String _code, GeometryType _geometryType, String _localizedLabel,
-      String _localizedDescription)
+  private void init(String code, GeometryType geometryType, String localizedLabel,
+      String localizedDescription, Boolean isLeaf)
   {
-    this.code = _code;
-    this.localizedLabel = _localizedLabel;
-    this.localizedDescription = _localizedDescription;
+    this.code = code;
+    this.localizedLabel = localizedLabel;
+    this.localizedDescription = localizedDescription;
     
-    this.geometryType = _geometryType;
+    this.geometryType = geometryType;
+    
+    this.isLeaf = isLeaf;
   }
   
 
@@ -162,6 +176,26 @@ public class GeoObjectType implements Serializable
   }
 
   /**
+   * Returns true if the type is a leaf node, false otherwise.
+   * 
+   * @return true if the type is a leaf node, false otherwise.
+   */
+  public Boolean isLeaf()
+  {
+    return this.isLeaf;
+  }
+
+  /**
+   * True if the type is a leaf node, false otherwise.
+   * 
+   * @param isLeaf True if the type is a leaf node, false otherwise.
+   */
+  public void isLeaf(Boolean isLeaf)
+  {
+    this.isLeaf = isLeaf;
+  }
+  
+  /**
    * Returns the localized description of this {@link GeoObjectType} used for the presentation layer.
    * 
    * @return Localized description of this {@link GeoObjectType}.
@@ -174,25 +208,25 @@ public class GeoObjectType implements Serializable
   /**
    * Returns the {@link AttributeType} defined on this {@link GeoObjectType} with the given name.
    * 
-   * @param _name Name of the attribute {@code AttributeType#getName()}.
+   * @param name Name of the attribute {@code AttributeType#getName()}.
    * 
    * @pre Attribute with the given name is defined on this {@link GeoObjectType}.
    * 
    * @return Name of the attributes.
    */
-  public Optional<AttributeType> getAttribute(String _name)
+  public Optional<AttributeType> getAttribute(String name)
   {
-    return Optional.of(this.attributeMap.get(_name));
+    return Optional.of(this.attributeMap.get(name));
   }
   
   /**
    * Adds the given {@link AttributeType} as an attribute defined on this {@link GeoObjectType}s.
    * 
-   * @param _attributeType {@link AttributeType} to add to this {@link GeoObjectType}.
+   * @param attributeType {@link AttributeType} to add to this {@link GeoObjectType}.
    */
-  public void addAttribute(AttributeType _attributeType)
+  public void addAttribute(AttributeType attributeType)
   {
-    this.attributeMap.put(_attributeType.getName(), _attributeType);
+    this.attributeMap.put(attributeType.getName(), attributeType);
   }
   
   /**
@@ -238,21 +272,22 @@ public class GeoObjectType implements Serializable
   /**
    * Creates a {@link GeoObjectType} from the given JSON string.
    * 
-   * @param _sJson JSON string that defines the {@link GeoObjectType}.
-   * @param _registry {@link RegistryAdapter} from which this {@link GeoObjectType} object comes. 
+   * @param sJson JSON string that defines the {@link GeoObjectType}.
+   * @param registry {@link RegistryAdapter} from which this {@link GeoObjectType} object comes. 
    * @return
    */
-  public static GeoObjectType fromJSON(String _sJson, RegistryAdapter _registry)
+  public static GeoObjectType fromJSON(String sJson, RegistryAdapter registry)
   {
     JsonParser parser = new JsonParser();
     
-    JsonObject oJson = parser.parse(_sJson).getAsJsonObject();
+    JsonObject oJson = parser.parse(sJson).getAsJsonObject();
     JsonArray oJsonAttrs = oJson.getAsJsonArray(JSON_ATTRIBUTES);
     
     String code = oJson.get(JSON_CODE).getAsString();
     String localizedLabel = oJson.get(JSON_LOCALIZED_LABEL).getAsString();
     String localizedDescription = oJson.get(JSON_LOCALIZED_DESCRIPTION).getAsString();
     GeometryType geometryType = GeometryType.valueOf(oJson.get(JSON_GEOMETRY_TYPE).getAsString());
+    Boolean isLeaf = Boolean.valueOf(oJson.get(JSON_IS_LEAF).getAsString()); 
         
     Map<String, AttributeType> attributeMap = new ConcurrentHashMap<String, AttributeType>();
     for (int i = 0; i < oJsonAttrs.size(); ++i)
@@ -265,7 +300,7 @@ public class GeoObjectType implements Serializable
     }
     
     // TODO Need to validate that the default attributes are still defined.
-    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription, _registry, attributeMap);
+    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription, isLeaf, registry, attributeMap);
     
     return geoObjType;
   }
@@ -286,6 +321,8 @@ public class GeoObjectType implements Serializable
     json.addProperty(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription());
     
     json.addProperty(JSON_GEOMETRY_TYPE, this.geometryType.name()); // TODO: PROPOSED but not yet approved. Required for fromJSON reconstruction.
+    
+    json.addProperty(JSON_IS_LEAF, this.isLeaf().toString()); 
     
     JsonArray attrs = new JsonArray();
     

@@ -35,19 +35,19 @@ public abstract class RegistryAdapter implements Serializable
   /**
    * Creates a new local {@link GeoObject} instance of the given type.
    * 
-   * @param _geoObjectTypeCode
+   * @param geoObjectTypeCode
    * @return a new local {@link GeoObject} instance of the given type.
    */
-  public GeoObject newGeoObjectInstance(String _geoObjectTypeCode)
+  public GeoObject newGeoObjectInstance(String geoObjectTypeCode)
   {
-    GeoObjectType geoObjectType = this.getMetadataCache().getGeoObjectType(_geoObjectTypeCode).get();
+    GeoObjectType geoObjectType = this.getMetadataCache().getGeoObjectType(geoObjectTypeCode).get();
     
     Map<String, Attribute> attributeMap = GeoObject.buildAttributeMap(geoObjectType);
     
     GeoObject geoObject = new GeoObject(geoObjectType, geoObjectType.getGeometryType(), attributeMap);
     
     // Set some default values
-//    geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(_geoObjectTypeCode);
+//    geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(geoObjectTypeCode);
     
     Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
     geoObject.getAttribute(DefaultAttribute.STATUS.getName()).setValue(newStatus);

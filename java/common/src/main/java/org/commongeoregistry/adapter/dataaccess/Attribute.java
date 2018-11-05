@@ -3,7 +3,9 @@ package org.commongeoregistry.adapter.dataaccess;
 import java.io.Serializable;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
+import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
+import org.commongeoregistry.adapter.metadata.AttributeFloatType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
@@ -22,10 +24,10 @@ public abstract class Attribute implements Serializable
   
   private String type;
   
-  public Attribute(String _name, String _type)
+  public Attribute(String name, String type)
   {
-    this.name = _name;
-    this.type = _type;
+    this.name = name;
+    this.type = type;
   }
   
   
@@ -45,27 +47,35 @@ public abstract class Attribute implements Serializable
   
   public abstract Object getValue();
   
-  public abstract void setValue(Object _value);
+  public abstract void setValue(Object value);
   
-  public static Attribute attributeFactory(AttributeType _attributeType)
+  public static Attribute attributeFactory(AttributeType attributeType)
   {
     Attribute attribute; 
     
-    if (_attributeType instanceof AttributeDateType)
+    if (attributeType instanceof AttributeDateType)
     {
-      attribute = new AttributeDate(_attributeType.getName());
+      attribute = new AttributeDate(attributeType.getName());
     }
-    else if (_attributeType instanceof AttributeIntegerType)
+    else if (attributeType instanceof AttributeIntegerType)
     {
-      attribute = new AttributeInteger(_attributeType.getName());
+      attribute = new AttributeInteger(attributeType.getName());
     }
-    else if (_attributeType instanceof AttributeTermType)
+    else if (attributeType instanceof AttributeFloatType)
     {
-      attribute = new AttributeTerm(_attributeType.getName());
+      attribute = new AttributeFloat(attributeType.getName());
+    }
+    else if (attributeType instanceof AttributeTermType)
+    {
+      attribute = new AttributeTerm(attributeType.getName());
+    }
+    else if (attributeType instanceof AttributeBooleanType)
+    {
+      attribute = new AttributeBoolean(attributeType.getName());
     }
     else 
     {
-      attribute = new AttributeCharacter(_attributeType.getName());
+      attribute = new AttributeCharacter(attributeType.getName());
     }
     
     return attribute;

@@ -79,9 +79,17 @@ public abstract class AttributeType implements Serializable
     {
       attributeType = new AttributeIntegerType(_name, _localizedLabel, _localizedDescription);
     }
+    else if (_type.equals(AttributeFloatType.TYPE))
+    {
+      attributeType = new AttributeFloatType(_name, _localizedLabel, _localizedDescription);
+    }
     else if (_type.equals(AttributeTermType.TYPE))
     {
       attributeType = new AttributeTermType(_name, _localizedLabel, _localizedDescription);
+    }
+    else if (_type.equals(AttributeBooleanType.TYPE))
+    {
+      attributeType = new AttributeBooleanType(_name, _localizedLabel, _localizedDescription);
     }
     
     return attributeType;

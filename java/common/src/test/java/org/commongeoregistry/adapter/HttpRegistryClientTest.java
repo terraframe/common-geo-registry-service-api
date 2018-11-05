@@ -29,7 +29,7 @@ public class HttpRegistryClientTest
      * Setup mock objects
      */
     RegistryAdapterServer registry = new RegistryAdapterServer();
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", registry);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
 
     JsonArray array = new JsonArray();
     array.add(state.toJSON());
@@ -86,7 +86,7 @@ public class HttpRegistryClientTest
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
 
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", client);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
     GeoObject geoObject = client.newGeoObjectInstance("State");
     geoObject.setCode("Test");
@@ -150,7 +150,7 @@ public class HttpRegistryClientTest
     MockHttpConnector connector = new MockHttpConnector(new HttpResponse("", 201));
     HttpRegistryClient client = new HttpRegistryClient(connector);
 
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", client);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
     GeoObject geoObject = client.newGeoObjectInstance("State");
     geoObject.setCode("Test");
@@ -195,7 +195,7 @@ public class HttpRegistryClientTest
     MockHttpConnector connector = new MockHttpConnector(new HttpResponse("", 201));
     HttpRegistryClient client = new HttpRegistryClient(connector);
 
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", client);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
     GeoObject geoObject = client.newGeoObjectInstance("State");
     geoObject.setCode("Test");

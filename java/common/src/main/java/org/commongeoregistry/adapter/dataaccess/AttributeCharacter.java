@@ -14,22 +14,22 @@ public class AttributeCharacter extends Attribute
 
   private String            value;
 
-  public AttributeCharacter(String _name)
+  public AttributeCharacter(String name)
   {
-    super(_name, AttributeCharacterType.TYPE);
+    super(name, AttributeCharacterType.TYPE);
 
     this.value = null;
   }
 
   @Override
-  public void setValue(Object _value)
+  public void setValue(Object value)
   {
-    this.setText((String) _value);
+    this.setText((String) value);
   }
 
-  public void setText(String _value)
+  public void setText(String value)
   {
-    this.value = _value;
+    this.value = value;
   }
 
   @Override

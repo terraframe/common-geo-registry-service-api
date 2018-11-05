@@ -22,9 +22,9 @@ public class AttributeTerm extends Attribute
    */
   private static final long serialVersionUID = -7912192621951141119L;
 
-  public AttributeTerm(String _name)
+  public AttributeTerm(String name)
   {
-    super(_name, AttributeTermType.TYPE);
+    super(name, AttributeTermType.TYPE);
 
     this.terms = Collections.synchronizedList(new LinkedList<Term>());
   }
@@ -35,17 +35,17 @@ public class AttributeTerm extends Attribute
   }
 
   @Override
-  public void setValue(Object _integer)
+  public void setValue(Object integer)
   {
     this.terms.clear();
-    this.addTerm((Term) _integer);
+    this.addTerm((Term) integer);
   }
 
-  public void addTerm(Term _term)
+  public void addTerm(Term term)
   {
     // TODO add validation to ensure that the provided term is one of the
     // allowed terms on this type
-    this.terms.add(_term);
+    this.terms.add(term);
   }
 
   public void clearTerms()

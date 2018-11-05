@@ -8,7 +8,7 @@ import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
-import org.commongeoregistry.adapter.dataaccess.TreeNode;
+import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
@@ -27,7 +27,7 @@ public class SerializationTest
   {
     RegistryAdapterServer registry = new RegistryAdapterServer();
     
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", registry);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
     
     String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
     
@@ -56,7 +56,7 @@ public class SerializationTest
   {
     RegistryAdapterServer registry = new RegistryAdapterServer();
     
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", registry);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
     
     GeoObject geoObject = registry.newGeoObjectInstance("State");
     
@@ -72,7 +72,7 @@ public class SerializationTest
   {
     RegistryAdapterServer registry = new RegistryAdapterServer();
     
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", registry);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
     
     String sJson = state.toJSON().toString();
     GeoObjectType state2 = GeoObjectType.fromJSON(sJson, registry);
@@ -87,18 +87,20 @@ public class SerializationTest
   {
     RegistryAdapterServer registryServerInterface = new RegistryAdapterServer();
     
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", registryServerInterface);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registryServerInterface);
     
     AttributeType testChar = AttributeType.factory("testChar",  "testCharLocalName", "testCharLocalDescrip", AttributeCharacterType.TYPE);
     AttributeType testDate = AttributeType.factory("testDate",  "testDateLocalName", "testDateLocalDescrip", AttributeDateType.TYPE);
     AttributeType testInteger = AttributeType.factory("testInteger",  "testIntegerLocalName", "testIntegerLocalDescrip", AttributeIntegerType.TYPE);
+    AttributeType testBoolean = AttributeType.factory("testBoolean",  "testBooleanName", "testBooleanDescrip", AttributeBooleanType.TYPE);
     AttributeType testTerm = AttributeType.factory("testTerm",  "testTermLocalName", "testTermLocalDescrip", AttributeTermType.TYPE);
-    
+
     ((AttributeTermType)testTerm).setRootTerm(registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get());
     
     state.addAttribute(testChar);
     state.addAttribute(testDate);
     state.addAttribute(testInteger);
+    state.addAttribute(testBoolean);
     state.addAttribute(testTerm);
     
     String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
@@ -112,6 +114,7 @@ public class SerializationTest
     geoObject.setValue("testChar", "Test Character Value");
     geoObject.setValue("testDate", new Date());
     geoObject.setValue("testInteger", 3);
+    geoObject.setValue("testBoolean", false);
     geoObject.setValue("testTerm", registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.PENDING.code).get());
     
     String sJson = geoObject.toJSON().toString();
@@ -122,7 +125,8 @@ public class SerializationTest
     Assert.equals(geoObject.getValue("testChar"), geoObject2.getValue("testChar"));
     Assert.equals(geoObject.getValue("testDate"), geoObject2.getValue("testDate"));
     Assert.equals(geoObject.getValue("testInteger"), geoObject2.getValue("testInteger"));
-    Assert.equals(geoObject.getValue("testTerm"), geoObject2.getValue("testTerm"));
+    Assert.equals(geoObject.getValue("testBoolean"), geoObject2.getValue("testBoolean"));
+
     Assert.equals(((List<Term>)geoObject.getValue("testTerm")).get(0).getCode(), ((List<Term>)geoObject2.getValue("testTerm")).get(0).getCode());
   }
     
@@ -134,7 +138,7 @@ public class SerializationTest
   {
     RegistryAdapterServer registry = new RegistryAdapterServer();
     
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", registry);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
     
     AttributeType testChar = AttributeType.factory("testChar", "testCharLocalName", "testCharLocalDescrip", AttributeCharacterType.TYPE);
     AttributeType testDate = AttributeType.factory("testDate", "testDateLocalName", "testDateLocalDescrip", AttributeDateType.TYPE);

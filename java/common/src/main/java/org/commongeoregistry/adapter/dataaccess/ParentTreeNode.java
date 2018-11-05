@@ -8,8 +8,6 @@ import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -28,12 +26,12 @@ public class ParentTreeNode extends TreeNode
   /**
    * 
    * 
-   * @param _geoObject
-   * @param _hierarchyType
+   * @param geoObject
+   * @param hierarchyType
    */
-  public ParentTreeNode(GeoObject _geoObject, HierarchyType _hierarchyType)
+  public ParentTreeNode(GeoObject geoObject, HierarchyType hierarchyType)
   {
-    super(_geoObject, _hierarchyType);
+    super(geoObject, hierarchyType);
     
     this.parents = Collections.synchronizedList(new LinkedList<ParentTreeNode>());
   }
@@ -51,22 +49,22 @@ public class ParentTreeNode extends TreeNode
   /**
    * Add a parent to the current node.
    * 
-   * @param _parents
+   * @param parents
    */
-  public void addParent(ParentTreeNode _parents)
+  public void addParent(ParentTreeNode parents)
   {
-    this.parents.add(_parents);
+    this.parents.add(parents);
   }
   
   /**
    * Returns the relationships of the {@link ParentTreeNode}.
    * 
-   * @param _json the JSON being constructed.
+   * @param json the JSON being constructed.
    * 
    * @return JSON being constructed
    */
   @Override
-  protected JsonObject relationshipsToJSON(JsonObject _json)
+  protected JsonObject relationshipsToJSON(JsonObject json)
   {
     JsonArray jaParents = new JsonArray();
     for (int i = 0; i < this.parents.size(); ++i)
@@ -76,9 +74,9 @@ public class ParentTreeNode extends TreeNode
       jaParents.add(parent.toJSON());
     }
     
-    _json.add(JSON_PARENTS, jaParents);
+    json.add(JSON_PARENTS, jaParents);
     
-    return _json;
+    return json;
   }
   
   /**

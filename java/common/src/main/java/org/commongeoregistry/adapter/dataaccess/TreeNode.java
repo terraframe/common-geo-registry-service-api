@@ -1,9 +1,6 @@
 package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 
@@ -24,11 +21,11 @@ public abstract class TreeNode implements Serializable
   
   private HierarchyType hierarchyType;
   
-  public TreeNode(GeoObject _geoObject, HierarchyType _hierarchyType)
+  public TreeNode(GeoObject geoObject, HierarchyType hierarchyType)
   {
-    this.geoObject = _geoObject;
+    this.geoObject = geoObject;
     
-    this.hierarchyType = _hierarchyType;
+    this.hierarchyType = hierarchyType;
   }
 
   public GeoObject getGeoObject() 
@@ -60,11 +57,11 @@ public abstract class TreeNode implements Serializable
   /**
    * Returns the relationships of the {@link TreeNode}.
    * 
-   * @param _json the JSON being constructed.
+   * @param json the JSON being constructed.
    * 
    * @return JSON being constructed
    */
-  protected abstract JsonObject relationshipsToJSON(JsonObject _json);
+  protected abstract JsonObject relationshipsToJSON(JsonObject json);
   
 
 //  public static TreeNode fromJSON(String sJson, RegistryAdapterServer registry)

@@ -16,22 +16,22 @@ public class AttributeInteger extends Attribute
   
   private Integer integer;
   
-  public AttributeInteger(String _name)
+  public AttributeInteger(String name)
   {
-    super(_name, AttributeIntegerType.TYPE);
+    super(name, AttributeIntegerType.TYPE);
     
     this.integer = null;
   }
   
   @Override
-  public void setValue(Object _integer)
+  public void setValue(Object integer)
   {
-    this.setInteger((Integer)_integer);
+    this.setInteger((Integer)integer);
   }
   
-  public void setInteger(Integer _integer)
+  public void setInteger(Integer integer)
   {
-    this.integer = _integer;
+    this.integer = integer;
   }
   
   @Override

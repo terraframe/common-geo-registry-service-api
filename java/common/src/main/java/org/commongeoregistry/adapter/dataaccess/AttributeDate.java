@@ -21,23 +21,23 @@ public class AttributeDate extends Attribute
   
   private static final String FORMAT = "yyyy-MM-dd G HH-mm-ss-SS Z";
   
-  public AttributeDate(String _name)
+  public AttributeDate(String name)
   {
-    super(_name, AttributeDateType.TYPE);
+    super(name, AttributeDateType.TYPE);
     
     this.date = null;
   }
   
   @Override
-  public void setValue(Object _date)
+  public void setValue(Object date)
   {
-    this.setDate((Date)_date);
+    this.setDate((Date)date);
   }
   
 
-  public void setDate(Date _date)
+  public void setDate(Date date)
   {
-    this.date = _date;
+    this.date = date;
   }
   
   @Override
