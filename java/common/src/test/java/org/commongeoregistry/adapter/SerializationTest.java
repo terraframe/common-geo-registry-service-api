@@ -3,6 +3,8 @@ package org.commongeoregistry.adapter;
 import java.util.Date;
 import java.util.List;
 
+import org.commongeoregistry.adapter.action.AddChildAction;
+import org.commongeoregistry.adapter.action.CreateAction;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
@@ -281,4 +283,18 @@ public class SerializationTest
     Assert.equals(ctOne.getHierachyType(), ctOne2.getHierachyType());
     Assert.equals(ctOne.getParents().get(0).getHierachyType(), ctOne2.getParents().get(0).getHierachyType());
   }
+  
+//  @Test
+//  public void testActions()
+//  {
+//    AddChildAction addChild = new AddChildAction("child-id", "parent-id");
+//    String addChildJson = addChild.toJSON().toString();
+//    String addChildJson2 = AddChildAction.fromJSON(addChildJson).toJSON().toString();
+//    Assert.equals(addChildJson, addChildJson2);
+//    
+//    CreateAction create = new CreateAction();
+//    String createJson = addChild.toJSON().toString();
+//    String createJson2 = CreateAction.fromJSON(createJson).toJSON().toString();
+//    Assert.equals(createJson, createJson2);
+//  }
 }

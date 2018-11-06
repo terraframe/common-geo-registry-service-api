@@ -49,10 +49,10 @@ public class LocalCacheDbHelperTest {
             Assert.assertNotNull(db);
 
             ContentValues values = new ContentValues();
-            values.put(GeoObjectContract.GeoObjectEntry.COLUMN_NAME_UID, "2c72a8d0-4637-42e9-814d-70751bd2a6ea");
-            values.put(GeoObjectContract.GeoObjectEntry.COLUMN_NAME_OBJECT, geoObject.toJSON().toString());
+            values.put(LocalCacheContract.GeoObjectEntry.COLUMN_NAME_UID, "2c72a8d0-4637-42e9-814d-70751bd2a6ea");
+            values.put(LocalCacheContract.GeoObjectEntry.COLUMN_NAME_OBJECT, geoObject.toJSON().toString());
 
-            long newRowId = db.insert(GeoObjectContract.GeoObjectEntry.TABLE_NAME, null, values);
+            long newRowId = db.insert(LocalCacheContract.GeoObjectEntry.TABLE_NAME, null, values);
 
             Assert.assertNotEquals(0, db);
         } finally {
@@ -90,10 +90,10 @@ public class LocalCacheDbHelperTest {
             String json = geoObject.toJSON().toString();
 
             ContentValues values = new ContentValues();
-            values.put(GeoObjectContract.GeoObjectEntry.COLUMN_NAME_UID, uuid);
-            values.put(GeoObjectContract.GeoObjectEntry.COLUMN_NAME_OBJECT, json);
+            values.put(LocalCacheContract.GeoObjectEntry.COLUMN_NAME_UID, uuid);
+            values.put(LocalCacheContract.GeoObjectEntry.COLUMN_NAME_OBJECT, json);
 
-            long newRowId = db.insert(GeoObjectContract.GeoObjectEntry.TABLE_NAME, null, values);
+            long newRowId = db.insert(LocalCacheContract.GeoObjectEntry.TABLE_NAME, null, values);
 
             Assert.assertNotEquals(0, db);
 
@@ -101,19 +101,19 @@ public class LocalCacheDbHelperTest {
 
             String[] projection = {
                     BaseColumns._ID,
-                    GeoObjectContract.GeoObjectEntry.COLUMN_NAME_UID,
-                    GeoObjectContract.GeoObjectEntry.COLUMN_NAME_OBJECT
+                    LocalCacheContract.GeoObjectEntry.COLUMN_NAME_UID,
+                    LocalCacheContract.GeoObjectEntry.COLUMN_NAME_OBJECT
             };
 
             // Filter results WHERE "title" = 'My Title'
-            String selection = GeoObjectContract.GeoObjectEntry.COLUMN_NAME_UID + " = ?";
+            String selection = LocalCacheContract.GeoObjectEntry.COLUMN_NAME_UID + " = ?";
             String[] selectionArgs = {uuid};
 
             // How you want the results sorted in the resulting Cursor
-            String sortOrder = GeoObjectContract.GeoObjectEntry.COLUMN_NAME_UID + " DESC";
+            String sortOrder = LocalCacheContract.GeoObjectEntry.COLUMN_NAME_UID + " DESC";
 
             Cursor cursor = db.query(
-                    GeoObjectContract.GeoObjectEntry.TABLE_NAME,   // The table to query
+                    LocalCacheContract.GeoObjectEntry.TABLE_NAME,   // The table to query
                     projection,             // The array of columns to return (pass null to get all)
                     selection,              // The columns for the WHERE clause
                     selectionArgs,          // The values for the WHERE clause

@@ -10,9 +10,15 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
-import org.commongeoregistry.adapter.android.sql.GeoObjectContract;
-import org.commongeoregistry.adapter.android.sql.GeoObjectContract.GeoObjectEntry;
-import org.commongeoregistry.adapter.android.sql.GeoObjectContract.TreeNodeEntry;
+import org.commongeoregistry.adapter.action.UpdateAction;
+import org.commongeoregistry.adapter.android.action.AbstractAction;
+import org.commongeoregistry.adapter.android.action.AddChildAction;
+import org.commongeoregistry.adapter.android.action.CreateAction;
+import org.commongeoregistry.adapter.android.action.DeleteAction;
+import org.commongeoregistry.adapter.android.action.UpdateAction;
+import org.commongeoregistry.adapter.android.sql.LocalCacheContract;
+import org.commongeoregistry.adapter.android.sql.LocalCacheContract.GeoObjectEntry;
+import org.commongeoregistry.adapter.android.sql.LocalCacheContract.TreeNodeEntry;
 import org.commongeoregistry.adapter.android.sql.LocalCacheDbHelper;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
@@ -33,6 +39,8 @@ import java.util.Optional;
  * for offline use.
  *
  * @author nathan
+ * @author rrowlands
+ * @author jsmethie
  */
 public class LocalObjectCache implements Serializable {
 
@@ -72,6 +80,74 @@ public class LocalObjectCache implements Serializable {
     }
 
     /**
+     * Returns the history of all actions performed on the cache. This is used when
+     * pushing changes made in offline mode to the server.
+     */
+    public AbstractAction[] getActionHistory()
+    {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                LocalCacheContract.ActionEntry.COLUMN_NAME_TYPE,
+                LocalCacheContract.ActionEntry.COLUMN_NAME_JSON
+        };
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder = LocalCacheContract.ActionEntry.COLUMN_NAME_ID + " ASC";
+
+        Cursor cursor = null;
+        try {
+
+
+            cursor = db.query(
+                    LocalCacheContract.ActionEntry.TABLE_NAME,   // The table to query
+                    projection,             // The array of columns to return (pass null to get all)
+                    null,              // The columns for the WHERE clause
+                    null,          // The values for the WHERE clause
+                    null,                   // don't group the rows
+                    null,                   // don't filter by row groups
+                    sortOrder               // The sort order
+            );
+
+            AbstractAction[] history = new AbstractAction[]{};
+
+            int i = 0;
+            while (cursor.moveToNext()) {
+                String type = cursor.getString(0);
+                String json = cursor.getString(1);
+
+                if (type.equals(CreateAction.class.getName()))
+                {
+                    history[i++] = CreateAction.fromJSON(json);
+                }
+                else if (type.equals(UpdateAction.class.getName()))
+                {
+                    history[i++] = UpdateAction.fromJSON(json);
+                }
+                else if (type.equals(DeleteAction.class.getName()))
+                {
+                    history[i++] = DeleteAction.fromJSON(json);
+                }
+                else if (type.equals(AddChildAction.class.getName()))
+                {
+                    history[i++] = AddChildAction.fromJSON(json);
+                }
+                else
+                {
+                    throw new UnsupportedOperationException("Unsupported action type [" + type + "].");
+                }
+            }
+
+            return history;
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    /**
      * Adds the given {@link TreeNode} object to the local cache.
      *
      * @param treeNode
@@ -82,6 +158,8 @@ public class LocalObjectCache implements Serializable {
             db.beginTransaction();
 
             this.cache(treeNode, db);
+
+            this.insertAction(new UpdateAction(), db);
 
             // your sql stuff
             db.setTransactionSuccessful();
@@ -155,6 +233,15 @@ public class LocalObjectCache implements Serializable {
         }
     }
 
+    public void insertAction(AbstractAction action, SQLiteDatabase db)
+    {
+        ContentValues values = new ContentValues();
+        values.put(LocalCacheContract.ActionEntry.COLUMN_NAME_JSON, action.toJSON().toString());
+        values.put(LocalCacheContract.ActionEntry.COLUMN_NAME_TYPE, action.getClass().getName());
+
+        db.insertWithOnConflict(LocalCacheContract.ActionEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_FAIL);
+    }
+
     private void insertGeoObject(GeoObject geoObject, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(GeoObjectEntry.COLUMN_NAME_UID, geoObject.getUid());
@@ -188,18 +275,18 @@ public class LocalObjectCache implements Serializable {
         };
 
         // Filter results WHERE "title" = 'My Title'
-        String selection = GeoObjectContract.GeoObjectEntry.COLUMN_NAME_UID + " = ?";
+        String selection = LocalCacheContract.GeoObjectEntry.COLUMN_NAME_UID + " = ?";
         String[] selectionArgs = {_uid};
 
         // How you want the results sorted in the resulting Cursor
-        String sortOrder = GeoObjectContract.GeoObjectEntry.COLUMN_NAME_UID + " DESC";
+        String sortOrder = LocalCacheContract.GeoObjectEntry.COLUMN_NAME_UID + " DESC";
 
         Cursor cursor = null;
         try {
 
 
             cursor = db.query(
-                    GeoObjectContract.GeoObjectEntry.TABLE_NAME,   // The table to query
+                    LocalCacheContract.GeoObjectEntry.TABLE_NAME,   // The table to query
                     projection,             // The array of columns to return (pass null to get all)
                     selection,              // The columns for the WHERE clause
                     selectionArgs,          // The values for the WHERE clause

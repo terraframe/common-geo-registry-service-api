@@ -51,7 +51,7 @@ public class RegistryServerInterfaceTest
     
     Assert.assertNotNull(TestFixture.HOUSEHOLD+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.HOUSEHOLD).get());
     
-    Assert.assertNotNull(TestFixture.FOCUS_AREA+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.FOCUS_AREA).get());
+//    Assert.assertNotNull(TestFixture.FOCUS_AREA+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.FOCUS_AREA).get());
     
     Assert.assertNotNull(TestFixture.HEALTH_FACILITY+" was not found in the cache", registryServerInterface.getMetadataCache().getGeoObjectType(TestFixture.HEALTH_FACILITY).get());
   }
