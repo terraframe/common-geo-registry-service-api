@@ -1,6 +1,7 @@
 package org.commongeoregistry.adapter;
 
 import org.commongeoregistry.adapter.constants.GeometryType;
+import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
@@ -75,6 +76,20 @@ public class TestFixture
     healthCommuneNode.addChild(healthFacilityNode);
     
     healthAdministrative.addRootGeoObjects(healthProvinceNode);
+  }
+  
+  public static GeoObject createGeoObject(RegistryAdapter registry, String genKey, String typeCode)
+  {
+    GeoObject geoObject = registry.newGeoObjectInstance(typeCode);
+    
+    String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
+    
+    geoObject.setWKTGeometry(geom);
+    geoObject.setCode(genKey + "_CODE");
+    geoObject.setUid(genKey + "_UID");
+    geoObject.setLocalizedDisplayLabel(genKey + " Display Label");
+    
+    return geoObject;
   }
   
   private static AttributeTermType createHealthFacilityTypeAttribute(RegistryAdapter registry)

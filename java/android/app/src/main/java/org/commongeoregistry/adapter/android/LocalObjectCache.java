@@ -159,8 +159,6 @@ public class LocalObjectCache implements Serializable {
 
             this.cache(treeNode, db);
 
-            this.insertAction(new UpdateAction(), db);
-
             // your sql stuff
             db.setTransactionSuccessful();
         } catch (SQLException e) {

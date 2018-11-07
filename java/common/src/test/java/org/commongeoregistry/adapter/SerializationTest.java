@@ -3,8 +3,10 @@ package org.commongeoregistry.adapter;
 import java.util.Date;
 import java.util.List;
 
+import org.commongeoregistry.adapter.action.AbstractAction;
 import org.commongeoregistry.adapter.action.AddChildAction;
-import org.commongeoregistry.adapter.action.CreateAction;
+import org.commongeoregistry.adapter.action.DeleteAction;
+import org.commongeoregistry.adapter.action.UpdateAction;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
@@ -19,8 +21,8 @@ import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 import org.commongeoregistry.adapter.metadata.MetadataFactory;
+import org.junit.Assert;
 import org.junit.Test;
-import org.locationtech.jts.util.Assert;
 
 public class SerializationTest
 {
@@ -44,10 +46,10 @@ public class SerializationTest
     GeoObject geoObject2 = GeoObject.fromJSON(registry, sJson);
     String sJson2 = geoObject2.toJSON().toString();
     
-    Assert.equals(sJson, sJson2);
-    Assert.equals("Colorado", geoObject2.getCode());
-    Assert.equals("CO", geoObject2.getUid());
-    Assert.equals("Colorado Display Label", geoObject2.getLocalizedDisplayLabel());
+    Assert.assertEquals(sJson, sJson2);
+    Assert.assertEquals("Colorado", geoObject2.getCode());
+    Assert.assertEquals("CO", geoObject2.getUid());
+    Assert.assertEquals("Colorado Display Label", geoObject2.getLocalizedDisplayLabel());
   }
   
   /**
@@ -66,7 +68,7 @@ public class SerializationTest
     GeoObject geoObject2 = GeoObject.fromJSON(registry, sJson);
     String sJson2 = geoObject2.toJSON().toString();
     
-    Assert.equals(sJson, sJson2);
+    Assert.assertEquals(sJson, sJson2);
   }
   
   @Test
@@ -80,7 +82,7 @@ public class SerializationTest
     GeoObjectType state2 = GeoObjectType.fromJSON(sJson, registry);
     String sJson2 = state2.toJSON().toString();
     
-    Assert.equals(sJson, sJson2);
+    Assert.assertEquals(sJson, sJson2);
   }
   
   @SuppressWarnings("unchecked")
@@ -123,13 +125,13 @@ public class SerializationTest
     GeoObject geoObject2 = GeoObject.fromJSON(registryServerInterface, sJson);
     String sJson2 = geoObject2.toJSON().toString();
     
-    Assert.equals(sJson, sJson2);
-    Assert.equals(geoObject.getValue("testChar"), geoObject2.getValue("testChar"));
-    Assert.equals(geoObject.getValue("testDate"), geoObject2.getValue("testDate"));
-    Assert.equals(geoObject.getValue("testInteger"), geoObject2.getValue("testInteger"));
-    Assert.equals(geoObject.getValue("testBoolean"), geoObject2.getValue("testBoolean"));
+    Assert.assertEquals(sJson, sJson2);
+    Assert.assertEquals(geoObject.getValue("testChar"), geoObject2.getValue("testChar"));
+    Assert.assertEquals(geoObject.getValue("testDate"), geoObject2.getValue("testDate"));
+    Assert.assertEquals(geoObject.getValue("testInteger"), geoObject2.getValue("testInteger"));
+    Assert.assertEquals(geoObject.getValue("testBoolean"), geoObject2.getValue("testBoolean"));
 
-    Assert.equals(((List<Term>)geoObject.getValue("testTerm")).get(0).getCode(), ((List<Term>)geoObject2.getValue("testTerm")).get(0).getCode());
+    Assert.assertEquals(((List<Term>)geoObject.getValue("testTerm")).get(0).getCode(), ((List<Term>)geoObject2.getValue("testTerm")).get(0).getCode());
   }
     
   /**
@@ -156,11 +158,11 @@ public class SerializationTest
     GeoObjectType state2 = GeoObjectType.fromJSON(sJson, registry);
     String sJson2 = state2.toJSON().toString();
     
-    Assert.equals(sJson, sJson2);
-    Assert.equals(testChar.getName(), state2.getAttribute("testChar").get().getName());
-    Assert.equals(testDate.getName(), state2.getAttribute("testDate").get().getName());
-    Assert.equals(testInteger.getName(), state2.getAttribute("testInteger").get().getName());
-    Assert.equals(testTerm.getName(), state2.getAttribute("testTerm").get().getName());
+    Assert.assertEquals(sJson, sJson2);
+    Assert.assertEquals(testChar.getName(), state2.getAttribute("testChar").get().getName());
+    Assert.assertEquals(testDate.getName(), state2.getAttribute("testDate").get().getName());
+    Assert.assertEquals(testInteger.getName(), state2.getAttribute("testInteger").get().getName());
+    Assert.assertEquals(testTerm.getName(), state2.getAttribute("testTerm").get().getName());
   }
   
   @Test
@@ -176,12 +178,12 @@ public class SerializationTest
     HierarchyType geoPolitical2 = HierarchyType.fromJSON(geoPoliticalJson, registry);
     String geoPoliticalJson2 = geoPolitical2.toJSON().toString();
     
-    Assert.equals(geoPoliticalJson, geoPoliticalJson2);
-    Assert.equals(geoPolitical.getCode(), geoPolitical2.getCode());
-    Assert.equals(geoPolitical.getLocalizedDescription(), geoPolitical2.getLocalizedDescription());
-    Assert.equals(geoPolitical.getLocalizedLabel(), geoPolitical2.getLocalizedLabel());
-    Assert.equals(geoPolitical.getRootGeoObjectTypes().size(), geoPolitical2.getRootGeoObjectTypes().size());
-    Assert.equals(geoPolitical.getRootGeoObjectTypes().get(0).getChildren().size(), geoPolitical2.getRootGeoObjectTypes().get(0).getChildren().size());
+    Assert.assertEquals(geoPoliticalJson, geoPoliticalJson2);
+    Assert.assertEquals(geoPolitical.getCode(), geoPolitical2.getCode());
+    Assert.assertEquals(geoPolitical.getLocalizedDescription(), geoPolitical2.getLocalizedDescription());
+    Assert.assertEquals(geoPolitical.getLocalizedLabel(), geoPolitical2.getLocalizedLabel());
+    Assert.assertEquals(geoPolitical.getRootGeoObjectTypes().size(), geoPolitical2.getRootGeoObjectTypes().size());
+    Assert.assertEquals(geoPolitical.getRootGeoObjectTypes().get(0).getChildren().size(), geoPolitical2.getRootGeoObjectTypes().get(0).getChildren().size());
   }
  
   @Test
@@ -226,12 +228,12 @@ public class SerializationTest
     
     String ptOne2Json = ptOne2.toJSON().toString();
     
-    Assert.equals(ptOneJson, ptOne2Json);
-    Assert.equals(ptOne.getChildren().size(), ptOne2.getChildren().size());
-    Assert.equals(ptOne.getChildren().get(0).getChildren().size(), ptOne2.getChildren().get(0).getChildren().size());
-    Assert.equals(ptOne.getChildren().get(0).getChildren().get(0).getChildren().size(), ptOne2.getChildren().get(0).getChildren().get(0).getChildren().size());
-    Assert.equals(ptOne.getHierachyType(), ptOne2.getHierachyType());
-    Assert.equals(ptOne.getChildren().get(0).getHierachyType(), ptOne2.getChildren().get(0).getHierachyType());
+    Assert.assertEquals(ptOneJson, ptOne2Json);
+    Assert.assertEquals(ptOne.getChildren().size(), ptOne2.getChildren().size());
+    Assert.assertEquals(ptOne.getChildren().get(0).getChildren().size(), ptOne2.getChildren().get(0).getChildren().size());
+    Assert.assertEquals(ptOne.getChildren().get(0).getChildren().get(0).getChildren().size(), ptOne2.getChildren().get(0).getChildren().get(0).getChildren().size());
+    Assert.assertEquals(ptOne.getHierachyType(), ptOne2.getHierachyType());
+    Assert.assertEquals(ptOne.getChildren().get(0).getHierachyType(), ptOne2.getChildren().get(0).getHierachyType());
   }
   
   @Test
@@ -276,25 +278,68 @@ public class SerializationTest
     
     String ctOne2Json = ctOne2.toJSON().toString();
     
-    Assert.equals(ctOneJson, ctOne2Json);
-    Assert.equals(ctOne.getParents().size(), ctOne2.getParents().size());
-    Assert.equals(ctOne.getParents().get(0).getParents().size(), ctOne2.getParents().get(0).getParents().size());
-    Assert.equals(ctOne.getParents().get(0).getParents().get(0).getParents().size(), ctOne2.getParents().get(0).getParents().get(0).getParents().size());
-    Assert.equals(ctOne.getHierachyType(), ctOne2.getHierachyType());
-    Assert.equals(ctOne.getParents().get(0).getHierachyType(), ctOne2.getParents().get(0).getHierachyType());
+    Assert.assertEquals(ctOneJson, ctOne2Json);
+    Assert.assertEquals(ctOne.getParents().size(), ctOne2.getParents().size());
+    Assert.assertEquals(ctOne.getParents().get(0).getParents().size(), ctOne2.getParents().get(0).getParents().size());
+    Assert.assertEquals(ctOne.getParents().get(0).getParents().get(0).getParents().size(), ctOne2.getParents().get(0).getParents().get(0).getParents().size());
+    Assert.assertEquals(ctOne.getHierachyType(), ctOne2.getHierachyType());
+    Assert.assertEquals(ctOne.getParents().get(0).getHierachyType(), ctOne2.getParents().get(0).getHierachyType());
   }
   
-//  @Test
-//  public void testActions()
-//  {
-//    AddChildAction addChild = new AddChildAction("child-id", "parent-id");
-//    String addChildJson = addChild.toJSON().toString();
-//    String addChildJson2 = AddChildAction.fromJSON(addChildJson).toJSON().toString();
-//    Assert.equals(addChildJson, addChildJson2);
-//    
-//    CreateAction create = new CreateAction();
-//    String createJson = addChild.toJSON().toString();
-//    String createJson2 = CreateAction.fromJSON(createJson).toJSON().toString();
-//    Assert.equals(createJson, createJson2);
-//  }
+  @Test
+  public void testActions()
+  {
+    RegistryAdapterServer registry = new RegistryAdapterServer();
+    TestFixture.defineExampleHierarchies(registry);
+    GeoObject geoObj1 = TestFixture.createGeoObject(registry, "PROV_ONE", TestFixture.PROVINCE);
+    GeoObject geoObj2 = TestFixture.createGeoObject(registry, "PROV_ONE", TestFixture.PROVINCE);
+    GeoObjectType province = geoObj1.getType();
+    HierarchyType geoPolitical = registry.getMetadataCache().getHierachyType(TestFixture.GEOPOLITICAL).get();
+    
+    AbstractAction[] actions = new AbstractAction[5];
+    int i = 0;
+    
+    // Add Child
+    AddChildAction addChild = new AddChildAction(geoObj1.getUid(), geoObj2.getUid(), geoPolitical.getCode());
+    String addChildJson = addChild.toJSON().toString();
+    String addChildJson2 = AddChildAction.fromJSON(addChildJson).toJSON().toString();
+    Assert.assertEquals(addChildJson, addChildJson2);
+    actions[i++] = addChild;
+    
+    // Remove Child ??
+    // TODO
+    
+    // Update a GeoObject
+    UpdateAction create = new UpdateAction(geoObj1);
+    String createJson = create.toJSON().toString();
+    String createJson2 = UpdateAction.fromJSON(createJson).toJSON().toString();
+    Assert.assertEquals(createJson, createJson2);
+    actions[i++] = create;
+    
+    // Update a GeoObjectType
+    UpdateAction createGOT = new UpdateAction(province);
+    String createGOTJson = createGOT.toJSON().toString();
+    String createGOTJson2 = UpdateAction.fromJSON(createGOTJson).toJSON().toString();
+    Assert.assertEquals(createGOTJson, createGOTJson2);
+    actions[i++] = createGOT;
+    
+    // Delete a GeoObject
+    DeleteAction deleteGO = new DeleteAction(geoObj1);
+    String deleteGOJson = deleteGO.toJSON().toString();
+    String deleteGOJson2 = DeleteAction.fromJSON(deleteGOJson).toJSON().toString();
+    Assert.assertEquals(deleteGOJson, deleteGOJson2);
+    actions[i++] = deleteGO;
+    
+    // Delete a GeoObjectType
+    DeleteAction deleteGOT = new DeleteAction(province);
+    String deleteGOTJson = deleteGOT.toJSON().toString();
+    String deleteGOTJson2 = DeleteAction.fromJSON(deleteGOTJson).toJSON().toString();
+    Assert.assertEquals(deleteGOTJson, deleteGOTJson2);
+    actions[i++] = deleteGOT;
+    
+    // Serialize the actions
+    String sActions = AbstractAction.serializeActions(actions).toString();
+    String sActions2 = AbstractAction.serializeActions(AbstractAction.parseActions(sActions)).toString();
+    Assert.assertEquals(sActions, sActions2);
+  }
 }

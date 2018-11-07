@@ -1,5 +1,8 @@
 package org.commongeoregistry.adapter.action;
 
+import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.metadata.GeoObjectType;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -13,10 +16,22 @@ public class DeleteAction extends AbstractAction
 
     private final String objOid;
 
-    public DeleteAction(String objType, String objOid)
+    public DeleteAction(GeoObject go)
     {
-        this.objType = objType;
-        this.objOid = objOid;
+      this.objType = go.getClass().getName();
+      this.objOid = go.getUid();
+    }
+    
+    public DeleteAction(GeoObjectType type)
+    {
+      this.objType = type.getClass().getName();
+      this.objOid = type.getCode();
+    }
+    
+    private DeleteAction(String objType, String objOid)
+    {
+      this.objType = objType;
+      this.objOid = objOid;
     }
 
     @Override

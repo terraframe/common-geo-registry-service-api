@@ -9,7 +9,19 @@ abstract public class AbstractAction
   public static final String JSON_KEY_ACTION_TYPE = "actiontype";
   
   abstract public JsonObject toJSON();
-
+  
+  public static JsonArray serializeActions(AbstractAction[] actions)
+  {
+    JsonArray ja = new JsonArray();
+    
+    for (int i = 0; i < actions.length; ++i)
+    {
+      ja.add(actions[i].toJSON());
+    }
+    
+    return ja;
+  }
+  
   public static AbstractAction[] parseActions(String json) {
     JsonParser parser = new JsonParser();
 
@@ -26,13 +38,13 @@ abstract public class AbstractAction
       {
         actions[i] = AddChildAction.fromJSON(oJson.toString());
       }
-      else if (actionType.equals(CreateAction.class.getName()))
+      else if (actionType.equals(UpdateAction.class.getName()))
       {
-        actions[i] = CreateAction.fromJSON(oJson.toString());
+        actions[i] = UpdateAction.fromJSON(oJson.toString());
       }
       else if (actionType.equals(DeleteAction.class.getName()))
       {
-        actions[i] = UpdateAction.fromJSON(oJson.toString());
+        actions[i] = DeleteAction.fromJSON(oJson.toString());
       }
       else
       {
