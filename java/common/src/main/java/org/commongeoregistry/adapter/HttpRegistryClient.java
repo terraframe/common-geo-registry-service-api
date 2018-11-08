@@ -51,7 +51,7 @@ public class HttpRegistryClient extends RegistryAdapter
 
   public static final String GET_GEO_OBJECT_TYPES     = "getGeoObjectTypes";
 
-  private Connector          connector;
+  protected Connector          connector;
 
   /**
    * 

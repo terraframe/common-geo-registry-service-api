@@ -8,6 +8,10 @@ import junit.framework.Assert;
 
 import org.commongeoregistry.adapter.HttpRegistryClient;
 import org.commongeoregistry.adapter.Term;
+import org.commongeoregistry.adapter.action.AbstractAction;
+import org.commongeoregistry.adapter.action.AddChildAction;
+import org.commongeoregistry.adapter.action.DeleteAction;
+import org.commongeoregistry.adapter.action.UpdateAction;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
@@ -68,19 +72,19 @@ public class LocalObjectCacheTest {
         cache.clear();
 
         // Define GeoObject Types
-        GeoObjectType province = MetadataFactory.newGeoObjectType(PROVINCE, GeometryType.POLYGON, "Province", "", client);
+        GeoObjectType province = MetadataFactory.newGeoObjectType(PROVINCE, GeometryType.POLYGON, "Province", "", false, client);
 
-        GeoObjectType district = MetadataFactory.newGeoObjectType(DISTRICT, GeometryType.POLYGON, "District", "", client);
+        GeoObjectType district = MetadataFactory.newGeoObjectType(DISTRICT, GeometryType.POLYGON, "District", "", false, client);
 
-        GeoObjectType commune = MetadataFactory.newGeoObjectType(COMMUNE, GeometryType.POLYGON, "Commune", "", client);
+        GeoObjectType commune = MetadataFactory.newGeoObjectType(COMMUNE, GeometryType.POLYGON, "Commune", "", false, client);
 
-        GeoObjectType village = MetadataFactory.newGeoObjectType(VILLAGE, GeometryType.POLYGON, "Village", "", client);
+        GeoObjectType village = MetadataFactory.newGeoObjectType(VILLAGE, GeometryType.POLYGON, "Village", "", false, client);
 
-        GeoObjectType household = MetadataFactory.newGeoObjectType(HOUSEHOLD, GeometryType.POLYGON, "Household", "", client);
+        GeoObjectType household = MetadataFactory.newGeoObjectType(HOUSEHOLD, GeometryType.POLYGON, "Household", "", false, client);
 
-        GeoObjectType focusArea = MetadataFactory.newGeoObjectType(FOCUS_AREA, GeometryType.POLYGON, "Focus Area", "", client);
+        GeoObjectType focusArea = MetadataFactory.newGeoObjectType(FOCUS_AREA, GeometryType.POLYGON, "Focus Area", "", false, client);
 
-        GeoObjectType healthFacility = MetadataFactory.newGeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, "Health Facility", "", client);
+        GeoObjectType healthFacility = MetadataFactory.newGeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, "Health Facility", "", false, client);
         healthFacility.addAttribute(createHealthFacilityTypeAttribute(client));
 
         // Define Geopolitical Hierarchy Type
@@ -127,6 +131,19 @@ public class LocalObjectCacheTest {
         return rootTerm;
     }
 
+    public GeoObject generateGeoObject(String genKey, String typeCode)
+    {
+        GeoObject geoObject = client.newGeoObjectInstance(typeCode);
+
+        String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
+
+        geoObject.setWKTGeometry(geom);
+        geoObject.setCode(genKey + "_CODE");
+        geoObject.setUid(genKey + "_UID");
+        geoObject.setLocalizedDisplayLabel(genKey + " Display Label");
+
+        return geoObject;
+    }
 
     @Test
     public void testCacheAndGetGeoObject() {
@@ -464,5 +481,22 @@ public class LocalObjectCacheTest {
         }
     }
 
+    @Test
+    public void testCacheActions() {
+        GeoObject geoObj1 = generateGeoObject("ActionTest1", PROVINCE);
+        GeoObject geoObj2 = generateGeoObject("ActionTest2", PROVINCE);
+        GeoObjectType province = geoObj1.getType();
+        HierarchyType geoPolitical = client.getMetadataCache().getHierachyType(GEOPOLITICAL).get();
 
+        cache.cache(geoObj1);
+        cache.cache(geoObj2);
+
+        // TODO : AddChild
+
+        AbstractAction[] actions = cache.getActionHistory();
+
+        Assert.assertEquals(2, actions.length);
+        Assert.assertEquals(geoObj1.toJSON().toString(),((UpdateAction)actions[0]).getObjJson().toString());
+        Assert.assertEquals(geoObj2.toJSON().toString(),((UpdateAction)actions[1]).getObjJson().toString());
+    }
 }

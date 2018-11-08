@@ -5,11 +5,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import org.commongeoregistry.adapter.HttpRegistryClient;
+import org.commongeoregistry.adapter.action.AbstractAction;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.http.AbstractHttpConnector;
 import org.commongeoregistry.adapter.http.Connector;
+import org.commongeoregistry.adapter.http.HttpResponse;
+import org.commongeoregistry.adapter.http.ResponseProcessor;
 
 
 public class AndroidRegistryClient extends HttpRegistryClient
@@ -18,6 +21,8 @@ public class AndroidRegistryClient extends HttpRegistryClient
    * 
    */
   private static final long serialVersionUID = 2367836756416546643L;
+
+  public static final String EXECUTE_ACTIONS  = "executeActions";
   
   private LocalObjectCache localObjectCache;
 
@@ -63,6 +68,11 @@ public class AndroidRegistryClient extends HttpRegistryClient
    */
   public void pushObjectsToRegistry()
   {
-    
+    AbstractAction[] actions = this.localObjectCache.getActionHistory();
+
+    String sActions = AbstractAction.serializeActions(actions).toString();
+
+    HttpResponse resp = this.connector.httpPost(EXECUTE_ACTIONS, sActions);
+    ResponseProcessor.validateStatusCode(resp);
   }
 }
