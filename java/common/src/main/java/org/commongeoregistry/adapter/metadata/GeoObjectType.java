@@ -44,7 +44,7 @@ public class GeoObjectType implements Serializable
   
   public static final String         JSON_GEOMETRY_TYPE             = "geometryType";
  
-  public static final String         JSON_IS_LEAF                        = "isLeaf";
+  public static final String         JSON_IS_LEAF                   = "isLeaf";
   
   /**
    * Unique but human readable identifier. It could be VILLAGE or HOUSEHOLD.
@@ -260,10 +260,18 @@ public class GeoObjectType implements Serializable
     AttributeCharacterType type = (AttributeCharacterType)DefaultAttribute.TYPE.createAttributeType();
     defaultAttributeMap.put(DefaultAttribute.TYPE.getName(), type);
     
+    AttributeIntegerType sequence = (AttributeIntegerType)DefaultAttribute.SEQUENCE.createAttributeType();
+    defaultAttributeMap.put(DefaultAttribute.SEQUENCE.getName(), sequence);
+    
+    AttributeDateType createdDate = (AttributeDateType)DefaultAttribute.CREATED_DATE.createAttributeType();
+    defaultAttributeMap.put(DefaultAttribute.CREATED_DATE.getName(), createdDate);
+    
+    AttributeDateType updatedDate = (AttributeDateType)DefaultAttribute.UPDATED_DATE.createAttributeType();
+    defaultAttributeMap.put(DefaultAttribute.UPDATED_DATE.getName(), updatedDate);
+    
     AttributeTermType status = (AttributeTermType)DefaultAttribute.STATUS.createAttributeType();
     Term rootStatusTerm = registry.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get();
     status.setRootTerm(rootStatusTerm);
-    
     defaultAttributeMap.put(DefaultAttribute.STATUS.getName(), status);
     
     return defaultAttributeMap;

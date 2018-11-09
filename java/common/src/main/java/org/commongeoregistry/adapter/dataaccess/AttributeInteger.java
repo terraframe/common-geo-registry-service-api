@@ -4,6 +4,7 @@ import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 public class AttributeInteger extends Attribute
@@ -47,7 +48,10 @@ public class AttributeInteger extends Attribute
   
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-    this.setValue(jValue.getAsInt());
+    if (!(jValue instanceof JsonNull))
+    {
+      this.setValue(jValue.getAsInt());
+    }
   }
 
 }

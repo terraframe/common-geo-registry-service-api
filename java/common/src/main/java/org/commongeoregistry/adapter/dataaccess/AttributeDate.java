@@ -49,9 +49,12 @@ public class AttributeDate extends Attribute
   @Override
   public void toJSON(JsonObject geoObjProps)
   {
-    String sDate = new java.text.SimpleDateFormat(FORMAT).format(this.date);
-    
-    geoObjProps.addProperty(this.getName(), sDate);
+    if (this.date != null)
+    {
+      String sDate = new java.text.SimpleDateFormat(FORMAT).format(this.date);
+      
+      geoObjProps.addProperty(this.getName(), sDate);
+    }
   }
   
   @Override

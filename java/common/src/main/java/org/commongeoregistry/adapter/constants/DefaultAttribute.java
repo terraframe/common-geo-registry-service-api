@@ -1,6 +1,8 @@
 package org.commongeoregistry.adapter.constants;
 
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
+import org.commongeoregistry.adapter.metadata.AttributeDateType;
+import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 
@@ -14,7 +16,13 @@ public enum DefaultAttribute
   
   TYPE("type",     "Type",      "The type of the GeoObject", AttributeCharacterType.TYPE),
   
-  STATUS("status", "Status",    "The status of the GeoObject", AttributeTermType.TYPE);
+  STATUS("status", "Status",    "The status of the GeoObject", AttributeTermType.TYPE),
+  
+  SEQUENCE("sequence", "Sequence",    "The sequence number of the GeoObject that is incremented when the object is updated", AttributeIntegerType.TYPE),
+ 
+  CREATED_DATE("createdDate", "Date Created",    "The date the object was created", AttributeDateType.TYPE),
+  
+  UPDATED_DATE("updatedDate", "Date Updated",    "The date the object was updated", AttributeDateType.TYPE);
 
   
   private String name;
