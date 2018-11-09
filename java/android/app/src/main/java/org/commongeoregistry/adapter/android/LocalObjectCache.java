@@ -10,12 +10,14 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
+import org.commongeoregistry.adapter.action.AbstractAction;
+import org.commongeoregistry.adapter.action.AddChildAction;
+import org.commongeoregistry.adapter.action.DeleteAction;
 import org.commongeoregistry.adapter.action.UpdateAction;
-import org.commongeoregistry.adapter.android.action.AbstractAction;
-import org.commongeoregistry.adapter.android.action.AddChildAction;
-import org.commongeoregistry.adapter.android.action.CreateAction;
-import org.commongeoregistry.adapter.android.action.DeleteAction;
-import org.commongeoregistry.adapter.android.action.UpdateAction;
+import org.commongeoregistry.adapter.action.AbstractAction;
+import org.commongeoregistry.adapter.action.AddChildAction;
+import org.commongeoregistry.adapter.action.DeleteAction;
+import org.commongeoregistry.adapter.action.UpdateAction;
 import org.commongeoregistry.adapter.android.sql.LocalCacheContract;
 import org.commongeoregistry.adapter.android.sql.LocalCacheContract.GeoObjectEntry;
 import org.commongeoregistry.adapter.android.sql.LocalCacheContract.TreeNodeEntry;
@@ -27,6 +29,7 @@ import org.commongeoregistry.adapter.dataaccess.TreeNode;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -109,28 +112,24 @@ public class LocalObjectCache implements Serializable {
                     sortOrder               // The sort order
             );
 
-            AbstractAction[] history = new AbstractAction[]{};
+            ArrayList<AbstractAction> history = new ArrayList<AbstractAction>();
 
             int i = 0;
             while (cursor.moveToNext()) {
                 String type = cursor.getString(0);
                 String json = cursor.getString(1);
 
-                if (type.equals(CreateAction.class.getName()))
+                if (type.equals(UpdateAction.class.getName()))
                 {
-                    history[i++] = CreateAction.fromJSON(json);
-                }
-                else if (type.equals(UpdateAction.class.getName()))
-                {
-                    history[i++] = UpdateAction.fromJSON(json);
+                    history.add(UpdateAction.fromJSON(json));
                 }
                 else if (type.equals(DeleteAction.class.getName()))
                 {
-                    history[i++] = DeleteAction.fromJSON(json);
+                    history.add(DeleteAction.fromJSON(json));
                 }
                 else if (type.equals(AddChildAction.class.getName()))
                 {
-                    history[i++] = AddChildAction.fromJSON(json);
+                    history.add(AddChildAction.fromJSON(json));
                 }
                 else
                 {
@@ -138,7 +137,7 @@ public class LocalObjectCache implements Serializable {
                 }
             }
 
-            return history;
+            return history.toArray(new AbstractAction[history.size()]);
 
         } finally {
             if (cursor != null) {
@@ -211,6 +210,34 @@ public class LocalObjectCache implements Serializable {
     }
 
     /**
+     * Records the update to the action cache and saves the new relationship to the object cache.
+     * When online synchronization happens at a later point this update will be processed.
+     *
+     * @param childGeoObject
+     * @param parentGeoObject
+     * @param hierarchyType
+     */
+    public void addChild(GeoObject childGeoObject, GeoObject parentGeoObject, HierarchyType hierarchyType) {
+        ChildTreeNode treeNode = new ChildTreeNode(parentGeoObject, hierarchyType);
+        treeNode.addChild(new ChildTreeNode(childGeoObject, hierarchyType));
+
+        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
+        try {
+            db.beginTransaction();
+
+            this.cache(treeNode, db);
+
+            this.insertAction(new AddChildAction(childGeoObject.getUid(), parentGeoObject.getUid(), hierarchyType.getCode()), db);
+
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to add child. A database error has occurred.", e);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
      * Add the given {@link GeoObject} to the local cache.
      *
      * @param geoObject
@@ -222,10 +249,33 @@ public class LocalObjectCache implements Serializable {
 
             this.insertGeoObject(geoObject, db);
 
-            // your sql stuff
             db.setTransactionSuccessful();
         } catch (SQLException e) {
-            throw new RuntimeException("Unable to cache tree node. A database error has occurred.", e);
+            throw new RuntimeException("Unable to cache geo object. A database error has occurred.", e);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
+     * Records the update to the action cache and saves the updated {@link GeoObject} to the
+     * object cache. When online synchronization happens at a later point this update will be
+     * processed.
+     *
+     * @param geoObject
+     */
+    public void updateGeoObject(GeoObject geoObject) {
+        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
+        try {
+            db.beginTransaction();
+
+            this.insertGeoObject(geoObject, db);
+
+            this.insertAction(new UpdateAction(geoObject), db);
+
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to update geo object. A database error has occurred.", e);
         } finally {
             db.endTransaction();
         }

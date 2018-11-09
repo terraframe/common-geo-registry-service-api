@@ -33,7 +33,7 @@ public class LocalCacheDbHelperTest {
         MockHttpConnector connector = new MockHttpConnector();
         HttpRegistryClient client = new HttpRegistryClient(connector);
 
-        MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", client);
+        MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
         GeoObject geoObject = client.newGeoObjectInstance("State");
         geoObject.setCode("Test");
@@ -70,7 +70,7 @@ public class LocalCacheDbHelperTest {
         MockHttpConnector connector = new MockHttpConnector();
         HttpRegistryClient client = new HttpRegistryClient(connector);
 
-        MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", client);
+        MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
         GeoObject geoObject = client.newGeoObjectInstance("State");
         geoObject.setCode("Test");
