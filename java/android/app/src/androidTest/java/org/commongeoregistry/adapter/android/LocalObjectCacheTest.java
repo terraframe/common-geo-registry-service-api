@@ -488,15 +488,26 @@ public class LocalObjectCacheTest {
         GeoObjectType province = geoObj1.getType();
         HierarchyType geoPolitical = client.getMetadataCache().getHierachyType(GEOPOLITICAL).get();
 
-        cache.cache(geoObj1);
-        cache.cache(geoObj2);
+        String action1GeoObj1 = geoObj1.toJSON().toString();
+        cache.updateGeoObject(geoObj1);
+        cache.updateGeoObject(geoObj2);
+        cache.addChild(geoObj1, geoObj2, geoPolitical);
 
-        // TODO : AddChild
+        geoObj1.setCode("TEST_MODIFIED_CODE");
+        cache.updateGeoObject(geoObj1);
 
         AbstractAction[] actions = cache.getActionHistory();
 
-        Assert.assertEquals(2, actions.length);
-        Assert.assertEquals(geoObj1.toJSON().toString(),((UpdateAction)actions[0]).getObjJson().toString());
+        Assert.assertEquals(4, actions.length);
+
+        Assert.assertEquals(action1GeoObj1,((UpdateAction)actions[0]).getObjJson().toString());
         Assert.assertEquals(geoObj2.toJSON().toString(),((UpdateAction)actions[1]).getObjJson().toString());
+
+        AddChildAction aca = (AddChildAction) actions[2];
+        Assert.assertEquals(geoObj1.getUid(), aca.getChildId());
+        Assert.assertEquals(geoObj2.getUid(), aca.getParentId());
+        Assert.assertEquals(geoPolitical.getCode(), aca.getHierarchyId());
+
+        Assert.assertEquals(geoObj1.toJSON().toString(),((UpdateAction)actions[3]).getObjJson().toString());
     }
 }

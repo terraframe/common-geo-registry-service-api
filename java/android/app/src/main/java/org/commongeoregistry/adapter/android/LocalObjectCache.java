@@ -210,6 +210,34 @@ public class LocalObjectCache implements Serializable {
     }
 
     /**
+     * Records the update to the action cache and saves the new relationship to the object cache.
+     * When online synchronization happens at a later point this update will be processed.
+     *
+     * @param childGeoObject
+     * @param parentGeoObject
+     * @param hierarchyType
+     */
+    public void addChild(GeoObject childGeoObject, GeoObject parentGeoObject, HierarchyType hierarchyType) {
+        ChildTreeNode treeNode = new ChildTreeNode(parentGeoObject, hierarchyType);
+        treeNode.addChild(new ChildTreeNode(childGeoObject, hierarchyType));
+
+        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
+        try {
+            db.beginTransaction();
+
+            this.cache(treeNode, db);
+
+            this.insertAction(new AddChildAction(childGeoObject.getUid(), parentGeoObject.getUid(), hierarchyType.getCode()), db);
+
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to add child. A database error has occurred.", e);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
      * Add the given {@link GeoObject} to the local cache.
      *
      * @param geoObject
@@ -221,12 +249,33 @@ public class LocalObjectCache implements Serializable {
 
             this.insertGeoObject(geoObject, db);
 
-            this.insertAction(new UpdateAction(geoObject), db);
-
-            // your sql stuff
             db.setTransactionSuccessful();
         } catch (SQLException e) {
-            throw new RuntimeException("Unable to cache tree node. A database error has occurred.", e);
+            throw new RuntimeException("Unable to cache geo object. A database error has occurred.", e);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
+     * Records the update to the action cache and saves the updated {@link GeoObject} to the
+     * object cache. When online synchronization happens at a later point this update will be
+     * processed.
+     *
+     * @param geoObject
+     */
+    public void updateGeoObject(GeoObject geoObject) {
+        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
+        try {
+            db.beginTransaction();
+
+            this.insertGeoObject(geoObject, db);
+
+            this.insertAction(new UpdateAction(geoObject), db);
+
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to update geo object. A database error has occurred.", e);
         } finally {
             db.endTransaction();
         }
