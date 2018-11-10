@@ -112,13 +112,13 @@ public class GeoObjectType implements Serializable
    * @param localizedLabel localized label of the {@link GeoObjectType}.
    * @param localizedDescription localized description of the {@link GeoObjectType}.
    * @param isLeaf True if the type is a leaf, false otherwise.
-   * @param registry {@link RegistryAdapter} from which this {@link GeoObjectType} is defined. 
+   * @param attributeMap attribute map.
    */
-  private GeoObjectType(String code, GeometryType geometryType, String localizedLabel, String localizedDescription, Boolean isLeaf, RegistryAdapter registry, Map<String, AttributeType> _attributeMap)
+  private GeoObjectType(String code, GeometryType geometryType, String localizedLabel, String localizedDescription, Boolean isLeaf, Map<String, AttributeType> attributeMap)
   {
     this.init(code, geometryType, localizedLabel, localizedDescription, isLeaf);
 
-    this.attributeMap = _attributeMap;
+    this.attributeMap = attributeMap;
   }
   
 
@@ -142,6 +142,30 @@ public class GeoObjectType implements Serializable
     this.geometryType = geometryType;
     
     this.isLeaf = isLeaf;
+  }
+  
+  
+  /**
+   * Createss a new instance of the current object and copies the attributes from the given {@link GeoObject} into this object.
+   *  
+   * @param gotSource {@link GeoObject} with attributes to copy into this attribute.
+
+   * @return this {@link GeoObject}
+   */
+  public GeoObjectType copy(GeoObjectType gotSource)
+  {
+    
+    GeoObjectType newGeoObjt = new GeoObjectType(this.code, this.geometryType, this.localizedLabel, this.localizedDescription, this.isLeaf, this.attributeMap);
+    
+    newGeoObjt.code = gotSource.getCode();
+    newGeoObjt.localizedLabel = gotSource.getLocalizedLabel();
+    newGeoObjt.localizedDescription = gotSource.getLocalizedDescription();
+    
+    newGeoObjt.geometryType = gotSource.getGeometryType();
+    
+    newGeoObjt.isLeaf = gotSource.isLeaf();
+    
+    return newGeoObjt;
   }
   
 
@@ -174,6 +198,16 @@ public class GeoObjectType implements Serializable
   {
     return this.localizedLabel;
   }
+  
+  /**
+   * Sets the localized display label of this {@link GeoObjectType}.
+   * 
+   * @param localizedLabel
+   */
+  public void setLocalizedLabel(String localizedLabel)
+  {
+    this.localizedLabel = localizedLabel;
+  }
 
   /**
    * Returns true if the type is a leaf node, false otherwise.
@@ -205,6 +239,17 @@ public class GeoObjectType implements Serializable
     return this.localizedDescription;
   }
 
+
+  /**
+   * Sets the localized display label of this {@link GeoObjectType}.
+   * 
+   * @param localizedDescription
+   */
+  public void setLocalizedDescription(String localizedDescription)
+  {
+    this.localizedDescription = localizedDescription;
+  }
+  
   /**
    * Returns the {@link AttributeType} defined on this {@link GeoObjectType} with the given name.
    * 
@@ -263,11 +308,11 @@ public class GeoObjectType implements Serializable
     AttributeIntegerType sequence = (AttributeIntegerType)DefaultAttribute.SEQUENCE.createAttributeType();
     defaultAttributeMap.put(DefaultAttribute.SEQUENCE.getName(), sequence);
     
-    AttributeDateType createdDate = (AttributeDateType)DefaultAttribute.CREATED_DATE.createAttributeType();
-    defaultAttributeMap.put(DefaultAttribute.CREATED_DATE.getName(), createdDate);
+    AttributeDateType createdDate = (AttributeDateType)DefaultAttribute.CREATE_DATE.createAttributeType();
+    defaultAttributeMap.put(DefaultAttribute.CREATE_DATE.getName(), createdDate);
     
-    AttributeDateType updatedDate = (AttributeDateType)DefaultAttribute.UPDATED_DATE.createAttributeType();
-    defaultAttributeMap.put(DefaultAttribute.UPDATED_DATE.getName(), updatedDate);
+    AttributeDateType updatedDate = (AttributeDateType)DefaultAttribute.LAST_UPDATE_DATE.createAttributeType();
+    defaultAttributeMap.put(DefaultAttribute.LAST_UPDATE_DATE.getName(), updatedDate);
     
     AttributeTermType status = (AttributeTermType)DefaultAttribute.STATUS.createAttributeType();
     Term rootStatusTerm = registry.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get();
@@ -308,7 +353,7 @@ public class GeoObjectType implements Serializable
     }
     
     // TODO Need to validate that the default attributes are still defined.
-    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription, isLeaf, registry, attributeMap);
+    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription, isLeaf, attributeMap);
     
     return geoObjType;
   }

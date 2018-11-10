@@ -20,9 +20,9 @@ public enum DefaultAttribute
   
   SEQUENCE("sequence", "Sequence",    "The sequence number of the GeoObject that is incremented when the object is updated", AttributeIntegerType.TYPE),
  
-  CREATED_DATE("createdDate", "Date Created",    "The date the object was created", AttributeDateType.TYPE),
+  CREATE_DATE("createDate", "Date Created",    "The date the object was created", AttributeDateType.TYPE),
   
-  UPDATED_DATE("updatedDate", "Date Updated",    "The date the object was updated", AttributeDateType.TYPE);
+  LAST_UPDATE_DATE("lastUpdateDate", "Date Last Updated",    "The date the object was updated", AttributeDateType.TYPE);
 
   
   private String name;
