@@ -45,44 +45,44 @@ public class MetadataCache implements Serializable
     DefaultTerms.buildGeoObjectStatusTree(adapter);
   }
   
-  public void addTerm(Term _term) 
+  public void addTerm(Term term) 
   {
-    this.termMap.put(_term.getCode(), _term);
+    this.termMap.put(term.getCode(), term);
   }
     
-  public Optional<Term> getTerm(String _code) 
+  public Optional<Term> getTerm(String code) 
   {
-    return Optional.of(this.termMap.get(_code));
+    return Optional.of(this.termMap.get(code));
   }
   
-  public void addGeoObjectType(GeoObjectType _geoObjectType) 
+  public void addGeoObjectType(GeoObjectType geoObjectType) 
   {
-    this.geoGeoObjectTypeMap.put(_geoObjectType.getCode(), _geoObjectType);
+    this.geoGeoObjectTypeMap.put(geoObjectType.getCode(), geoObjectType);
   }
     
-  public Optional<GeoObjectType> getGeoObjectType(String _code) 
+  public Optional<GeoObjectType> getGeoObjectType(String code) 
   {
-    return Optional.of(this.geoGeoObjectTypeMap.get(_code));
+    return Optional.of(this.geoGeoObjectTypeMap.get(code));
   }
   
-  public void removeGeoObjectType(String _code)
+  public void removeGeoObjectType(String code)
   {
-    this.geoGeoObjectTypeMap.remove(_code);
+    this.geoGeoObjectTypeMap.remove(code);
   }
   
-  public void addHierarchyType(HierarchyType _hierarchyType) 
+  public void addHierarchyType(HierarchyType hierarchyType) 
   {
-    this.hierarchyTypeMap.put(_hierarchyType.getCode(), _hierarchyType);
+    this.hierarchyTypeMap.put(hierarchyType.getCode(), hierarchyType);
   }
   
-  public Optional<HierarchyType> getHierachyType(String _code) 
+  public Optional<HierarchyType> getHierachyType(String code) 
   {
-    return Optional.of(this.hierarchyTypeMap.get(_code));
+    return Optional.of(this.hierarchyTypeMap.get(code));
   }
   
-  public void removeHierarchyType(String _code)
+  public void removeHierarchyType(String code)
   {
-    this.hierarchyTypeMap.remove(_code);
+    this.hierarchyTypeMap.remove(code);
   }
 
   public GeoObjectType[] getAllGeoObjectTypes()
