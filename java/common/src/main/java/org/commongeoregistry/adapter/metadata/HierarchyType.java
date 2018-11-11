@@ -69,9 +69,19 @@ public class HierarchyType implements Serializable
     return this.localizedLabel;
   }
 
+  public void setLocalizedLabel(String localizedLabel)
+  {
+    this.localizedLabel = localizedLabel;
+  }
+  
   public String getLocalizedDescription()
   {
     return this.localizedDescription;
+  }
+  
+  public void setLocalizedDescription(String localizedDescription)
+  {
+    this.localizedDescription = localizedDescription;
   }
   
   public List<HierarchyNode> getRootGeoObjectTypes()
