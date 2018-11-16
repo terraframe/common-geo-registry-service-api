@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.commongeoregistry.adapter.constants.GeometryType;
+import org.commongeoregistry.adapter.constants.RegistryUrls;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
@@ -46,7 +47,7 @@ public class HttpRegistryClientTest
     /*
      * Validate request
      */
-    Assert.assertEquals(HttpRegistryClient.GET_GEO_OBJECT_TYPES, connector.getUrl());
+    Assert.assertEquals(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, connector.getUrl());
     Assert.assertEquals(0, connector.getParams().size());
 
     /*
@@ -108,7 +109,7 @@ public class HttpRegistryClientTest
     /*
      * Validate request
      */
-    Assert.assertEquals(HttpRegistryClient.GET_GEO_OBJECT, connector.getUrl());
+    Assert.assertEquals(RegistryUrls.GEO_OBJECT_GET, connector.getUrl());
 
     Map<String, String> params = connector.getParams();
 
@@ -164,7 +165,7 @@ public class HttpRegistryClientTest
     /*
      * Validate request
      */
-    Assert.assertEquals(HttpRegistryClient.CREATE_GEO_OBJECT, connector.getUrl());
+    Assert.assertEquals(RegistryUrls.GEO_OBJECT_CREATE, connector.getUrl());
 
     String body = connector.getBody();
 
@@ -209,7 +210,7 @@ public class HttpRegistryClientTest
     /*
      * Validate request
      */
-    Assert.assertEquals(HttpRegistryClient.UPDATE_GEO_OBJECT, connector.getUrl());
+    Assert.assertEquals(RegistryUrls.GEO_OBJECT_UPDATE, connector.getUrl());
 
     String body = connector.getBody();
 
@@ -281,7 +282,7 @@ public class HttpRegistryClientTest
     /*
      * Validate request
      */
-    Assert.assertEquals(HttpRegistryClient.GET_CHILDREN_GEO_OBJECTS, connector.getUrl());
+    Assert.assertEquals(RegistryUrls.GEO_OBJECT_GET_CHILDREN, connector.getUrl());
 
     Map<String, String> params = connector.getParams();
 
@@ -381,7 +382,7 @@ public class HttpRegistryClientTest
     /*
      * Validate request
      */
-    Assert.assertEquals(HttpRegistryClient.GET_PARENT_GEO_OBJECTS, connector.getUrl());
+    Assert.assertEquals(RegistryUrls.GEO_OBJECT_GET_PARENTS, connector.getUrl());
 
     Map<String, String> params = connector.getParams();
 
@@ -460,7 +461,7 @@ public class HttpRegistryClientTest
     /*
      * Validate request
      */
-    Assert.assertEquals(HttpRegistryClient.GET_GEO_OBJECT_UIDS, connector.getUrl());
+    Assert.assertEquals(RegistryUrls.GEO_OBJECT_GET_UIDS, connector.getUrl());
 
     Map<String, String> params = connector.getParams();
 

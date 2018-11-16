@@ -72,7 +72,7 @@ public class AndroidRegistryClient extends HttpRegistryClient
 
     String sActions = AbstractAction.serializeActions(actions).toString();
 
-    HttpResponse resp = this.connector.httpPost(EXECUTE_ACTIONS, sActions);
+    HttpResponse resp = this.getConnector().httpPost(EXECUTE_ACTIONS, sActions);
     ResponseProcessor.validateStatusCode(resp);
   }
 }
