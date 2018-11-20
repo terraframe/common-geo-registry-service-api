@@ -49,4 +49,10 @@ public class RegistryUrls
   public static final String HIERARCHY_TYPE_ADD      = "hierarchytype/add";
   
   public static final String HIERARCHY_TYPE_REMOVE   = "hierarchytype/remove";
+  
+  /**
+   * Miscellaneous
+   */
+  
+  public static final String EXECUTE_ACTIONS         = "executeActions";
 }

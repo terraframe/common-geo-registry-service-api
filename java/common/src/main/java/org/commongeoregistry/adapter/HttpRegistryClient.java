@@ -62,16 +62,11 @@ public class HttpRegistryClient extends RegistryAdapter
   public void refreshMetadataCache()
   {
     this.getMetadataCache().rebuild();
+    
+    GeoObjectType[] gots = this.getGeoObjectTypes(new String[]{});
 
-    HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, new HashMap<String, String>());
-    ResponseProcessor.validateStatusCode(resp);
-
-    JsonArray jArr = resp.getAsJsonArray();
-
-    for (int i = 0; i < jArr.size(); ++i)
+    for (GeoObjectType got : gots)
     {
-      JsonObject jObj = jArr.get(i).getAsJsonObject();
-      GeoObjectType got = GeoObjectType.fromJSON(jObj.toString(), this);
       this.getMetadataCache().addGeoObjectType(got);
     }
   }
@@ -109,7 +104,7 @@ public class HttpRegistryClient extends RegistryAdapter
    * 
    * @param _geoObject
    */
-  public void createGeoObject(GeoObject _geoObject)
+  public GeoObject createGeoObject(GeoObject _geoObject)
   {
     if (_geoObject == null)
     {
@@ -118,10 +113,14 @@ public class HttpRegistryClient extends RegistryAdapter
 
     JsonObject jsonObject = _geoObject.toJSON();
 
-    String geoJSON = jsonObject.toString();
+    JsonObject params = new JsonObject();
+    params.add("geoObject", jsonObject);
 
-    HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_CREATE, geoJSON);
+    HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_CREATE, params.toString());
     ResponseProcessor.validateStatusCode(resp);
+    
+    GeoObject retGeo = GeoObject.fromJSON(this, resp.getAsString());
+    return retGeo;
   }
 
   /**
@@ -131,7 +130,7 @@ public class HttpRegistryClient extends RegistryAdapter
    * 
    * @param _geoObject
    */
-  public void updateGeoObject(GeoObject _geoObject)
+  public GeoObject updateGeoObject(GeoObject _geoObject)
   {
     if (_geoObject == null)
     {
@@ -140,10 +139,14 @@ public class HttpRegistryClient extends RegistryAdapter
 
     JsonObject jsonObject = _geoObject.toJSON();
 
-    String geoJSON = jsonObject.toString();
+    JsonObject params = new JsonObject();
+    params.add("geoObject", jsonObject);
 
-    HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_UPDATE, geoJSON);
+    HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_UPDATE, params.toString());
     ResponseProcessor.validateStatusCode(resp);
+    
+    GeoObject retGeo = GeoObject.fromJSON(this, resp.getAsString());
+    return retGeo;
   }
 
   /**
@@ -286,5 +289,56 @@ public class HttpRegistryClient extends RegistryAdapter
     }
 
     return list;
+  }
+  
+  /**
+   * Sends the given {@link GeoObjectType} to the common geo-registry to be created.
+   * 
+   * @param geoObjectType
+   */
+  public void createGeoObjectType(GeoObjectType geoObjectType)
+  {
+    if (geoObjectType == null)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_TYPE_CREATE, "geoObjectType");
+    }
+    
+    JsonObject jsonObject = geoObjectType.toJSON();
+
+    JsonObject params = new JsonObject();
+    params.add("gtJSON", jsonObject);
+
+    HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_TYPE_CREATE, params.toString());
+    ResponseProcessor.validateStatusCode(resp);
+  }
+  
+  public GeoObjectType[] getGeoObjectTypes(String[] codes)
+  {
+    if (codes == null)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, "types");
+    }
+    
+    JsonArray types = new JsonArray();
+    for (String code : codes)
+    {
+      types.add(code);
+    }
+    
+    HashMap<String, String> params = new HashMap<String, String>();
+    params.put("types", types.toString());
+    
+    HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, params);
+    ResponseProcessor.validateStatusCode(resp);
+    
+    JsonArray jaGots = resp.getAsJsonArray();
+    GeoObjectType[] gots = new GeoObjectType[jaGots.size()];
+    for (int i = 0; i < jaGots.size(); ++i)
+    {
+      GeoObjectType got = GeoObjectType.fromJSON(jaGots.get(i).toString(), this);
+      gots[i] = got;
+    }
+    
+    return gots;
   }
 }

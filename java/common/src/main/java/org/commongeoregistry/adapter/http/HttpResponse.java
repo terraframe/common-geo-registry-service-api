@@ -62,4 +62,19 @@ public class HttpResponse
   {
     this.statusCode = statusCode;
   }
+  
+  @Override
+  public String toString()
+  {
+    String status = "HTTPResponse [" + this.statusCode + "]";
+    
+    if (this.response.length() > 300)
+    {
+      return status;
+    }
+    else
+    {
+      return status + " : [" + this.response + "]";
+    }
+  }
 }

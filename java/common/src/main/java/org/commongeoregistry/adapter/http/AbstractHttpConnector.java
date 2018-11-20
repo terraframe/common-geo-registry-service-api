@@ -21,6 +21,7 @@ package org.commongeoregistry.adapter.http;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -29,6 +30,11 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.commongeoregistry.adapter.constants.RegistryUrls;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
 public abstract class AbstractHttpConnector implements Connector
 {
@@ -62,24 +68,48 @@ public abstract class AbstractHttpConnector implements Connector
     {
       StringBuilder builder = new StringBuilder();
       builder.append(this.getServerUrl());
+      builder.append(RegistryUrls.REGISTRY_CONTROLLER_URL);
+      builder.append("/");
       builder.append(url);
-
+      
       if (params.size() > 0)
       {
         Set<Entry<String, String>> entries = params.entrySet();
-
+        
         int count = 0;
         for (Entry<String, String> entry : entries)
         {
-          builder.append( ( count == 0 ? "?" : "&" ));
-          builder.append(URLEncoder.encode(entry.getKey(), "utf-8"));
-          builder.append("=");
-          builder.append(URLEncoder.encode(entry.getValue(), "utf-8"));
-
+          String value = entry.getValue();
+          
+          if (value.startsWith("[") && value.endsWith("]"))
+          {
+            JsonArray array = new JsonParser().parse(value).getAsJsonArray();
+            String key = entry.getKey();
+            
+            for (int i = 0; i < array.size(); ++i)
+            {
+              builder.append( ( count == 0 ? "?" : "&" ));
+              builder.append(URLEncoder.encode(key, "utf-8"));
+              builder.append("=");
+              builder.append(URLEncoder.encode(array.get(i).getAsString(), "utf-8"));
+              
+              count++;
+            }
+          }
+          else
+          {
+            builder.append( ( count == 0 ? "?" : "&" ));
+            builder.append(URLEncoder.encode(entry.getKey(), "utf-8"));
+            builder.append("=");
+            builder.append(URLEncoder.encode(value, "utf-8"));
+          }
+          
           count++;
         }
       }
-
+      
+      System.out.println("Sending HTTP GET request to [" + builder.toString() + "].");
+      
       URL obj = new URL(builder.toString());
       HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -87,10 +117,24 @@ public abstract class AbstractHttpConnector implements Connector
       {
         con.setRequestMethod("GET");
         con.setRequestProperty("Accept", "application/json");
+        
+        this.configureHttpUrlConnectionPost(con);
 
         con.connect();
+        
+        int status = con.getResponseCode();
+        
+        InputStream is;
+        if (status != HttpURLConnection.HTTP_OK)
+        {
+          is = con.getErrorStream();
+        }
+        else
+        {
+          is = con.getInputStream();
+        }
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())))
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(is)))
         {
           String inputLine;
           StringBuffer response = new StringBuffer();
@@ -100,7 +144,12 @@ public abstract class AbstractHttpConnector implements Connector
             response.append(inputLine);
           }
 
-          return new HttpResponse(response.toString(), con.getResponseCode());
+          
+          HttpResponse resp = new HttpResponse(response.toString(), con.getResponseCode());
+          
+          System.out.println("Receieved response [" + resp + "].");
+
+          return resp;
         }
       }
       finally
@@ -112,6 +161,10 @@ public abstract class AbstractHttpConnector implements Connector
     {
       throw new RuntimeException(e);
     }
+  }
+  
+  public void configureHttpUrlConnectionPost(HttpURLConnection con)
+  {
   }
 
   /*
@@ -128,7 +181,11 @@ public abstract class AbstractHttpConnector implements Connector
     {
       StringBuilder builder = new StringBuilder();
       builder.append(this.getServerUrl());
+      builder.append(RegistryUrls.REGISTRY_CONTROLLER_URL);
+      builder.append("/");
       builder.append(url);
+      
+      System.out.println("Sending HTTP POST request to [" + builder.toString() + "].");
 
       URL obj = new URL(builder.toString());
       HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -139,6 +196,8 @@ public abstract class AbstractHttpConnector implements Connector
         con.setRequestMethod("POST");
         con.setDoOutput(true);
         con.setChunkedStreamingMode(0);
+        
+        this.configureHttpUrlConnectionPost(con);
 
         con.connect();
 
@@ -147,8 +206,21 @@ public abstract class AbstractHttpConnector implements Connector
          */
         OutputStream out = new BufferedOutputStream(con.getOutputStream());
         out.write(body.getBytes("utf-8"));
-
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())))
+        out.close();
+        
+        int status = con.getResponseCode();
+        
+        InputStream is;
+        if (status != HttpURLConnection.HTTP_OK)
+        {
+          is = con.getErrorStream();
+        }
+        else
+        {
+          is = con.getInputStream();
+        }
+        
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(is)))
         {
           String inputLine;
           StringBuffer response = new StringBuffer();
@@ -157,8 +229,12 @@ public abstract class AbstractHttpConnector implements Connector
           {
             response.append(inputLine);
           }
+          
+          HttpResponse resp = new HttpResponse(response.toString(), con.getResponseCode());
+          
+          System.out.println("Receieved response [" + resp + "].");
 
-          return new HttpResponse(response.toString(), con.getResponseCode());
+          return resp;
         }
       }
       finally

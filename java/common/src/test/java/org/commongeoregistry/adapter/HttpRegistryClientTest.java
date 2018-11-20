@@ -19,6 +19,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class HttpRegistryClientTest
 {
@@ -48,7 +50,7 @@ public class HttpRegistryClientTest
      * Validate request
      */
     Assert.assertEquals(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, connector.getUrl());
-    Assert.assertEquals(0, connector.getParams().size());
+    Assert.assertEquals(1, connector.getParams().size());
 
     /*
      * Validate response
@@ -160,6 +162,7 @@ public class HttpRegistryClientTest
     /*
      * Invoke method
      */
+    connector.setResponse(new HttpResponse(geoObject.toJSON().toString(), 201));
     client.createGeoObject(geoObject);
 
     /*
@@ -171,7 +174,8 @@ public class HttpRegistryClientTest
 
     Assert.assertNotNull(body);
 
-    GeoObject test = GeoObject.fromJSON(client, body);
+    JsonObject params = new JsonParser().parse(body).getAsJsonObject();
+    GeoObject test = GeoObject.fromJSON(client, params.get("geoObject").toString());
 
     Assert.assertEquals(geoObject.getUid(), test.getUid());
   }
@@ -205,6 +209,7 @@ public class HttpRegistryClientTest
     /*
      * Invoke method
      */
+    connector.setResponse(new HttpResponse(geoObject.toJSON().toString(), 201));
     client.updateGeoObject(geoObject);
 
     /*
@@ -215,8 +220,10 @@ public class HttpRegistryClientTest
     String body = connector.getBody();
 
     Assert.assertNotNull(body);
+    
+    JsonObject params = new JsonParser().parse(body).getAsJsonObject();
 
-    GeoObject test = GeoObject.fromJSON(client, body);
+    GeoObject test = GeoObject.fromJSON(client, params.get("geoObject").toString());
 
     Assert.assertEquals(geoObject.getUid(), test.getUid());
   }

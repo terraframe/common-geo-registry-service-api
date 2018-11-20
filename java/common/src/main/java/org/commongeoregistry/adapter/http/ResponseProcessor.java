@@ -10,7 +10,7 @@ public class ResponseProcessor
 
     if (statusCode != HttpURLConnection.HTTP_OK && statusCode != HttpURLConnection.HTTP_CREATED)
     {
-      throw new ResponseException("Invalid status code [" + statusCode + "].", statusCode);
+      throw new ResponseException("Invalid status code [" + statusCode + "] [" + resp.getAsString() + "].", statusCode);
     }
   }
 }
