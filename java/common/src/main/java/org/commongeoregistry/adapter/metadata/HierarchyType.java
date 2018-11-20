@@ -261,11 +261,14 @@ public class HierarchyType implements Serializable
     HierarchyType ht = new HierarchyType(code, localizedLabel, localizedDescription);
     
     JsonArray rootGeoObjectTypes = oJson.getAsJsonArray(JSON_ROOT_GEOOBJECTTYPES);
-    for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
+    if (rootGeoObjectTypes != null)
     {
-      HierarchyNode node = HierarchyNode.fromJSON(rootGeoObjectTypes.get(i).getAsJsonObject().toString(), _registry);
-      
-      ht.addRootGeoObjects(node);
+      for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
+      {
+        HierarchyNode node = HierarchyNode.fromJSON(rootGeoObjectTypes.get(i).getAsJsonObject().toString(), _registry);
+        
+        ht.addRootGeoObjects(node);
+      }
     }
     
     return ht;

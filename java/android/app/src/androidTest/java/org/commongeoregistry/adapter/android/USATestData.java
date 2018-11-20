@@ -1,11 +1,18 @@
-package org.commongeoregistry.adapter;
+package org.commongeoregistry.adapter.android;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.commongeoregistry.adapter.HttpRegistryClient;
+import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
+import org.commongeoregistry.adapter.metadata.HierarchyType;
 import org.junit.Assert;
 
 /**
@@ -15,6 +22,10 @@ import org.junit.Assert;
 public class USATestData
 {
   public static final String TEST_DATA_KEY = "USATestData";
+
+  public final TestHierarchyTypeInfo LOCATED_IN = new TestHierarchyTypeInfo("LocatedIn");
+
+  public final TestHierarchyTypeInfo ALLOWED_IN = new TestHierarchyTypeInfo("AllowedIn");
   
   public final TestGeoObjectTypeInfo COUNTRY = new TestGeoObjectTypeInfo("Country");
   
@@ -37,20 +48,56 @@ public class USATestData
   public final TestGeoObjectInfo WA_D_ONE = new TestGeoObjectInfo("WashingtonDistrictOne", DISTRICT);
   
   public final TestGeoObjectInfo WA_D_TWO = new TestGeoObjectInfo("WashingtonDistrictTwo", DISTRICT);
-  
-  public TestGeoObjectTypeInfo[] UNIVERSALS = new TestGeoObjectTypeInfo[]{COUNTRY, STATE, DISTRICT};
-  
-  public TestGeoObjectInfo[] GEOENTITIES = new TestGeoObjectInfo[]{USA, COLORADO, WASHINGTON, CO_D_ONE, CO_D_TWO, CO_D_THREE, WA_D_ONE, WA_D_TWO};
-  
-  private ArrayList<TestGeoObjectInfo> customGeoInfos = new ArrayList<TestGeoObjectInfo>();
 
-  private ArrayList<TestGeoObjectTypeInfo> customUniInfos = new ArrayList<TestGeoObjectTypeInfo>();
+  public ArrayList<TestGeoObjectTypeInfo> GEOOBJECTTYPES = new ArrayList<TestGeoObjectTypeInfo>(Arrays.asList(new TestGeoObjectTypeInfo[]{COUNTRY, STATE, DISTRICT}));
   
-  private RegistryAdapter adapter;
+  public ArrayList<TestGeoObjectInfo> GEOOBJECTS = new ArrayList<TestGeoObjectInfo>(Arrays.asList(new TestGeoObjectInfo[]{USA, COLORADO, WASHINGTON, CO_D_ONE, CO_D_TWO, CO_D_THREE, WA_D_ONE, WA_D_TWO}));
   
-  public USATestData(RegistryAdapter adapter)
+  private HttpRegistryClient client;
+  
+  public USATestData(HttpRegistryClient client)
   {
-    this.adapter = adapter;
+    this.client = client;
+  }
+
+  public void setUp()
+  {
+    for (TestGeoObjectInfo geo : GEOOBJECTS)
+    {
+      geo.fetchUid();
+    }
+
+    COUNTRY.addChild(STATE);
+    STATE.addChild(DISTRICT);
+
+    USA.addChild(COLORADO);
+    COLORADO.addChild(CO_D_ONE);
+    COLORADO.addChild(CO_D_TWO);
+    COLORADO.addChild(CO_D_THREE);
+
+    USA.addChild(WASHINGTON);
+    WASHINGTON.addChild(WA_D_ONE);
+    WASHINGTON.addChild(WA_D_TWO);
+  }
+
+  public class TestHierarchyTypeInfo
+  {
+    private String code;
+
+    private TestHierarchyTypeInfo(String code)
+    {
+      this.code = code;
+    }
+
+    public String getCode()
+    {
+      return code;
+    }
+
+    public void setCode(String code)
+    {
+      this.code = code;
+    }
   }
   
   public class TestGeoObjectTypeInfo
@@ -98,7 +145,7 @@ public class USATestData
       return this.children;
     }
     
-    public void addChild(TestGeoObjectTypeInfo child, String relationshipType)
+    public void addChild(TestGeoObjectTypeInfo child)
     {
       if (!this.children.contains(child))
       {
@@ -116,7 +163,7 @@ public class USATestData
     
     public GeoObjectType newGeoObjectType()
     {
-      return USATestData.this.adapter.getMetadataCache().getGeoObjectType(this.code).get();
+      return USATestData.this.client.getMetadataCache().getGeoObjectType(this.code).get();
 //      return RegistryService.getConversionService().universalToGeoObjectType(this.getUniversal());
     }
 
@@ -132,7 +179,7 @@ public class USATestData
     
     info.delete();
     
-    this.customGeoInfos.add(info);
+    this.GEOOBJECTS.add(info);
     
     return info;
   }
@@ -143,7 +190,7 @@ public class USATestData
     
     info.delete();
     
-    this.customGeoInfos.add(info);
+    this.GEOOBJECTS.add(info);
     
     return info;
   }
@@ -151,13 +198,26 @@ public class USATestData
   public TestGeoObjectTypeInfo newTestGeoObjectTypeInfo(String genKey)
   {
     TestGeoObjectTypeInfo info = new TestGeoObjectTypeInfo(genKey);
-    
+
     info.delete();
-    
-    this.customUniInfos.add(info);
-    
+
+    this.GEOOBJECTTYPES.add(info);
+
     return info;
   }
+
+    public static void assertEqualsHierarchyType(String relationshipType, HierarchyType compare)
+    {
+        // TODO
+
+//        MdRelationship allowedIn = MdRelationship.getMdRelationship(relationshipType);
+//
+//        Assert.assertEquals(allowedIn.getKey(), compare.getCode());
+//        Assert.assertEquals(allowedIn.getDescription().getValue(), compare.getLocalizedDescription());
+//        Assert.assertEquals(allowedIn.getDisplayLabel().getValue(), compare.getLocalizedLabel());
+
+//    compare.getRootGeoObjectTypes() // TODO
+    }
   
   public class TestGeoObjectInfo
   {
@@ -206,7 +266,7 @@ public class USATestData
       this.parents = new LinkedList<TestGeoObjectInfo>();
     }
 
-    public String getGeoId() {
+    public String getCode() {
       return geoId;
     }
 
@@ -228,10 +288,10 @@ public class USATestData
     
     public GeoObject newGeoObject()
     {
-      GeoObject geoObj = USATestData.this.adapter.newGeoObjectInstance(this.universal.getCode());
+      GeoObject geoObj = USATestData.this.client.newGeoObjectInstance(this.universal.getCode());
       
       geoObj.setWKTGeometry(this.getWkt());
-      geoObj.setCode(this.getGeoId());
+      geoObj.setCode(this.getCode());
       geoObj.setLocalizedDisplayLabel(this.getDisplayLabel());
       
       if (uid != null)
@@ -252,135 +312,135 @@ public class USATestData
       return this.parents;
     }
     
-//    public void assertEquals(ChildTreeNode tn, String[] childrenTypes, boolean recursive)
-//    {
-//      this.assertEquals(tn.getGeoObject());
-//      // TODO : HierarchyType?
-//      
-//      List<ChildTreeNode> tnChildren = tn.getChildren();
-//      
-//      // Check array size
-//      int numChildren = 0;
-//      for (TestGeoObjectInfo testChild : this.children)
-//      {
-//        if (ArrayUtils.contains(childrenTypes, testChild.getUniversal().getCode()))
-//        {
-//          numChildren++;
-//        }
-//      }
-//      Assert.assertEquals(numChildren, tnChildren.size());
-//      
-//      // Check to make sure all the children match types in our type array
-//      for (ChildTreeNode compareChild : tnChildren)
-//      {
-//        String code = compareChild.getGeoObject().getType().getCode();
-//        
-//        if (!ArrayUtils.contains(childrenTypes, code))
-//        {
-//          Assert.fail("Unexpected child with code [" + code + "]. Does not match expected childrenTypes array [" + StringUtils.join(childrenTypes, ", ") + "].");
-//        }
-//      }
-//      
-//      for (TestGeoObjectInfo testChild : this.children)
-//      {
-//        if (ArrayUtils.contains(childrenTypes, testChild.getGeoId()))
-//        {
-//          ChildTreeNode tnChild = null;
-//          for (ChildTreeNode compareChild : tnChildren)
-//          {
-//            if (testChild.getGeoId().equals(compareChild.getGeoObject().getCode()))
-//            {
-//              tnChild = compareChild;
-//            }
-//          }
-//          
-//          if (tnChild == null)
-//          {
-//            Assert.fail("The ChildTreeNode did not contain a child that we expected to find.");
-//          }
-//          else if (recursive)
-//          {
-//            testChild.assertEquals(tnChild, childrenTypes, recursive);
-//          }
-//          else
-//          {
-//            testChild.assertEquals(tnChild.getGeoObject());
-//            USATestData.assertEqualsHierarchyType(LocatedIn.CLASS, tnChild.getHierachyType());
-//          }
-//        }
-//      }
-//    }
+    public void assertEquals(ChildTreeNode tn, String[] childrenTypes, boolean recursive)
+    {
+      this.assertEquals(tn.getGeoObject());
+      // TODO : HierarchyType?
+
+      List<ChildTreeNode> tnChildren = tn.getChildren();
+
+      // Check array size
+      int numChildren = 0;
+      for (TestGeoObjectInfo testChild : this.children)
+      {
+        if (ArrayUtils.contains(childrenTypes, testChild.getUniversal().getCode()))
+        {
+          numChildren++;
+        }
+      }
+      Assert.assertEquals(numChildren, tnChildren.size());
+
+      // Check to make sure all the children match types in our type array
+      for (ChildTreeNode compareChild : tnChildren)
+      {
+        String code = compareChild.getGeoObject().getType().getCode();
+
+        if (!ArrayUtils.contains(childrenTypes, code))
+        {
+          Assert.fail("Unexpected child with code [" + code + "]. Does not match expected childrenTypes array [" + StringUtils.join(childrenTypes, ", ") + "].");
+        }
+      }
+
+      for (TestGeoObjectInfo testChild : this.children)
+      {
+        if (ArrayUtils.contains(childrenTypes, testChild.getCode()))
+        {
+          ChildTreeNode tnChild = null;
+          for (ChildTreeNode compareChild : tnChildren)
+          {
+            if (testChild.getCode().equals(compareChild.getGeoObject().getCode()))
+            {
+              tnChild = compareChild;
+            }
+          }
+
+          if (tnChild == null)
+          {
+            Assert.fail("The ChildTreeNode did not contain a child that we expected to find.");
+          }
+          else if (recursive)
+          {
+            testChild.assertEquals(tnChild, childrenTypes, recursive);
+          }
+          else
+          {
+            testChild.assertEquals(tnChild.getGeoObject());
+//            USATestData.assertEqualsHierarchyTyp, tnChild.getHierachyType()); // TODO
+          }
+        }
+      }
+    }
     
-//    public void assertEquals(ParentTreeNode tn, String[] parentTypes, boolean recursive)
-//    {
-//      this.assertEquals(tn.getGeoObject());
-//      // TODO : HierarchyType?
-//      
-//      List<ParentTreeNode> tnParents = tn.getParents();
-//      
-//      // Check array size
-//      int numParents = 0;
-//      for (TestGeoObjectInfo testParent : this.parents)
-//      {
-//        if (ArrayUtils.contains(parentTypes, testParent.getUniversal().getCode()))
-//        {
-//          numParents++;
-//        }
-//      }
-//      Assert.assertEquals(numParents, tnParents.size());
-//      
-//      // Check to make sure all the children match types in our type array
-//      for (ParentTreeNode compareParent : tnParents)
-//      {
-//        String code = compareParent.getGeoObject().getType().getCode();
-//        
-//        if (!ArrayUtils.contains(parentTypes, code))
-//        {
-//          Assert.fail("Unexpected child with code [" + code + "]. Does not match expected childrenTypes array [" + StringUtils.join(parentTypes, ", ") + "].");
-//        }
-//      }
-//      
-//      for (TestGeoObjectInfo testParent : this.parents)
-//      {
-//        if (ArrayUtils.contains(parentTypes, testParent.getGeoId()))
-//        {
-//          ParentTreeNode tnParent = null;
-//          for (ParentTreeNode compareParent : tnParents)
-//          {
-//            if (testParent.getGeoId().equals(compareParent.getGeoObject().getCode()))
-//            {
-//              tnParent = compareParent;
-//            }
-//          }
-//          
-//          if (tnParent == null)
-//          {
-//            Assert.fail("The ParentTreeNode did not contain a child that we expected to find.");
-//          }
-//          else if (recursive)
-//          {
-//            testParent.assertEquals(tnParent, parentTypes, recursive);
-//          }
-//          else
-//          {
-//            testParent.assertEquals(tnParent.getGeoObject());
-//            USATestData.assertEqualsHierarchyType(LocatedIn.CLASS, tnParent.getHierachyType());
-//          }
-//        }
-//      }
-//    }
+    public void assertEquals(ParentTreeNode tn, String[] parentTypes, boolean recursive)
+    {
+      this.assertEquals(tn.getGeoObject());
+      // TODO : HierarchyType?
+
+      List<ParentTreeNode> tnParents = tn.getParents();
+
+      // Check array size
+      int numParents = 0;
+      for (TestGeoObjectInfo testParent : this.parents)
+      {
+        if (ArrayUtils.contains(parentTypes, testParent.getUniversal().getCode()))
+        {
+          numParents++;
+        }
+      }
+      Assert.assertEquals(numParents, tnParents.size());
+
+      // Check to make sure all the children match types in our type array
+      for (ParentTreeNode compareParent : tnParents)
+      {
+        String code = compareParent.getGeoObject().getType().getCode();
+
+        if (!ArrayUtils.contains(parentTypes, code))
+        {
+          Assert.fail("Unexpected child with code [" + code + "]. Does not match expected childrenTypes array [" + StringUtils.join(parentTypes, ", ") + "].");
+        }
+      }
+
+      for (TestGeoObjectInfo testParent : this.parents)
+      {
+        if (ArrayUtils.contains(parentTypes, testParent.getCode()))
+        {
+          ParentTreeNode tnParent = null;
+          for (ParentTreeNode compareParent : tnParents)
+          {
+            if (testParent.getCode().equals(compareParent.getGeoObject().getCode()))
+            {
+              tnParent = compareParent;
+            }
+          }
+
+          if (tnParent == null)
+          {
+            Assert.fail("The ParentTreeNode did not contain a child that we expected to find.");
+          }
+          else if (recursive)
+          {
+            testParent.assertEquals(tnParent, parentTypes, recursive);
+          }
+          else
+          {
+            testParent.assertEquals(tnParent.getGeoObject());
+//            USATestData.assertEqualsHierarchyTyp, tnParent.getHierachyType()); // TODO
+          }
+        }
+      }
+    }
     
     public void assertEquals(GeoObject geoObj)
     {
       Assert.assertEquals(this.getUid(), geoObj.getUid());
-      Assert.assertEquals(this.getGeoId(), geoObj.getCode());
+      Assert.assertEquals(this.getCode(), geoObj.getCode());
 //      Assert.assertEquals(StringUtils.deleteWhitespace(this.getWkt()), StringUtils.deleteWhitespace(geoObj.getGeometry().toText()));
       Assert.assertEquals(this.getDisplayLabel(), geoObj.getLocalizedDisplayLabel());
       this.getUniversal().assertEquals(geoObj.getType());
       // TODO : state?
     }
     
-    public void addChild(TestGeoObjectInfo child, String relationshipType)
+    public void addChild(TestGeoObjectInfo child)
     {
       if (!this.children.contains(child))
       {
@@ -400,6 +460,11 @@ public class USATestData
     public TestGeoObjectTypeInfo getUniversal()
     {
       return universal;
+    }
+
+    public void fetchUid()
+    {
+      this.setUid(client.getGeoObjectByCode(USA.getCode()).getUid());
     }
   }
 }

@@ -34,11 +34,19 @@ public class HttpRegistryClientTest
     RegistryAdapterServer registry = new RegistryAdapterServer();
     GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
 
-    JsonArray array = new JsonArray();
-    array.add(state.toJSON());
+    JsonArray req1Array = new JsonArray();
+    req1Array.add(state.toJSON());
+    
+    HierarchyType locatedIn = MetadataFactory.newHierarchyType("LocatedIn", "LOCATED_IN_LABEL", "LOCATED_IN_DESCRIPTION", registry);
 
-    HttpResponse response = new HttpResponse(array.toString(), 200);
-    MockHttpConnector connector = new MockHttpConnector(response);
+    JsonArray req2Array = new JsonArray();
+    req2Array.add(locatedIn.toJSON());
+
+    MockHttpRequest[] requests = new MockHttpRequest[]{
+        new MockHttpRequest(new HttpResponse(req1Array.toString(), 200)),
+        new MockHttpRequest(new HttpResponse(req2Array.toString(), 200))
+    };
+    MockHttpConnector connector = new MockHttpConnector(requests);
 
     /*
      * Invoke method
@@ -46,11 +54,14 @@ public class HttpRegistryClientTest
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.refreshMetadataCache();
 
+    MockHttpRequest req1 = connector.getRequests().get(0);
+    MockHttpRequest req2 = connector.getRequests().get(1);
+    
     /*
      * Validate request
      */
-    Assert.assertEquals(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, connector.getUrl());
-    Assert.assertEquals(1, connector.getParams().size());
+    Assert.assertEquals(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, req1.getUrl());
+    Assert.assertEquals(1, req1.getParams().size());
 
     /*
      * Validate response
@@ -65,13 +76,29 @@ public class HttpRegistryClientTest
     Assert.assertEquals(state.getCode(), test.getCode());
     Assert.assertEquals(state.getLocalizedDescription(), test.getLocalizedDescription());
     Assert.assertEquals(state.getLocalizedLabel(), test.getLocalizedLabel());
+    
+    /*
+     * Validate the hierarchy type request
+     */
+    Assert.assertEquals(RegistryUrls.HIERARCHY_TYPE_GET_ALL, req2.getUrl());
+    Assert.assertEquals(1, req2.getParams().size());
+    
+    Optional<HierarchyType> htOpt = cache.getHierachyType(locatedIn.getCode());
+
+    Assert.assertTrue(optional.isPresent());
+
+    HierarchyType htCache = htOpt.get();
+
+    Assert.assertEquals(locatedIn.getCode(), htCache.getCode());
+    Assert.assertEquals(locatedIn.getLocalizedDescription(), htCache.getLocalizedDescription());
+    Assert.assertEquals(locatedIn.getLocalizedLabel(), htCache.getLocalizedLabel());
   }
 
   @Test(expected = ResponseException.class)
   public void testRefreshMetadataCacheBadStatus()
   {
     HttpResponse response = new HttpResponse(new JsonArray().toString(), 400);
-    MockHttpConnector connector = new MockHttpConnector(response);
+    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{new MockHttpRequest(response)});
 
     /*
      * Invoke method
@@ -95,7 +122,7 @@ public class HttpRegistryClientTest
     geoObject.setCode("Test");
     geoObject.setUid("blarg");
 
-    connector.setResponse(new HttpResponse(geoObject.toJSON().toString(), 200));
+    connector.setNextRequest(new MockHttpRequest(new HttpResponse(geoObject.toJSON().toString(), 200)));
 
     /*
      * Invoke method
@@ -139,7 +166,7 @@ public class HttpRegistryClientTest
     /*
      * Invoke method
      */
-    MockHttpConnector connector = new MockHttpConnector(new HttpResponse("", 400));
+    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{new MockHttpRequest(new HttpResponse("", 400))});
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getGeoObject("23");
   }
@@ -150,7 +177,7 @@ public class HttpRegistryClientTest
     /*
      * Setup mock objects
      */
-    MockHttpConnector connector = new MockHttpConnector(new HttpResponse("", 201));
+    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{new MockHttpRequest(new HttpResponse("", 201))});
     HttpRegistryClient client = new HttpRegistryClient(connector);
 
     MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
@@ -162,7 +189,7 @@ public class HttpRegistryClientTest
     /*
      * Invoke method
      */
-    connector.setResponse(new HttpResponse(geoObject.toJSON().toString(), 201));
+    connector.setNextRequest(new MockHttpRequest(new HttpResponse(geoObject.toJSON().toString(), 201)));
     client.createGeoObject(geoObject);
 
     /*
@@ -197,7 +224,7 @@ public class HttpRegistryClientTest
     /*
      * Setup mock objects
      */
-    MockHttpConnector connector = new MockHttpConnector(new HttpResponse("", 201));
+    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{new MockHttpRequest(new HttpResponse("", 201))});
     HttpRegistryClient client = new HttpRegistryClient(connector);
 
     MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
@@ -209,7 +236,7 @@ public class HttpRegistryClientTest
     /*
      * Invoke method
      */
-    connector.setResponse(new HttpResponse(geoObject.toJSON().toString(), 201));
+    connector.setNextRequest(new MockHttpRequest(new HttpResponse(geoObject.toJSON().toString(), 201)));
     client.updateGeoObject(geoObject);
 
     /*
@@ -274,7 +301,7 @@ public class HttpRegistryClientTest
     ChildTreeNode dtTwo = new ChildTreeNode(dTwo, geoPolitical);
     ptOne.addChild(dtTwo);
 
-    connector.setResponse(new HttpResponse(dtOne.toJSON().toString(), 200));
+    connector.setNextRequest(new MockHttpRequest(new HttpResponse(dtOne.toJSON().toString(), 200)));
 
     /*
      * Invoke method
@@ -374,7 +401,7 @@ public class HttpRegistryClientTest
     ChildTreeNode dtTwo = new ChildTreeNode(dTwo, geoPolitical);
     ptOne.addChild(dtTwo);
 
-    connector.setResponse(new HttpResponse(dtOne.toJSON().toString(), 200));
+    connector.setNextRequest(new MockHttpRequest(new HttpResponse(dtOne.toJSON().toString(), 200)));
 
     /*
      * Invoke method
@@ -453,7 +480,7 @@ public class HttpRegistryClientTest
     values.add("uid2");
     values.add("uid3");
 
-    connector.setResponse(new HttpResponse(values.toString(), 200));
+    connector.setNextRequest(new MockHttpRequest(new HttpResponse(values.toString(), 200)));
 
     /*
      * Invoke method

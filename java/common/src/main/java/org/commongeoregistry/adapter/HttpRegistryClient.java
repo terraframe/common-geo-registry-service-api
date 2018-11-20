@@ -12,6 +12,7 @@ import org.commongeoregistry.adapter.http.Connector;
 import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseProcessor;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
+import org.commongeoregistry.adapter.metadata.HierarchyType;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -69,6 +70,13 @@ public class HttpRegistryClient extends RegistryAdapter
     {
       this.getMetadataCache().addGeoObjectType(got);
     }
+    
+    HierarchyType[] hts = this.getHierarchyTypes(new String[]{});
+    
+    for (HierarchyType ht : hts)
+    {
+      this.getMetadataCache().addHierarchyType(ht);
+    }
   }
 
   /**
@@ -81,7 +89,7 @@ public class HttpRegistryClient extends RegistryAdapter
    */
   public GeoObject getGeoObject(String _uid)
   {
-    if (_uid == null)
+    if (_uid == null || _uid.length() == 0)
     {
       throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET, "uid");
     }
@@ -90,6 +98,32 @@ public class HttpRegistryClient extends RegistryAdapter
     params.put("uid", _uid);
 
     HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_GET, params);
+    ResponseProcessor.validateStatusCode(resp);
+
+    GeoObject geoObject = GeoObject.fromJSON(this, resp.getAsString());
+
+    return geoObject;
+  }
+  
+  /**
+   * Returns the GeoObject with the given code.
+   * 
+   * @param code
+   *          code of the GeoObject.
+   * 
+   * @return GeoObject with the given code.
+   */
+  public GeoObject getGeoObjectByCode(String code)
+  {
+    if (code == null || code.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CODE, "code");
+    }
+
+    HashMap<String, String> params = new HashMap<String, String>();
+    params.put("code", code);
+
+    HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_GET_CODE, params);
     ResponseProcessor.validateStatusCode(resp);
 
     GeoObject geoObject = GeoObject.fromJSON(this, resp.getAsString());
@@ -121,6 +155,41 @@ public class HttpRegistryClient extends RegistryAdapter
     
     GeoObject retGeo = GeoObject.fromJSON(this, resp.getAsString());
     return retGeo;
+  }
+  
+  /**
+   * Creates a relationship between @parentUid and @childUid.
+   *
+   * @pre Both the parent and child have already been persisted / applied
+   * @post A relationship will exist between @parent and @child
+   *
+   * @returns ParentTreeNode The new node which was created with the provided parent.
+   */
+  public ParentTreeNode addChild(String childUid, String parentUid, String hierarchyCode)
+  {
+    if (childUid == null || childUid.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, "childUid");
+    }
+    if (parentUid == null || childUid.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, "parentUid");
+    }
+    if (hierarchyCode == null || childUid.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, "hierarchyCode");
+    }
+    
+    JsonObject params = new JsonObject();
+    params.addProperty("childUid", childUid);
+    params.addProperty("parentUid", parentUid);
+    params.addProperty("hierarchyCode", hierarchyCode);
+    
+    HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_ADD_CHILD, params.toString());
+    ResponseProcessor.validateStatusCode(resp);
+    
+    ParentTreeNode ret = ParentTreeNode.fromJSON(resp.getAsString(), this);
+    return ret;
   }
 
   /**
@@ -168,7 +237,7 @@ public class HttpRegistryClient extends RegistryAdapter
    */
   public ChildTreeNode getChildGeoObjects(String parentUid, String[] childrenTypes, Boolean recursive)
   {
-    if (parentUid == null)
+    if (parentUid == null || parentUid.length() == 0)
     {
       throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, "parentUid");
     }
@@ -222,7 +291,7 @@ public class HttpRegistryClient extends RegistryAdapter
    */
   public ParentTreeNode getParentGeoObjects(String childUid, String[] parentTypes, Boolean recursive)
   {
-    if (childUid == null)
+    if (childUid == null || childUid.length() == 0)
     {
       throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, "childUid");
     }
@@ -312,11 +381,22 @@ public class HttpRegistryClient extends RegistryAdapter
     ResponseProcessor.validateStatusCode(resp);
   }
   
+  /**
+   * Returns an array of {@link GeoOjectType} objects that define the given list of types.
+   *
+    * @pre 
+   * @post 
+   *
+   * @param types An array of GeoObjectType codes. If blank then all GeoObjectType objects are returned.
+   *
+    * @returns
+   * @throws
+   **/
   public GeoObjectType[] getGeoObjectTypes(String[] codes)
   {
     if (codes == null)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, "types");
+      codes = new String[]{};
     }
     
     JsonArray types = new JsonArray();
@@ -340,5 +420,40 @@ public class HttpRegistryClient extends RegistryAdapter
     }
     
     return gots;
+  }
+  
+  /**
+   * Returns an array of {@link HierarchyType} that define the given list of types. If no types are provided then all will be returned.
+   * 
+   * @param types An array of HierarchyType codes that will be retrieved.
+   */
+  private HierarchyType[] getHierarchyTypes(String[] types)
+  {
+    if (types == null)
+    {
+      types = new String[]{};
+    }
+    
+    JsonArray jaTypes = new JsonArray();
+    for (String type : types)
+    {
+      jaTypes.add(type);
+    }
+    
+    HashMap<String, String> params = new HashMap<String, String>();
+    params.put("types", jaTypes.toString());
+    
+    HttpResponse resp = this.connector.httpGet(RegistryUrls.HIERARCHY_TYPE_GET_ALL, params);
+    ResponseProcessor.validateStatusCode(resp);
+    
+    JsonArray jaHts = resp.getAsJsonArray();
+    HierarchyType[] hts = new HierarchyType[jaHts.size()];
+    for (int i = 0; i < jaHts.size(); ++i)
+    {
+      HierarchyType got = HierarchyType.fromJSON(jaHts.get(i).toString(), this);
+      hts[i] = got;
+    }
+    
+    return hts;
   }
 }

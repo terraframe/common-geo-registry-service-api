@@ -1,5 +1,8 @@
 package org.commongeoregistry.adapter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.commongeoregistry.adapter.http.AbstractHttpConnector;
@@ -7,77 +10,97 @@ import org.commongeoregistry.adapter.http.HttpResponse;
 
 public class MockHttpConnector extends AbstractHttpConnector
 {
-  private String              url;
-
-  private Map<String, String> params;
-
-  private String              body;
-
-  private HttpResponse        response;
+  private ArrayList<MockHttpRequest> requests;
+  
+  private int current;
 
   public MockHttpConnector()
   {
     super();
+    
+    this.requests = new ArrayList<MockHttpRequest>();
   }
 
-  public MockHttpConnector(HttpResponse response)
+  public MockHttpConnector(MockHttpRequest[] requests)
   {
     super();
-    this.response = response;
+    
+    this.current = 0;
+    
+    this.requests = new ArrayList<MockHttpRequest>();
+    for (MockHttpRequest request : requests)
+    {
+      this.requests.add(request);
+    }
   }
 
   public String getUrl()
   {
-    return url;
+    return this.requests.get(this.current-1).getUrl();
   }
 
   public Map<String, String> getParams()
   {
-    return params;
+    return this.requests.get(this.current-1).getParams();
   }
 
   public String getBody()
   {
-    return body;
+    return this.requests.get(this.current-1).getBody();
+  }
+  
+  public MockHttpRequest getRequest()
+  {
+    if (this.current >= this.requests.size())
+    {
+      MockHttpRequest req = new MockHttpRequest();
+      this.requests.add(req);
+      return req;
+    }
+    
+    return this.requests.get(this.current);
+  }
+  
+  public List<MockHttpRequest> getRequests()
+  {
+    return this.requests;
   }
 
   public HttpResponse getResponse()
   {
-    return response;
+    return this.requests.get(this.current-1).getResponse();
   }
 
-  public void setResponse(HttpResponse response)
+  public void setNextRequest(MockHttpRequest request)
   {
-    this.response = response;
-  }
-
-  private void clear()
-  {
-    this.url = null;
-    this.params = null;
-    this.body = null;
+    this.requests.add(request);
+    this.current = this.requests.size()-1;
   }
 
   @Override
   public HttpResponse httpGet(String url, Map<String, String> params)
   {
-    this.clear();
+    MockHttpRequest curReq = this.getRequest();
+    
+    curReq.setUrl(url);
+    curReq.setParams(params);
 
-    this.url = url;
-    this.params = params;
-
-    return this.response;
+    HttpResponse resp = curReq.getResponse();
+    this.current++;
+    return resp;
   }
 
   @Override
   public HttpResponse httpPost(String url, String body)
   {
-    this.clear();
+    MockHttpRequest curReq = this.getRequest();
+    
+    curReq.setUrl(url);
+    curReq.setBody(body);
 
-    this.url = url;
-    this.body = body;
-
-    return this.response;
+    HttpResponse resp = curReq.getResponse();
+    this.current++;
+    return resp;
   }
 
 }

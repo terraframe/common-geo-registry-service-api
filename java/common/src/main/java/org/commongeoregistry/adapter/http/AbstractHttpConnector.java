@@ -81,28 +81,28 @@ public abstract class AbstractHttpConnector implements Connector
         {
           String value = entry.getValue();
           
-          if (value.startsWith("[") && value.endsWith("]"))
-          {
-            JsonArray array = new JsonParser().parse(value).getAsJsonArray();
-            String key = entry.getKey();
-            
-            for (int i = 0; i < array.size(); ++i)
-            {
-              builder.append( ( count == 0 ? "?" : "&" ));
-              builder.append(URLEncoder.encode(key, "utf-8"));
-              builder.append("=");
-              builder.append(URLEncoder.encode(array.get(i).getAsString(), "utf-8"));
-              
-              count++;
-            }
-          }
-          else
-          {
+//          if (value.startsWith("[") && value.endsWith("]"))
+//          {
+//            JsonArray array = new JsonParser().parse(value).getAsJsonArray();
+//            String key = entry.getKey();
+//            
+//            for (int i = 0; i < array.size(); ++i)
+//            {
+//              builder.append( ( count == 0 ? "?" : "&" ));
+//              builder.append(URLEncoder.encode(key, "utf-8"));
+//              builder.append("=");
+//              builder.append(URLEncoder.encode(array.get(i).getAsString(), "utf-8"));
+//              
+//              count++;
+//            }
+//          }
+//          else
+//          {
             builder.append( ( count == 0 ? "?" : "&" ));
             builder.append(URLEncoder.encode(entry.getKey(), "utf-8"));
             builder.append("=");
             builder.append(URLEncoder.encode(value, "utf-8"));
-          }
+//          }
           
           count++;
         }

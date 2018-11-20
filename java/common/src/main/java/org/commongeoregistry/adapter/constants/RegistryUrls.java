@@ -9,6 +9,8 @@ public class RegistryUrls
    */
   
   public static final String GEO_OBJECT_GET           = "geoobject/get";
+  
+  public static final String GEO_OBJECT_GET_CODE      = "geoobject/get-code";
 
   public static final String GEO_OBJECT_UPDATE        = "geoobject/update";
   

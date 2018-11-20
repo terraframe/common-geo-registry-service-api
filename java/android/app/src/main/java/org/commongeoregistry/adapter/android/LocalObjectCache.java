@@ -281,6 +281,17 @@ public class LocalObjectCache implements Serializable {
         }
     }
 
+    /**
+     * Records the create to the action cache and saves the new {@link GeoObject} to the
+     * object cache. When online synchronization happens at a later point this create will be
+     * processed.
+     *
+     * @param geoObject
+     */
+    public void createGeoObject(GeoObject geoObject) {
+        this.updateGeoObject(geoObject);
+    }
+
     public void insertAction(AbstractAction action, SQLiteDatabase db)
     {
         ContentValues values = new ContentValues();
