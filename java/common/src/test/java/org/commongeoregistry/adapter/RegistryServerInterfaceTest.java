@@ -27,7 +27,7 @@ public class RegistryServerInterfaceTest
   @BeforeClass
   public static void classSetUp()
   {
-    registryServerInterface = new RegistryAdapterServer();
+    registryServerInterface = new RegistryAdapterServer(new MockIdService());
     
     TestFixture.defineExampleHierarchies(registryServerInterface);
   }

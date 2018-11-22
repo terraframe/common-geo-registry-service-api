@@ -29,7 +29,7 @@ public class SerializationTest
   @Test
   public void testGeoObject()
   {
-    RegistryAdapterServer registry = new RegistryAdapterServer();
+    RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
     
     MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
     
@@ -58,7 +58,7 @@ public class SerializationTest
   @Test
   public void testOptionalGeoObject()
   {
-    RegistryAdapterServer registry = new RegistryAdapterServer();
+    RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
     
     MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
     
@@ -74,7 +74,7 @@ public class SerializationTest
   @Test
   public void testGeoObjectType()
   {
-    RegistryAdapterServer registry = new RegistryAdapterServer();
+    RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
     
     GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
     
@@ -89,7 +89,7 @@ public class SerializationTest
   @Test
   public void testGeoObjectCustomAttributes()
   {
-    RegistryAdapterServer registryServerInterface = new RegistryAdapterServer();
+    RegistryAdapterServer registryServerInterface = new RegistryAdapterServer(new MockIdService());
     
     GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registryServerInterface);
     
@@ -140,7 +140,7 @@ public class SerializationTest
   @Test
   public void testGeoObjectTypeCustomAttributes()
   {
-    RegistryAdapterServer registry = new RegistryAdapterServer();
+    RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
     
     GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
     
@@ -168,7 +168,7 @@ public class SerializationTest
   @Test
   public void testHierarchyType()
   {
-    RegistryAdapterServer registry = new RegistryAdapterServer();
+    RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
     
     TestFixture.defineExampleHierarchies(registry);
     
@@ -189,7 +189,7 @@ public class SerializationTest
   @Test
   public void testChildTreeNode()
   {
-    RegistryAdapterServer registry = new RegistryAdapterServer();
+    RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
     
     TestFixture.defineExampleHierarchies(registry);
     HierarchyType geoPolitical = registry.getMetadataCache().getHierachyType(TestFixture.GEOPOLITICAL).get();
@@ -239,7 +239,7 @@ public class SerializationTest
   @Test
   public void testParentTreeNode()
   {
-    RegistryAdapterServer registry = new RegistryAdapterServer();
+    RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
     
     TestFixture.defineExampleHierarchies(registry);
     HierarchyType geoPolitical = registry.getMetadataCache().getHierachyType(TestFixture.GEOPOLITICAL).get();
@@ -289,7 +289,7 @@ public class SerializationTest
   @Test
   public void testActions()
   {
-    RegistryAdapterServer registry = new RegistryAdapterServer();
+    RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
     TestFixture.defineExampleHierarchies(registry);
     GeoObject geoObj1 = TestFixture.createGeoObject(registry, "PROV_ONE", TestFixture.PROVINCE);
     GeoObject geoObj2 = TestFixture.createGeoObject(registry, "PROV_ONE", TestFixture.PROVINCE);
@@ -300,7 +300,7 @@ public class SerializationTest
     int i = 0;
     
     // Add Child
-    AddChildAction addChild = new AddChildAction(geoObj1.getUid(), geoObj2.getUid(), geoPolitical.getCode());
+    AddChildAction addChild = new AddChildAction(geoObj1.getUid(), geoObj1.getType().getCode(), geoObj2.getUid(), geoObj2.getType().getCode(), geoPolitical.getCode());
     String addChildJson = addChild.toJSON().toString();
     String addChildJson2 = AddChildAction.fromJSON(addChildJson).toJSON().toString();
     Assert.assertEquals(addChildJson, addChildJson2);

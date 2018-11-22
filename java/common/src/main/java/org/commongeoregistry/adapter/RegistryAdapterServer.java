@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.id.AdapterIdServiceIF;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 import org.commongeoregistry.adapter.metadata.MetadataCache;
@@ -25,9 +26,9 @@ public class RegistryAdapterServer extends RegistryAdapter
    */
   private static final long serialVersionUID = -3343727858910300438L;
 
-  public RegistryAdapterServer()
+  public RegistryAdapterServer(AdapterIdServiceIF idService)
   {
-    super();
+    super(idService);
   }
   
   /**

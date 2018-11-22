@@ -464,7 +464,7 @@ public class USATestData
 
     public void fetchUid()
     {
-      this.setUid(client.getGeoObjectByCode(USA.getCode()).getUid());
+      this.setUid(client.getGeoObjectByCode(this.getCode()).getUid());
     }
   }
 }

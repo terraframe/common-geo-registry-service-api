@@ -42,7 +42,7 @@ public class AndroidIntegrationTest
 
         data = new USATestData(client);
         // These objects are predefined:
-        TEST_ADD_CHILD = data.newTestGeoObjectInfo("TEST_ADD_CHILD", data.STATE);
+        TEST_ADD_CHILD = data.newTestGeoObjectInfo("TEST_ADD_CHILD", data.DISTRICT);
         data.setUp();
 
         // These objects do not exist in the database yet:
@@ -81,79 +81,101 @@ public class AndroidIntegrationTest
         UTAH.assertEquals(go5);
     }
 
-//    @Test
-//    public void testGetChildGeObjects() // TODO : This test doesn't work because of the LocatedIn / AllowedIn bug that Nate is working on.
-//    {
-//        String[] childrenTypes = new String[]{data.STATE.getCode(), data.DISTRICT.getCode()};
-//
-//        // Recursive
-//        ChildTreeNode tn = client.getChildGeoObjects(data.USA.getUid(), childrenTypes, true);
-//        data.USA.assertEquals(tn, childrenTypes, true);
-//        Assert.assertEquals(tn.toJSON().toString(), ChildTreeNode.fromJSON(tn.toJSON().toString(), client).toJSON().toString());
-//
-//        // Not recursive
-//        ChildTreeNode tn2 = client.getChildGeoObjects(data.USA.getUid(), childrenTypes, false);
-//        data.USA.assertEquals(tn2, childrenTypes, false);
-//        Assert.assertEquals(tn2.toJSON().toString(), ChildTreeNode.fromJSON(tn2.toJSON().toString(), client).toJSON().toString());
-//
-//        // Test only getting districts
-//        String[] distArr = new String[]{data.DISTRICT.getCode()};
-//        ChildTreeNode tn3 = client.getChildGeoObjects(data.USA.getUid(), distArr, true);
-//        data.USA.assertEquals(tn3, distArr, true);
-//        Assert.assertEquals(tn3.toJSON().toString(), ChildTreeNode.fromJSON(tn3.toJSON().toString(), client).toJSON().toString());
-//    }
+    @Test
+    public void testGetParentGeoObjects()
+    {
+        String childId = data.CO_D_TWO.getUid();
+        String[] childrenTypes = new String[]{data.COUNTRY.getCode(), data.STATE.getCode()};
 
-//    @Test
-//    public void testExecuteActions()
-//    {
-//        // Create a new GeoObject locally
-//        GeoObject goCali = CALIFORNIA.newGeoObject();
-//        client.getLocalCache().createGeoObject(goCali); // TODO : This does not work because we don't have ids locally
-//
-//        // Update that GeoObject
-//        final String newLabel = "MODIFIED DISPLAY LABEL";
-//        goCali.setLocalizedDisplayLabel(newLabel);
-//        client.getLocalCache().updateGeoObject(goCali);
-//
-//        client.pushObjectsToRegistry();
-//
-//        // Fetch California and make sure it has our new display label
-//        GeoObject goCali2 = client.getGeoObjectByCode(CALIFORNIA.getCode());
-//
-//        CALIFORNIA.setUid(goCali2.getUid());
-//        CALIFORNIA.setDisplayLabel(newLabel);
-//        CALIFORNIA.assertEquals(goCali2);
-//    }
+        // Recursive
+        ParentTreeNode tn = client.getParentGeoObjects(childId, childrenTypes, true);
+        data.CO_D_TWO.assertEquals(tn, childrenTypes, true);
+        Assert.assertEquals(tn.toJSON().toString(), ParentTreeNode.fromJSON(tn.toJSON().toString(), client).toJSON().toString());
 
-    // TODO : This test doesn't work because of the LocatedIn / AllowedIn bug that Nate is working on.
-//    @Test
-//    public void testAddChild()
-//    {
-//        ParentTreeNode ptnTestState = client.addChild(data.USA.getUid(), TEST_ADD_CHILD.getUid(), data.LOCATED_IN.getCode());
-//
-//        boolean found = false;
-//        for (ParentTreeNode ptnUSA : ptnTestState.getParents())
-//        {
-//            if (ptnUSA.getGeoObject().getCode().equals(data.USA.getCode()))
-//            {
-//                found = true;
-//                break;
-//            }
-//        }
-//        Assert.assertTrue("Did not find our test object in the list of returned children", found);
-//        TEST_ADD_CHILD.assertEquals(ptnTestState.getGeoObject());
-//
-//        ChildTreeNode ctnUSA2 = client.getChildGeoObjects(data.USA.getUid(), new String[]{data.STATE.getCode()}, false);
-//
-//        found = false;
-//        for (ChildTreeNode ctnState : ctnUSA2.getChildren())
-//        {
-//            if (ctnState.getGeoObject().getCode().equals(TEST_ADD_CHILD.getCode()))
-//            {
-//                found = true;
-//                break;
-//            }
-//        }
-//        Assert.assertTrue("Did not find our test object in the list of returned children", found);
+        // Not recursive
+        ParentTreeNode tn2 = client.getParentGeoObjects(childId, childrenTypes, false);
+        data.CO_D_TWO.assertEquals(tn2, childrenTypes, false);
+        Assert.assertEquals(tn2.toJSON().toString(), ParentTreeNode.fromJSON(tn2.toJSON().toString(), client).toJSON().toString());
+
+        // Test only getting countries
+        String[] countryArr = new String[]{data.COUNTRY.getCode()};
+        ParentTreeNode tn3 = client.getParentGeoObjects(childId, countryArr, true);
+        data.CO_D_TWO.assertEquals(tn3, countryArr, true);
+        Assert.assertEquals(tn3.toJSON().toString(), ParentTreeNode.fromJSON(tn3.toJSON().toString(), client).toJSON().toString());
+    }
+
+    @Test
+    public void testGetChildGeObjects()
+    {
+        String[] childrenTypes = new String[]{data.STATE.getCode(), data.DISTRICT.getCode()};
+
+        // Recursive
+        ChildTreeNode tn = client.getChildGeoObjects(data.USA.getUid(), childrenTypes, true);
+        data.USA.assertEquals(tn, childrenTypes, true);
+        Assert.assertEquals(tn.toJSON().toString(), ChildTreeNode.fromJSON(tn.toJSON().toString(), client).toJSON().toString());
+
+        // Not recursive
+        ChildTreeNode tn2 = client.getChildGeoObjects(data.USA.getUid(), childrenTypes, false);
+        data.USA.assertEquals(tn2, childrenTypes, false);
+        Assert.assertEquals(tn2.toJSON().toString(), ChildTreeNode.fromJSON(tn2.toJSON().toString(), client).toJSON().toString());
+
+        // Test only getting districts
+        String[] distArr = new String[]{data.DISTRICT.getCode()};
+        ChildTreeNode tn3 = client.getChildGeoObjects(data.USA.getUid(), distArr, true);
+        data.USA.assertEquals(tn3, distArr, true);
+        Assert.assertEquals(tn3.toJSON().toString(), ChildTreeNode.fromJSON(tn3.toJSON().toString(), client).toJSON().toString());
+    }
+
+    @Test
+    public void testExecuteActions()
+    {
+        // Create a new GeoObject locally
+        GeoObject goCali = CALIFORNIA.newGeoObject();
+        client.getLocalCache().createGeoObject(goCali); // TODO : This does not work because we don't have ids locally
+
+        // Update that GeoObject
+        final String newLabel = "MODIFIED DISPLAY LABEL";
+        goCali.setLocalizedDisplayLabel(newLabel);
+        client.getLocalCache().updateGeoObject(goCali);
+
+        client.pushObjectsToRegistry();
+
+        // Fetch California and make sure it has our new display label
+        GeoObject goCali2 = client.getGeoObjectByCode(CALIFORNIA.getCode());
+
+        CALIFORNIA.setUid(goCali2.getUid());
+        CALIFORNIA.setDisplayLabel(newLabel);
+        CALIFORNIA.assertEquals(goCali2);
+    }
+
+    @Test
+    public void testAddChild()
+    {
+        ParentTreeNode ptnTestState = client.addChild(TEST_ADD_CHILD.getUid(), data.WASHINGTON.getUid(), data.LOCATED_IN.getCode());
+
+        boolean found = false;
+        for (ParentTreeNode ptnUSA : ptnTestState.getParents())
+        {
+            if (ptnUSA.getGeoObject().getCode().equals(data.WASHINGTON.getCode()))
+            {
+                found = true;
+                break;
+            }
+        }
+        Assert.assertTrue("Did not find our test object in the list of returned children", found);
+        TEST_ADD_CHILD.assertEquals(ptnTestState.getGeoObject());
+
+        ChildTreeNode ctnUSA2 = client.getChildGeoObjects(data.WASHINGTON.getUid(), new String[]{data.DISTRICT.getCode()}, false);
+
+        found = false;
+        for (ChildTreeNode ctnState : ctnUSA2.getChildren())
+        {
+            if (ctnState.getGeoObject().getCode().equals(TEST_ADD_CHILD.getCode()))
+            {
+                found = true;
+                break;
+            }
+        }
+        Assert.assertTrue("Did not find our test object in the list of returned children", found);
     }
 }

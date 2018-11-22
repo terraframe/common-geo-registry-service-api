@@ -1,8 +1,10 @@
 package org.commongeoregistry.adapter.metadata;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
@@ -41,7 +43,7 @@ public class MetadataCache implements Serializable
     this.geoGeoObjectTypeMap = new ConcurrentHashMap<String, GeoObjectType>();
     this.hierarchyTypeMap = new ConcurrentHashMap<String, HierarchyType>();
     this.termMap = new ConcurrentHashMap<String, Term>();
-    
+
     DefaultTerms.buildGeoObjectStatusTree(adapter);
   }
   

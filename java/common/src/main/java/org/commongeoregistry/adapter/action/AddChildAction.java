@@ -5,23 +5,33 @@ import com.google.gson.JsonParser;
 
 public class AddChildAction extends AbstractAction
 {
-    public static final String JSON_KEY_CHILD_ID = "childoid";
+    public static final String JSON_KEY_CHILD_ID = "childid";
+    
+    public static final String JSON_KEY_CHILD_TYPE_CODE = "childtypecode";
 
-    public static final String JSON_KEY_PARENT_ID = "parentoid";
+    public static final String JSON_KEY_PARENT_ID = "parentid";
+    
+    public static final String JSON_KEY_PARENT_TYPE_CODE = "parenttypecode";
 
-    private static final String JSON_KEY_HIERARCHY_ID = "hiearchyoid";
+    private static final String JSON_KEY_HIERARCHY_CODE = "hiearchycode";
 
     private final String childId;
+    
+    private final String childTypeCode;
 
     private final String parentId;
 
-    private final String hierarchyId;
+    private final String hierarchyCode;
+    
+    private final String parentTypeCode;
 
-    public AddChildAction(String childId, String parentId, String hierarchyId)
+    public AddChildAction(String childId, String childTypeCode, String parentId, String parentTypeCode, String hierarchyId)
     {
       this.childId = childId;
+      this.childTypeCode = childTypeCode;
       this.parentId = parentId;
-      this.hierarchyId = hierarchyId;
+      this.parentTypeCode = parentTypeCode;
+      this.hierarchyCode = hierarchyId;
     }
 
     @Override
@@ -30,10 +40,14 @@ public class AddChildAction extends AbstractAction
       JsonObject json = new JsonObject();
 
       json.addProperty(JSON_KEY_CHILD_ID, this.childId);
+      
+      json.addProperty(JSON_KEY_CHILD_TYPE_CODE, this.childTypeCode);
 
       json.addProperty(JSON_KEY_PARENT_ID, this.parentId);
       
-      json.addProperty(JSON_KEY_HIERARCHY_ID, this.hierarchyId);
+      json.addProperty(JSON_KEY_PARENT_TYPE_CODE, this.parentTypeCode);
+      
+      json.addProperty(JSON_KEY_HIERARCHY_CODE, this.hierarchyCode);
       
       json.addProperty(JSON_KEY_ACTION_TYPE, this.getClass().getName());
 
@@ -46,10 +60,12 @@ public class AddChildAction extends AbstractAction
       JsonObject oJson = parser.parse(json).getAsJsonObject();
 
       String childId = oJson.get(JSON_KEY_CHILD_ID).getAsString();
+      String childTypeCode = oJson.get(JSON_KEY_CHILD_TYPE_CODE).getAsString();
       String parentId = oJson.get(JSON_KEY_PARENT_ID).getAsString();
-      String hierarchyId = oJson.get(JSON_KEY_HIERARCHY_ID).getAsString();
+      String parentTypeCode = oJson.get(JSON_KEY_PARENT_TYPE_CODE).getAsString();
+      String hierarchyCode = oJson.get(JSON_KEY_HIERARCHY_CODE).getAsString();
 
-      AddChildAction aca = new AddChildAction(childId, parentId, hierarchyId);
+      AddChildAction aca = new AddChildAction(childId, childTypeCode, parentId, parentTypeCode, hierarchyCode);
 
       return aca;
     }
@@ -58,14 +74,24 @@ public class AddChildAction extends AbstractAction
     {
       return childId;
     }
+    
+    public String getChildTypeCode()
+    {
+      return childTypeCode;
+    }
 
     public String getParentId()
     {
       return parentId;
     }
-
-    public String getHierarchyId()
+    
+    public String getParentTypeCode()
     {
-      return hierarchyId;
+      return parentTypeCode;
+    }
+
+    public String getHierarchyCode()
+    {
+      return hierarchyCode;
     }
 }

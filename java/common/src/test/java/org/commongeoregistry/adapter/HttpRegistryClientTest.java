@@ -1,8 +1,8 @@
 package org.commongeoregistry.adapter;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.constants.RegistryUrls;
@@ -11,6 +11,7 @@ import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseException;
+import org.commongeoregistry.adapter.id.MemoryOnlyIdService;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 import org.commongeoregistry.adapter.metadata.MetadataCache;
@@ -31,7 +32,7 @@ public class HttpRegistryClientTest
     /*
      * Setup mock objects
      */
-    RegistryAdapterServer registry = new RegistryAdapterServer();
+    RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
     GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
 
     JsonArray req1Array = new JsonArray();
@@ -113,9 +114,10 @@ public class HttpRegistryClientTest
     /*
      * Setup mock objects
      */
-    MockHttpConnector connector = new MockHttpConnector();
+    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
-
+    client.getIdSerivce().populate(500);
+    
     MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
     GeoObject geoObject = client.newGeoObjectInstance("State");
@@ -177,8 +179,12 @@ public class HttpRegistryClientTest
     /*
      * Setup mock objects
      */
-    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{new MockHttpRequest(new HttpResponse("", 201))});
+    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{
+        MockIdService.getIdRequest(500),
+        new MockHttpRequest(new HttpResponse("", 201))
+    });
     HttpRegistryClient client = new HttpRegistryClient(connector);
+    client.getIdSerivce().populate(500);
 
     MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
@@ -224,8 +230,12 @@ public class HttpRegistryClientTest
     /*
      * Setup mock objects
      */
-    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{new MockHttpRequest(new HttpResponse("", 201))});
+    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{
+        MockIdService.getIdRequest(500),
+        new MockHttpRequest(new HttpResponse("", 201))
+    });
     HttpRegistryClient client = new HttpRegistryClient(connector);
+    client.getIdSerivce().populate(500);
 
     MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
@@ -269,9 +279,10 @@ public class HttpRegistryClientTest
   @Test
   public void testGetChildGeoObjects()
   {
-    MockHttpConnector connector = new MockHttpConnector();
+    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
-
+    client.getIdSerivce().populate(500);
+    
     /*
      * Setup mock objects
      */
@@ -369,8 +380,9 @@ public class HttpRegistryClientTest
   @Test
   public void testGetParentGeoObjects()
   {
-    MockHttpConnector connector = new MockHttpConnector();
+    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
+    client.getIdSerivce().populate(500);
 
     /*
      * Setup mock objects
@@ -469,8 +481,9 @@ public class HttpRegistryClientTest
   @Test
   public void testGetGeoObjectUids()
   {
-    MockHttpConnector connector = new MockHttpConnector();
+    MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
+    client.getIdSerivce().populate(500);
 
     /*
      * Setup mock objects
@@ -485,7 +498,7 @@ public class HttpRegistryClientTest
     /*
      * Invoke method
      */
-    List<String> list = client.getGeoObjectUids(values.size());
+    Set<String> list = client.getGeoObjectUids(values.size());
 
     /*
      * Validate response

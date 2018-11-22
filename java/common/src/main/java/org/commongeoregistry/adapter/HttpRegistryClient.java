@@ -1,8 +1,8 @@
 package org.commongeoregistry.adapter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.commongeoregistry.adapter.constants.RegistryUrls;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
@@ -11,6 +11,7 @@ import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.http.Connector;
 import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseProcessor;
+import org.commongeoregistry.adapter.id.MemoryOnlyIdService;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 
@@ -43,7 +44,9 @@ public class HttpRegistryClient extends RegistryAdapter
    */
   public HttpRegistryClient(Connector connector)
   {
+    super(new MemoryOnlyIdService());
     this.connector = connector;
+    ((MemoryOnlyIdService)this.getIdSerivce()).setClient(this);
   }
   
   /**
@@ -335,7 +338,7 @@ public class HttpRegistryClient extends RegistryAdapter
    * 
    * @return An array of UIDs.
    */
-  public List<String> getGeoObjectUids(Integer numberOfUids)
+  public Set<String> getGeoObjectUids(Integer numberOfUids)
   {
     if (numberOfUids == null)
     {
@@ -350,14 +353,14 @@ public class HttpRegistryClient extends RegistryAdapter
 
     JsonArray values = resp.getAsJsonArray();
 
-    List<String> list = new ArrayList<String>(values.size());
+    Set<String> set = new HashSet<String>(values.size());
 
     for (int i = 0; i < values.size(); i++)
     {
-      list.add(values.get(i).getAsString());
+      set.add(values.get(i).getAsString());
     }
 
-    return list;
+    return set;
   }
   
   /**
