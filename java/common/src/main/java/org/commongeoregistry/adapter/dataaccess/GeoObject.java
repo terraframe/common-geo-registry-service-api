@@ -259,12 +259,12 @@ public class GeoObject implements Serializable
    */
   public Term getStatus()
   {
-    return (Term) this.attributeMap.get(DefaultAttribute.STATUS).getValue();
+    return ((AttributeTerm)this.getAttribute(DefaultAttribute.STATUS.getName())).getValue().get(0);
   }
   
   public void setStatus(Term status)
   {
-    this.attributeMap.get(DefaultAttribute.STATUS).setValue(status);
+    this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(status);
   }
   
   /**
