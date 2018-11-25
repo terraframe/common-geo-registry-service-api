@@ -114,7 +114,7 @@ public class USATestData
     
     private TestGeoObjectTypeInfo(String genKey)
     {
-      this.code = TEST_DATA_KEY + "-" + genKey + "Code";
+      this.code = TEST_DATA_KEY + genKey + "Code";
       this.displayLabel = TEST_DATA_KEY + " " + genKey + " Display Label";
       this.description = TEST_DATA_KEY + " " + genKey + " Description";
       this.children = new LinkedList<TestGeoObjectTypeInfo>();
@@ -258,7 +258,7 @@ public class USATestData
     
     private void initialize(String genKey, TestGeoObjectTypeInfo testUni)
     {
-      this.geoId = TEST_DATA_KEY + "-" + genKey + "Code";
+      this.geoId = TEST_DATA_KEY + genKey + "Code";
       this.displayLabel = TEST_DATA_KEY + " " + genKey + " Display Label";
       this.wkt = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
       this.universal = testUni;
@@ -464,7 +464,7 @@ public class USATestData
 
     public void fetchUid()
     {
-      this.setUid(client.getGeoObjectByCode(this.getCode()).getUid());
+      this.setUid(client.getGeoObjectByCode(this.getCode(), this.getUniversal().getCode()).getUid());
     }
   }
 }

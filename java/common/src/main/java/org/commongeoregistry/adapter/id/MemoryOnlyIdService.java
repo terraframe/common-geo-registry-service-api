@@ -32,9 +32,12 @@ public class MemoryOnlyIdService implements AdapterIdServiceIF
     {
       int amount = size - this.cache.size();
       
-      Set<String> fetchedSet = this.client.getGeoObjectUids(amount);
-      
-      this.cache.addAll(fetchedSet);
+      if (amount > 0)
+      {
+        Set<String> fetchedSet = this.client.getGeoObjectUids(amount);
+        
+        this.cache.addAll(fetchedSet);
+      }
     }
   }
 

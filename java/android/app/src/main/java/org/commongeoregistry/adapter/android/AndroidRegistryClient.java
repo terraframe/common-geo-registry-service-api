@@ -4,8 +4,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.google.gson.JsonObject;
+
 import org.commongeoregistry.adapter.HttpRegistryClient;
 import org.commongeoregistry.adapter.action.AbstractAction;
+import org.commongeoregistry.adapter.constants.RegistryUrls;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
@@ -21,8 +24,6 @@ public class AndroidRegistryClient extends HttpRegistryClient
    * 
    */
   private static final long serialVersionUID = 2367836756416546643L;
-
-  public static final String EXECUTE_ACTIONS  = "executeActions";
   
   private LocalObjectCache localObjectCache;
 
@@ -32,7 +33,7 @@ public class AndroidRegistryClient extends HttpRegistryClient
    */
   public AndroidRegistryClient(Connector connector, Context context)
   {
-    super(connector);
+    super(connector, new AndroidSQLiteIdService());
 
     this.localObjectCache = new LocalObjectCache(context, this);
   }
@@ -44,7 +45,7 @@ public class AndroidRegistryClient extends HttpRegistryClient
    */
   public AndroidRegistryClient(Connector connector, LocalObjectCache localObjectCache)
   {
-    super(connector);
+    super(connector, new AndroidSQLiteIdService());
 
     this.localObjectCache = localObjectCache;
   }
@@ -68,11 +69,14 @@ public class AndroidRegistryClient extends HttpRegistryClient
    */
   public void pushObjectsToRegistry()
   {
-    AbstractAction[] actions = this.localObjectCache.getActionHistory();
+    AbstractAction[] actions = this.localObjectCache.getUnpushedActionHistory();
 
     String sActions = AbstractAction.serializeActions(actions).toString();
 
-    HttpResponse resp = this.getConnector().httpPost(EXECUTE_ACTIONS, sActions);
+    JsonObject params = new JsonObject();
+    params.addProperty(RegistryUrls.EXECUTE_ACTIONS_PARAM_ACTIONS, sActions);
+
+    HttpResponse resp = this.getConnector().httpPost(RegistryUrls.EXECUTE_ACTIONS, params.toString());
     ResponseProcessor.validateStatusCode(resp);
   }
 }

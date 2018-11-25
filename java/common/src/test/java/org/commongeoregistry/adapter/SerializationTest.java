@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.commongeoregistry.adapter.action.AbstractAction;
 import org.commongeoregistry.adapter.action.AddChildAction;
+import org.commongeoregistry.adapter.action.CreateAction;
 import org.commongeoregistry.adapter.action.DeleteAction;
 import org.commongeoregistry.adapter.action.UpdateAction;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
@@ -296,7 +297,7 @@ public class SerializationTest
     GeoObjectType province = geoObj1.getType();
     HierarchyType geoPolitical = registry.getMetadataCache().getHierachyType(TestFixture.GEOPOLITICAL).get();
     
-    AbstractAction[] actions = new AbstractAction[5];
+    AbstractAction[] actions = new AbstractAction[6];
     int i = 0;
     
     // Add Child
@@ -309,11 +310,18 @@ public class SerializationTest
     // Remove Child ??
     // TODO
     
-    // Update a GeoObject
-    UpdateAction create = new UpdateAction(geoObj1);
+    // Create a GeoObject
+    CreateAction create = new CreateAction(geoObj1);
     String createJson = create.toJSON().toString();
-    String createJson2 = UpdateAction.fromJSON(createJson).toJSON().toString();
+    String createJson2 = CreateAction.fromJSON(createJson).toJSON().toString();
     Assert.assertEquals(createJson, createJson2);
+    actions[i++] = create;
+    
+    // Update a GeoObject
+    UpdateAction update = new UpdateAction(geoObj1);
+    String updateJson = update.toJSON().toString();
+    String updateJson2 = UpdateAction.fromJSON(updateJson).toJSON().toString();
+    Assert.assertEquals(updateJson, updateJson2);
     actions[i++] = create;
     
     // Update a GeoObjectType

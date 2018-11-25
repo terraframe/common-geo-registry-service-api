@@ -11,6 +11,7 @@ import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.http.Connector;
 import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseProcessor;
+import org.commongeoregistry.adapter.id.AdapterIdServiceIF;
 import org.commongeoregistry.adapter.id.MemoryOnlyIdService;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
@@ -47,6 +48,17 @@ public class HttpRegistryClient extends RegistryAdapter
     super(new MemoryOnlyIdService());
     this.connector = connector;
     ((MemoryOnlyIdService)this.getIdSerivce()).setClient(this);
+  }
+  
+  public HttpRegistryClient(Connector connector, AdapterIdServiceIF idService)
+  {
+    super(idService);
+    this.connector = connector;
+    
+    if (idService instanceof MemoryOnlyIdService)
+    {
+      ( (MemoryOnlyIdService) idService ).setClient(this);
+    }
   }
   
   /**
@@ -90,15 +102,20 @@ public class HttpRegistryClient extends RegistryAdapter
    * 
    * @return GeoObject with the given UID.
    */
-  public GeoObject getGeoObject(String _uid)
+  public GeoObject getGeoObject(String id, String typeCode)
   {
-    if (_uid == null || _uid.length() == 0)
+    if (id == null || id.length() == 0)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET, "uid");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET, RegistryUrls.GEO_OBJECT_GET_PARAM_ID);
+    }
+    if (typeCode == null || typeCode.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET, RegistryUrls.GEO_OBJECT_GET_PARAM_TYPE_CODE);
     }
 
     HashMap<String, String> params = new HashMap<String, String>();
-    params.put("uid", _uid);
+    params.put(RegistryUrls.GEO_OBJECT_GET_PARAM_ID, id);
+    params.put(RegistryUrls.GEO_OBJECT_GET_PARAM_TYPE_CODE, typeCode);
 
     HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_GET, params);
     ResponseProcessor.validateStatusCode(resp);
@@ -116,15 +133,20 @@ public class HttpRegistryClient extends RegistryAdapter
    * 
    * @return GeoObject with the given code.
    */
-  public GeoObject getGeoObjectByCode(String code)
+  public GeoObject getGeoObjectByCode(String code, String typeCode)
   {
     if (code == null || code.length() == 0)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CODE, "code");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CODE, RegistryUrls.GEO_OBJECT_GET_CODE_PARAM_CODE);
+    }
+    if (typeCode == null || typeCode.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CODE, RegistryUrls.GEO_OBJECT_GET_CODE_PARAM_TYPE_CODE);
     }
 
     HashMap<String, String> params = new HashMap<String, String>();
-    params.put("code", code);
+    params.put(RegistryUrls.GEO_OBJECT_GET_CODE_PARAM_CODE, code);
+    params.put(RegistryUrls.GEO_OBJECT_GET_CODE_PARAM_TYPE_CODE, typeCode);
 
     HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_GET_CODE, params);
     ResponseProcessor.validateStatusCode(resp);
@@ -145,13 +167,13 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     if (_geoObject == null)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_CREATE, "geoObject");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_CREATE, RegistryUrls.GEO_OBJECT_CREATE_PARAM_GEOOBJECT);
     }
 
     JsonObject jsonObject = _geoObject.toJSON();
 
     JsonObject params = new JsonObject();
-    params.add("geoObject", jsonObject);
+    params.add(RegistryUrls.GEO_OBJECT_CREATE_PARAM_GEOOBJECT, jsonObject);
 
     HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_CREATE, params.toString());
     ResponseProcessor.validateStatusCode(resp);
@@ -168,25 +190,35 @@ public class HttpRegistryClient extends RegistryAdapter
    *
    * @returns ParentTreeNode The new node which was created with the provided parent.
    */
-  public ParentTreeNode addChild(String childUid, String parentUid, String hierarchyCode)
+  public ParentTreeNode addChild(String parentId, String parentTypeCode, String childId, String childTypeCode, String hierarchyCode)
   {
-    if (childUid == null || childUid.length() == 0)
+    if (childId == null || childId.length() == 0)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, "childUid");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, RegistryUrls.GEO_OBJECT_ADD_CHILD_PARAM_CHILDID);
     }
-    if (parentUid == null || childUid.length() == 0)
+    if (childTypeCode == null || childTypeCode.length() == 0)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, "parentUid");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, RegistryUrls.GEO_OBJECT_ADD_CHILD_PARAM_CHILD_TYPE_CODE);
     }
-    if (hierarchyCode == null || childUid.length() == 0)
+    if (parentId == null || parentId.length() == 0)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, "hierarchyCode");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, RegistryUrls.GEO_OBJECT_ADD_CHILD_PARAM_PARENTID);
+    }
+    if (parentTypeCode == null || parentTypeCode.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, RegistryUrls.GEO_OBJECT_ADD_CHILD_PARAM_PARENT_TYPE_CODE);
+    }
+    if (hierarchyCode == null || hierarchyCode.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_ADD_CHILD, RegistryUrls.GEO_OBJECT_ADD_CHILD_PARAM_HIERARCHY_CODE);
     }
     
     JsonObject params = new JsonObject();
-    params.addProperty("childUid", childUid);
-    params.addProperty("parentUid", parentUid);
-    params.addProperty("hierarchyCode", hierarchyCode);
+    params.addProperty(RegistryUrls.GEO_OBJECT_ADD_CHILD_PARAM_CHILDID, childId);
+    params.addProperty(RegistryUrls.GEO_OBJECT_ADD_CHILD_PARAM_CHILD_TYPE_CODE, childTypeCode);
+    params.addProperty(RegistryUrls.GEO_OBJECT_ADD_CHILD_PARAM_PARENTID, parentId);
+    params.addProperty(RegistryUrls.GEO_OBJECT_ADD_CHILD_PARAM_PARENT_TYPE_CODE, parentTypeCode);
+    params.addProperty(RegistryUrls.GEO_OBJECT_ADD_CHILD_PARAM_HIERARCHY_CODE, hierarchyCode);
     
     HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_ADD_CHILD, params.toString());
     ResponseProcessor.validateStatusCode(resp);
@@ -206,13 +238,13 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     if (_geoObject == null)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_UPDATE, "geoObject");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_UPDATE, RegistryUrls.GEO_OBJECT_UPDATE_PARAM_GEOOBJECT);
     }
 
     JsonObject jsonObject = _geoObject.toJSON();
 
     JsonObject params = new JsonObject();
-    params.add("geoObject", jsonObject);
+    params.add(RegistryUrls.GEO_OBJECT_UPDATE_PARAM_GEOOBJECT, jsonObject);
 
     HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_UPDATE, params.toString());
     ResponseProcessor.validateStatusCode(resp);
@@ -238,21 +270,26 @@ public class HttpRegistryClient extends RegistryAdapter
    * @return {@link ChildTreeNode} containing the {@link GeoObject} with the
    *         given UID and its children of the given types.
    */
-  public ChildTreeNode getChildGeoObjects(String parentUid, String[] childrenTypes, Boolean recursive)
+  public ChildTreeNode getChildGeoObjects(String parentId, String parentTypeCode, String[] childrenTypes, Boolean recursive)
   {
-    if (parentUid == null || parentUid.length() == 0)
+    if (parentId == null || parentId.length() == 0)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, "parentUid");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_PARENTID);
+    }
+    
+    if (parentTypeCode == null || parentTypeCode.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_PARENT_TYPE_CODE);
     }
 
     if (childrenTypes == null || childrenTypes.length == 0)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, "childrenTypes");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_CHILDREN_TYPES);
     }
 
     if (recursive == null)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, "recursive");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_RECURSIVE);
     }
 
     JsonArray serialized = new JsonArray();
@@ -263,9 +300,10 @@ public class HttpRegistryClient extends RegistryAdapter
     }
 
     HashMap<String, String> params = new HashMap<String, String>();
-    params.put("parentUid", parentUid);
-    params.put("childrenTypes", serialized.toString());
-    params.put("recursive", recursive.toString());
+    params.put(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_PARENTID, parentId);
+    params.put(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_PARENT_TYPE_CODE, parentTypeCode);
+    params.put(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_CHILDREN_TYPES, serialized.toString());
+    params.put(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_RECURSIVE, recursive.toString());
 
     HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_GET_CHILDREN, params);
     ResponseProcessor.validateStatusCode(resp);
@@ -281,8 +319,10 @@ public class HttpRegistryClient extends RegistryAdapter
    * 
    * Shall we include the hierarchy types as a parameter as well?
    * 
-   * @param childUid
+   * @param childId
    *          UID of the child {@link GeoObject}
+   * @param childTypeCode
+   *          The code of the child {@link GeoObjectType}
    * @param parentTypes
    *          an array of object types.
    * @param recursive
@@ -292,21 +332,26 @@ public class HttpRegistryClient extends RegistryAdapter
    * @return {@link ParentTreeNode} containing the {@link GeoObject} with the
    *         given UID and its children of the given types.
    */
-  public ParentTreeNode getParentGeoObjects(String childUid, String[] parentTypes, Boolean recursive)
+  public ParentTreeNode getParentGeoObjects(String childId, String childTypeCode, String[] parentTypes, Boolean recursive)
   {
-    if (childUid == null || childUid.length() == 0)
+    if (childId == null || childId.length() == 0)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, "childUid");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_CHILDID);
+    }
+    
+    if (childTypeCode == null || childTypeCode.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_CHILD_TYPE_CODE);
     }
 
     if (parentTypes == null || parentTypes.length == 0)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, "parentTypes");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_PARENT_TYPES);
     }
 
     if (recursive == null)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, "recursive");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_RECURSIVE);
     }
 
     JsonArray serialized = new JsonArray();
@@ -317,9 +362,10 @@ public class HttpRegistryClient extends RegistryAdapter
     }
 
     HashMap<String, String> params = new HashMap<String, String>();
-    params.put("childUid", childUid);
-    params.put("parentTypes", serialized.toString());
-    params.put("recursive", recursive.toString());
+    params.put(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_CHILDID, childId);
+    params.put(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_CHILD_TYPE_CODE, childTypeCode);
+    params.put(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_PARENT_TYPES, serialized.toString());
+    params.put(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_RECURSIVE, recursive.toString());
 
     HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_GET_PARENTS, params);
     ResponseProcessor.validateStatusCode(resp);
@@ -342,11 +388,11 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     if (numberOfUids == null)
     {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_UIDS, "numberOfUids");
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_UIDS, RegistryUrls.GEO_OBJECT_GET_UIDS_PARAM_AMOUNT);
     }
 
     HashMap<String, String> params = new HashMap<String, String>();
-    params.put("numberOfUids", numberOfUids.toString());
+    params.put(RegistryUrls.GEO_OBJECT_GET_UIDS_PARAM_AMOUNT, numberOfUids.toString());
 
     HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_GET_UIDS, params);
     ResponseProcessor.validateStatusCode(resp);
@@ -409,7 +455,7 @@ public class HttpRegistryClient extends RegistryAdapter
     }
     
     HashMap<String, String> params = new HashMap<String, String>();
-    params.put("types", types.toString());
+    params.put(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL_PARAM_TYPES, types.toString());
     
     HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, params);
     ResponseProcessor.validateStatusCode(resp);

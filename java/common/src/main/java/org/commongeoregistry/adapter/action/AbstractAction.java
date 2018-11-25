@@ -42,6 +42,10 @@ abstract public class AbstractAction
       {
         actions[i] = UpdateAction.fromJSON(oJson.toString());
       }
+      else if (actionType.equals(CreateAction.class.getName()))
+      {
+        actions[i] = CreateAction.fromJSON(oJson.toString());
+      }
       else if (actionType.equals(DeleteAction.class.getName()))
       {
         actions[i] = DeleteAction.fromJSON(oJson.toString());

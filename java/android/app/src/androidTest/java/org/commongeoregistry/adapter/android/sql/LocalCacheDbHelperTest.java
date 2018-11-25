@@ -9,6 +9,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.commongeoregistry.adapter.HttpRegistryClient;
+import org.commongeoregistry.adapter.MockIdService;
 import org.commongeoregistry.adapter.android.MockHttpConnector;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
@@ -31,7 +32,7 @@ public class LocalCacheDbHelperTest {
          * Setup mock objects
          */
         MockHttpConnector connector = new MockHttpConnector();
-        HttpRegistryClient client = new HttpRegistryClient(connector);
+        HttpRegistryClient client = new HttpRegistryClient(connector, new MockIdService());
 
         MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
@@ -68,7 +69,7 @@ public class LocalCacheDbHelperTest {
          * Setup mock objects
          */
         MockHttpConnector connector = new MockHttpConnector();
-        HttpRegistryClient client = new HttpRegistryClient(connector);
+        HttpRegistryClient client = new HttpRegistryClient(connector, new MockIdService());
 
         MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 

@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.action.AbstractAction;
 import org.commongeoregistry.adapter.action.AddChildAction;
+import org.commongeoregistry.adapter.action.CreateAction;
 import org.commongeoregistry.adapter.action.DeleteAction;
 import org.commongeoregistry.adapter.action.UpdateAction;
 import org.commongeoregistry.adapter.action.AbstractAction;
@@ -22,15 +23,18 @@ import org.commongeoregistry.adapter.android.sql.LocalCacheContract;
 import org.commongeoregistry.adapter.android.sql.LocalCacheContract.GeoObjectEntry;
 import org.commongeoregistry.adapter.android.sql.LocalCacheContract.TreeNodeEntry;
 import org.commongeoregistry.adapter.android.sql.LocalCacheDbHelper;
+import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.dataaccess.TreeNode;
+import org.commongeoregistry.adapter.id.EmptyIdCacheException;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,11 +86,225 @@ public class LocalObjectCache implements Serializable {
         this.adapter = adapter;
     }
 
+    private void insertLastPushId(int lastId, SQLiteDatabase db)
+    {
+        ContentValues values = new ContentValues();
+        values.put(LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_ID, 0);
+        values.put(LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_LAST_ID, lastId);
+
+        db.insertWithOnConflict(LocalCacheContract.ActionPushHistoryEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    private int getLastPushId(SQLiteDatabase db)
+    {
+        String[] select_columns = {
+            LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_LAST_ID
+        };
+
+        // Filter results WHERE "title" = 'My Title'
+        String selection = LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_ID + " = ?";
+        String[] selectionArgs = {"0"};
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder = LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_ID + " DESC";
+
+        Cursor cursor = null;
+        try {
+            cursor = db.query(
+                    LocalCacheContract.ActionPushHistoryEntry.TABLE_NAME,   // The table to query
+                    select_columns,             // The array of columns to return (pass null to get all)
+                    selection,              // The columns for the WHERE clause
+                    selectionArgs,          // The values for the WHERE clause
+                    null,                   // don't group the rows
+                    null,                   // don't filter by row groups
+                    sortOrder               // The sort order
+            );
+
+            if (!cursor.moveToNext()) {
+                return -1;
+            }
+
+            return cursor.getInt(0);
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    public int countNumberRegistryIds()
+    {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        Cursor cursor = null;
+        try {
+            cursor = db.query(
+                LocalCacheContract.RegistryIdEntry.TABLE_NAME,
+                new String[]{LocalCacheContract.RegistryIdEntry.COLUMN_NAME_ID},
+                null,
+                null,
+                null,
+                null,
+                null
+            );
+
+            return cursor.getCount();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    public void addRegistryIds(Collection<String> newIds)
+    {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        for (String id : newIds) {
+            ContentValues values = new ContentValues();
+            values.put(LocalCacheContract.RegistryIdEntry.COLUMN_NAME_REGISTRY_ID, id);
+
+            db.insertWithOnConflict(LocalCacheContract.RegistryIdEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_FAIL);
+        }
+    }
+
+    public String nextRegistryId()
+    {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                LocalCacheContract.RegistryIdEntry.COLUMN_NAME_REGISTRY_ID,
+                LocalCacheContract.RegistryIdEntry.COLUMN_NAME_ID
+        };
+
+        String registryId;
+        String id;
+
+        // Fetch an id from the database
+        Cursor cursor = null;
+        try {
+            cursor = db.query(
+                    LocalCacheContract.RegistryIdEntry.TABLE_NAME,   // The table to query
+                    projection,             // The array of columns to return (pass null to get all)
+                    null,              // The columns for the WHERE clause
+                    null,          // The values for the WHERE clause
+                    null,                   // don't group the rows
+                    null,                   // don't filter by row groups
+                    null               // The sort order
+            );
+
+            if (!cursor.moveToNext())
+            {
+                throw new EmptyIdCacheException();
+            }
+
+            registryId = cursor.getString(0);
+            id = cursor.getString(1);
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+
+        // Remove the id from the database
+        db.delete(
+            LocalCacheContract.RegistryIdEntry.TABLE_NAME,
+            LocalCacheContract.RegistryIdEntry.COLUMN_NAME_ID + " = ?",
+            new String[]{id}
+        );
+
+
+        return registryId;
+    }
+
+    /**
+     * Returns all action history that has been recorded since the last time this method was invoked.
+     *
+     * @return
+     */
+    public AbstractAction[] getUnpushedActionHistory()
+    {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        int lastPush = getLastPushId(db);
+
+        String[] projection = {
+            LocalCacheContract.ActionEntry.COLUMN_NAME_ID,
+            LocalCacheContract.ActionEntry.COLUMN_NAME_TYPE,
+            LocalCacheContract.ActionEntry.COLUMN_NAME_JSON
+        };
+
+        // Filter results WHERE "title" = 'My Title'
+        String selection = LocalCacheContract.ActionEntry.COLUMN_NAME_ID + " > ?";
+        String[] selectionArgs = {String.valueOf(lastPush)};
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder = LocalCacheContract.ActionEntry.COLUMN_NAME_ID + " ASC";
+
+        ArrayList<AbstractAction> history = new ArrayList<AbstractAction>();
+        int lastId = lastPush;
+
+        Cursor cursor = null;
+        try {
+            cursor = db.query(
+                    LocalCacheContract.ActionEntry.TABLE_NAME,   // The table to query
+                    projection,             // The array of columns to return (pass null to get all)
+                    selection,              // The columns for the WHERE clause
+                    selectionArgs,          // The values for the WHERE clause
+                    null,                   // don't group the rows
+                    null,                   // don't filter by row groups
+                    sortOrder               // The sort order
+            );
+
+            int i = 0;
+            while (cursor.moveToNext()) {
+//                String id = cursor.getString(0);
+                int id = cursor.getInt(0);
+                String type = cursor.getString(1);
+                String json = cursor.getString(2);
+
+                if (type.equals(UpdateAction.class.getName()))
+                {
+                    history.add(UpdateAction.fromJSON(json));
+                }
+                else if (type.equals(CreateAction.class.getName()))
+                {
+                    history.add(CreateAction.fromJSON(json));
+                }
+                else if (type.equals(DeleteAction.class.getName()))
+                {
+                    history.add(DeleteAction.fromJSON(json));
+                }
+                else if (type.equals(AddChildAction.class.getName()))
+                {
+                    history.add(AddChildAction.fromJSON(json));
+                }
+                else
+                {
+                    throw new UnsupportedOperationException("Unsupported action type [" + type + "].");
+                }
+
+                lastId = id;
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        insertLastPushId(lastId, db);
+
+        return history.toArray(new AbstractAction[history.size()]);
+    }
+
     /**
      * Returns the history of all actions performed on the cache. This is used when
      * pushing changes made in offline mode to the server.
      */
-    public AbstractAction[] getActionHistory()
+    public AbstractAction[] getAllActionHistory()
     {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -100,8 +318,6 @@ public class LocalObjectCache implements Serializable {
 
         Cursor cursor = null;
         try {
-
-
             cursor = db.query(
                     LocalCacheContract.ActionEntry.TABLE_NAME,   // The table to query
                     projection,             // The array of columns to return (pass null to get all)
@@ -122,6 +338,10 @@ public class LocalObjectCache implements Serializable {
                 if (type.equals(UpdateAction.class.getName()))
                 {
                     history.add(UpdateAction.fromJSON(json));
+                }
+                else if (type.equals(CreateAction.class.getName()))
+                {
+                    history.add(CreateAction.fromJSON(json));
                 }
                 else if (type.equals(DeleteAction.class.getName()))
                 {
@@ -227,7 +447,7 @@ public class LocalObjectCache implements Serializable {
 
             this.cache(treeNode, db);
 
-            this.insertAction(new AddChildAction(childGeoObject.getUid(), parentGeoObject.getUid(), hierarchyType.getCode()), db);
+            this.insertAction(new AddChildAction(childGeoObject.getUid(), childGeoObject.getType().getCode(), parentGeoObject.getUid(), parentGeoObject.getType().getCode(), hierarchyType.getCode()), db);
 
             db.setTransactionSuccessful();
         } catch (SQLException e) {
@@ -289,7 +509,20 @@ public class LocalObjectCache implements Serializable {
      * @param geoObject
      */
     public void createGeoObject(GeoObject geoObject) {
-        this.updateGeoObject(geoObject);
+        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
+        try {
+            db.beginTransaction();
+
+            this.insertGeoObject(geoObject, db);
+
+            this.insertAction(new CreateAction(geoObject), db);
+
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to create geo object. A database error has occurred.", e);
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public void insertAction(AbstractAction action, SQLiteDatabase db)

@@ -6,10 +6,13 @@ import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.commongeoregistry.adapter.HttpRegistryClient;
+import org.commongeoregistry.adapter.MockIdService;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.action.AbstractAction;
 import org.commongeoregistry.adapter.action.AddChildAction;
+import org.commongeoregistry.adapter.action.CreateAction;
 import org.commongeoregistry.adapter.action.DeleteAction;
 import org.commongeoregistry.adapter.action.UpdateAction;
 import org.commongeoregistry.adapter.constants.GeometryType;
@@ -27,6 +30,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -64,7 +69,7 @@ public class LocalObjectCacheTest {
          * Setup mock objects
          */
         MockHttpConnector connector = new MockHttpConnector();
-        this.client = new HttpRegistryClient(connector);
+        this.client = new HttpRegistryClient(connector, new MockIdService());
 
         Context context = InstrumentationRegistry.getTargetContext();
 
@@ -489,25 +494,65 @@ public class LocalObjectCacheTest {
         HierarchyType geoPolitical = client.getMetadataCache().getHierachyType(GEOPOLITICAL).get();
 
         String action1GeoObj1 = geoObj1.toJSON().toString();
-        cache.updateGeoObject(geoObj1);
-        cache.updateGeoObject(geoObj2);
+        cache.createGeoObject(geoObj1);
+        cache.createGeoObject(geoObj2);
         cache.addChild(geoObj1, geoObj2, geoPolitical);
 
         geoObj1.setCode("TEST_MODIFIED_CODE");
         cache.updateGeoObject(geoObj1);
 
-        AbstractAction[] actions = cache.getActionHistory();
+        AbstractAction[] actions = cache.getAllActionHistory();
 
         Assert.assertEquals(4, actions.length);
 
-        Assert.assertEquals(action1GeoObj1,((UpdateAction)actions[0]).getObjJson().toString());
-        Assert.assertEquals(geoObj2.toJSON().toString(),((UpdateAction)actions[1]).getObjJson().toString());
+        Assert.assertEquals(action1GeoObj1,((CreateAction)actions[0]).getObjJson().toString());
+        Assert.assertEquals(geoObj2.toJSON().toString(),((CreateAction)actions[1]).getObjJson().toString());
 
         AddChildAction aca = (AddChildAction) actions[2];
         Assert.assertEquals(geoObj1.getUid(), aca.getChildId());
         Assert.assertEquals(geoObj2.getUid(), aca.getParentId());
-        Assert.assertEquals(geoPolitical.getCode(), aca.getHierarchyId());
+        Assert.assertEquals(geoPolitical.getCode(), aca.getHierarchyCode());
 
         Assert.assertEquals(geoObj1.toJSON().toString(),((UpdateAction)actions[3]).getObjJson().toString());
+
+        // Test the 'unpushed action history' method
+        Assert.assertEquals(4, cache.getUnpushedActionHistory().length);
+        Assert.assertEquals(0, cache.getUnpushedActionHistory().length);
+
+        cache.updateGeoObject(geoObj1);
+        Assert.assertEquals(1, cache.getUnpushedActionHistory().length);
+        Assert.assertEquals(0, cache.getUnpushedActionHistory().length);
+    }
+
+    @Test
+    public void testCacheIds() {
+        Assert.assertEquals(0, cache.countNumberRegistryIds());
+
+        Collection<String> newIds = new HashSet<>();
+
+        for (int i = 0; i < 100; ++i)
+        {
+            newIds.add(MockIdService.genId());
+        }
+
+        cache.addRegistryIds(newIds);
+        Assert.assertEquals(100, cache.countNumberRegistryIds());
+
+        Assert.assertTrue(newIds.contains(cache.nextRegistryId()));
+        Assert.assertTrue(newIds.contains(cache.nextRegistryId()));
+        Assert.assertTrue(newIds.contains(cache.nextRegistryId()));
+        Assert.assertTrue(newIds.contains(cache.nextRegistryId()));
+
+        cache.clear();
+        Assert.assertEquals(0, cache.countNumberRegistryIds());
+
+        newIds.clear();
+        for (int i = 0; i < 50; ++i)
+        {
+            newIds.add(MockIdService.genId());
+        }
+
+        cache.addRegistryIds(newIds);
+        Assert.assertEquals(50, cache.countNumberRegistryIds());
     }
 }

@@ -129,7 +129,7 @@ public class HttpRegistryClientTest
     /*
      * Invoke method
      */
-    GeoObject test = client.getGeoObject(geoObject.getUid());
+    GeoObject test = client.getGeoObject(geoObject.getUid(), geoObject.getType().getCode());
 
     /*
      * Validate response
@@ -145,10 +145,13 @@ public class HttpRegistryClientTest
     Map<String, String> params = connector.getParams();
 
     Assert.assertNotNull(params);
-    Assert.assertEquals(1, params.size());
+    Assert.assertEquals(2, params.size());
 
-    Assert.assertTrue(params.containsKey("uid"));
-    Assert.assertEquals(geoObject.getUid(), params.get("uid"));
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_PARAM_ID));
+    Assert.assertEquals(geoObject.getUid(), params.get(RegistryUrls.GEO_OBJECT_GET_PARAM_ID));
+    
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_PARAM_TYPE_CODE));
+    Assert.assertEquals(geoObject.getType().getCode(), params.get(RegistryUrls.GEO_OBJECT_GET_PARAM_TYPE_CODE));
   }
 
   @Test(expected = RequiredParameterException.class)
@@ -159,7 +162,7 @@ public class HttpRegistryClientTest
      */
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getGeoObject(null);
+    client.getGeoObject(null, null);
   }
 
   @Test(expected = ResponseException.class)
@@ -170,7 +173,7 @@ public class HttpRegistryClientTest
      */
     MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{new MockHttpRequest(new HttpResponse("", 400))});
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getGeoObject("23");
+    client.getGeoObject("23", "foo");
   }
 
   @Test
@@ -208,7 +211,7 @@ public class HttpRegistryClientTest
     Assert.assertNotNull(body);
 
     JsonObject params = new JsonParser().parse(body).getAsJsonObject();
-    GeoObject test = GeoObject.fromJSON(client, params.get("geoObject").toString());
+    GeoObject test = GeoObject.fromJSON(client, params.get(RegistryUrls.GEO_OBJECT_CREATE_PARAM_GEOOBJECT).toString());
 
     Assert.assertEquals(geoObject.getUid(), test.getUid());
   }
@@ -260,7 +263,7 @@ public class HttpRegistryClientTest
     
     JsonObject params = new JsonParser().parse(body).getAsJsonObject();
 
-    GeoObject test = GeoObject.fromJSON(client, params.get("geoObject").toString());
+    GeoObject test = GeoObject.fromJSON(client, params.get(RegistryUrls.GEO_OBJECT_UPDATE_PARAM_GEOOBJECT).toString());
 
     Assert.assertEquals(geoObject.getUid(), test.getUid());
   }
@@ -317,7 +320,7 @@ public class HttpRegistryClientTest
     /*
      * Invoke method
      */
-    ChildTreeNode node = client.getChildGeoObjects(pOne.getUid(), new String[] { TestFixture.DISTRICT }, false);
+    ChildTreeNode node = client.getChildGeoObjects(pOne.getUid(), pOne.getType().getCode(), new String[] { TestFixture.DISTRICT }, false);
 
     /*
      * Validate response
@@ -332,16 +335,19 @@ public class HttpRegistryClientTest
     Map<String, String> params = connector.getParams();
 
     Assert.assertNotNull(params);
-    Assert.assertEquals(3, params.size());
+    Assert.assertEquals(4, params.size());
 
-    Assert.assertTrue(params.containsKey("parentUid"));
-    Assert.assertEquals(pOne.getUid(), params.get("parentUid"));
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_PARENTID));
+    Assert.assertEquals(pOne.getUid(), params.get(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_PARENTID));
 
-    Assert.assertTrue(params.containsKey("childrenTypes"));
-    Assert.assertEquals("[\"" + TestFixture.DISTRICT + "\"]", params.get("childrenTypes"));
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_PARENT_TYPE_CODE));
+    Assert.assertEquals(pOne.getType().getCode(), params.get(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_PARENT_TYPE_CODE));
+    
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_CHILDREN_TYPES));
+    Assert.assertEquals("[\"" + TestFixture.DISTRICT + "\"]", params.get(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_CHILDREN_TYPES));
 
-    Assert.assertTrue(params.containsKey("recursive"));
-    Assert.assertEquals(Boolean.FALSE.toString(), params.get("recursive"));
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_RECURSIVE));
+    Assert.assertEquals(Boolean.FALSE.toString(), params.get(RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_RECURSIVE));
   }
 
   @Test(expected = RequiredParameterException.class)
@@ -352,7 +358,7 @@ public class HttpRegistryClientTest
      */
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getChildGeoObjects(null, new String[] { "Test" }, true);
+    client.getChildGeoObjects(null, "foo", new String[] { "Test" }, true);
   }
 
   @Test(expected = RequiredParameterException.class)
@@ -363,7 +369,18 @@ public class HttpRegistryClientTest
      */
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getChildGeoObjects("Abc", null, true);
+    client.getChildGeoObjects("Abc", "foo", null, true);
+  }
+  
+  @Test(expected = RequiredParameterException.class)
+  public void testGetChildGeoObjectsMissingChildCode()
+  {
+    /*
+     * Invoke method
+     */
+    MockHttpConnector connector = new MockHttpConnector();
+    HttpRegistryClient client = new HttpRegistryClient(connector);
+    client.getChildGeoObjects("Abc", null, new String[] { "Test" }, true);
   }
 
   @Test(expected = RequiredParameterException.class)
@@ -374,7 +391,7 @@ public class HttpRegistryClientTest
      */
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getChildGeoObjects("Abc", new String[] {}, true);
+    client.getChildGeoObjects("Abc", "foo", new String[] {}, true);
   }
 
   @Test
@@ -418,7 +435,7 @@ public class HttpRegistryClientTest
     /*
      * Invoke method
      */
-    ParentTreeNode node = client.getParentGeoObjects(cOne.getUid(), new String[] { TestFixture.DISTRICT }, false);
+    ParentTreeNode node = client.getParentGeoObjects(cOne.getUid(), cOne.getType().getCode(), new String[] { TestFixture.DISTRICT }, false);
 
     /*
      * Validate response
@@ -433,16 +450,19 @@ public class HttpRegistryClientTest
     Map<String, String> params = connector.getParams();
 
     Assert.assertNotNull(params);
-    Assert.assertEquals(3, params.size());
+    Assert.assertEquals(4, params.size());
 
-    Assert.assertTrue(params.containsKey("childUid"));
-    Assert.assertEquals(cOne.getUid(), params.get("childUid"));
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_CHILDID));
+    Assert.assertEquals(cOne.getUid(), params.get(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_CHILDID));
 
-    Assert.assertTrue(params.containsKey("parentTypes"));
-    Assert.assertEquals("[\"" + TestFixture.DISTRICT + "\"]", params.get("parentTypes"));
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_CHILD_TYPE_CODE));
+    Assert.assertEquals(cOne.getType().getCode(), params.get(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_CHILD_TYPE_CODE));
+    
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_PARENT_TYPES));
+    Assert.assertEquals("[\"" + TestFixture.DISTRICT + "\"]", params.get(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_PARENT_TYPES));
 
-    Assert.assertTrue(params.containsKey("recursive"));
-    Assert.assertEquals(Boolean.FALSE.toString(), params.get("recursive"));
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_RECURSIVE));
+    Assert.assertEquals(Boolean.FALSE.toString(), params.get(RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_RECURSIVE));
   }
 
   @Test(expected = RequiredParameterException.class)
@@ -453,7 +473,7 @@ public class HttpRegistryClientTest
      */
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getParentGeoObjects(null, new String[] { "Test" }, true);
+    client.getParentGeoObjects(null, "foo", new String[] { "Test" }, true);
   }
 
   @Test(expected = RequiredParameterException.class)
@@ -464,7 +484,7 @@ public class HttpRegistryClientTest
      */
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getParentGeoObjects("Abc", null, true);
+    client.getParentGeoObjects("Abc", "foo", null, true);
   }
 
   @Test(expected = RequiredParameterException.class)
@@ -475,7 +495,7 @@ public class HttpRegistryClientTest
      */
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getParentGeoObjects("Abc", new String[] {}, true);
+    client.getParentGeoObjects("Abc", "foo", new String[] {}, true);
   }
 
   @Test
@@ -515,8 +535,8 @@ public class HttpRegistryClientTest
     Assert.assertNotNull(params);
     Assert.assertEquals(1, params.size());
 
-    Assert.assertTrue(params.containsKey("numberOfUids"));
-    Assert.assertEquals(Integer.toString(values.size()), params.get("numberOfUids"));
+    Assert.assertTrue(params.containsKey(RegistryUrls.GEO_OBJECT_GET_UIDS_PARAM_AMOUNT));
+    Assert.assertEquals(Integer.toString(values.size()), params.get(RegistryUrls.GEO_OBJECT_GET_UIDS_PARAM_AMOUNT));
   }
 
   @Test(expected = RequiredParameterException.class)
