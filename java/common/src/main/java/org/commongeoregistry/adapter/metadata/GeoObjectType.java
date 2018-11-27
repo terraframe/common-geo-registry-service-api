@@ -322,6 +322,21 @@ public class GeoObjectType implements Serializable
     return defaultAttributeMap;
   }
   
+  public static GeoObjectType[] fromJSONArray(String saJson, RegistryAdapter adapter)
+  {
+    JsonParser parser = new JsonParser();
+
+    JsonArray jaGots = parser.parse(saJson).getAsJsonArray();
+    GeoObjectType[] gots = new GeoObjectType[jaGots.size()];
+    for (int i = 0; i < jaGots.size(); ++i)
+    {
+      GeoObjectType got = GeoObjectType.fromJSON(jaGots.get(i).toString(), adapter);
+      gots[i] = got;
+    }
+    
+    return gots;
+  }
+  
   /**
    * Creates a {@link GeoObjectType} from the given JSON string.
    * 

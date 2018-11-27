@@ -460,13 +460,7 @@ public class HttpRegistryClient extends RegistryAdapter
     HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, params);
     ResponseProcessor.validateStatusCode(resp);
     
-    JsonArray jaGots = resp.getAsJsonArray();
-    GeoObjectType[] gots = new GeoObjectType[jaGots.size()];
-    for (int i = 0; i < jaGots.size(); ++i)
-    {
-      GeoObjectType got = GeoObjectType.fromJSON(jaGots.get(i).toString(), this);
-      gots[i] = got;
-    }
+    GeoObjectType[] gots = GeoObjectType.fromJSONArray(resp.getAsString(), this);
     
     return gots;
   }
@@ -495,13 +489,7 @@ public class HttpRegistryClient extends RegistryAdapter
     HttpResponse resp = this.connector.httpGet(RegistryUrls.HIERARCHY_TYPE_GET_ALL, params);
     ResponseProcessor.validateStatusCode(resp);
     
-    JsonArray jaHts = resp.getAsJsonArray();
-    HierarchyType[] hts = new HierarchyType[jaHts.size()];
-    for (int i = 0; i < jaHts.size(); ++i)
-    {
-      HierarchyType got = HierarchyType.fromJSON(jaHts.get(i).toString(), this);
-      hts[i] = got;
-    }
+    HierarchyType[] hts = HierarchyType.fromJSONArray(resp.getAsString(), this);
     
     return hts;
   }

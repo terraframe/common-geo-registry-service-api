@@ -273,4 +273,19 @@ public class HierarchyType implements Serializable
     
     return ht;
   }
+
+  public static HierarchyType[] fromJSONArray(String saJson, RegistryAdapter adapter)
+  {
+    JsonParser parser = new JsonParser();
+
+    JsonArray jaHts = parser.parse(saJson).getAsJsonArray();
+    HierarchyType[] hts = new HierarchyType[jaHts.size()];
+    for (int i = 0; i < jaHts.size(); ++i)
+    {
+      HierarchyType ht = HierarchyType.fromJSON(jaHts.get(i).toString(), adapter);
+      hts[i] = ht;
+    }
+    
+    return hts;
+  }
 }
