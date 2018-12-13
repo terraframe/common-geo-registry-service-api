@@ -289,7 +289,7 @@ public class GeoObjectType implements Serializable
    * 
    * @return the standard set of {@link AttributeType} defined on all{@link GeoObjectType}s.
    */
-  private Map<String, AttributeType> buildDefaultAttributes(RegistryAdapter registry)
+  private static Map<String, AttributeType> buildDefaultAttributes(RegistryAdapter registry)
   {
     Map<String, AttributeType> defaultAttributeMap = new ConcurrentHashMap<String, AttributeType>();
         
@@ -356,8 +356,8 @@ public class GeoObjectType implements Serializable
     String localizedDescription = oJson.get(JSON_LOCALIZED_DESCRIPTION).getAsString();
     GeometryType geometryType = GeometryType.valueOf(oJson.get(JSON_GEOMETRY_TYPE).getAsString());
     Boolean isLeaf = Boolean.valueOf(oJson.get(JSON_IS_LEAF).getAsString()); 
-        
-    Map<String, AttributeType> attributeMap = new ConcurrentHashMap<String, AttributeType>();
+    
+    Map<String, AttributeType> attributeMap = buildDefaultAttributes(registry);
     for (int i = 0; i < oJsonAttrs.size(); ++i)
     {
       JsonObject joAttr = oJsonAttrs.get(i).getAsJsonObject();
