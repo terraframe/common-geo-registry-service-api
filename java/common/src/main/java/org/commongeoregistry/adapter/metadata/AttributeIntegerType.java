@@ -9,8 +9,8 @@ public class AttributeIntegerType extends AttributeNumericType
   
   public static String TYPE = "integer";
   
-  public AttributeIntegerType(String _name, String _localizedLabel, String _localizedDescription)
+  public AttributeIntegerType(String _name, String _localizedLabel, String _localizedDescription, boolean _isDefault)
   {
-    super(_name, _localizedLabel, _localizedDescription, TYPE);
+    super(_name, _localizedLabel, _localizedDescription, TYPE, _isDefault);
   }
 }

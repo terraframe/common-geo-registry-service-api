@@ -46,6 +46,8 @@ public class GeoObjectType implements Serializable
  
   public static final String         JSON_IS_LEAF                   = "isLeaf";
   
+  public static final String 		 JSON_IS_DEFAULT			    = "isDefault";
+  
   /**
    * Unique but human readable identifier. It could be VILLAGE or HOUSEHOLD.
    */

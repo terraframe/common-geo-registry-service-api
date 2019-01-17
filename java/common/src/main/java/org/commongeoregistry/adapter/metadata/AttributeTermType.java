@@ -15,9 +15,9 @@ public class AttributeTermType extends AttributeType
   
   private Term rootTerm     = null;
   
-  public AttributeTermType(String _name, String _localizedLabel, String _localizedDescription)
+  public AttributeTermType(String _name, String _localizedLabel, String _localizedDescription, boolean _isDefault)
   {
-    super(_name, _localizedLabel, _localizedDescription, TYPE);
+    super(_name, _localizedLabel, _localizedDescription, TYPE, _isDefault);
   }
   
   public Term getRootTerm()
