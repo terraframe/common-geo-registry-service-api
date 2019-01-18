@@ -279,11 +279,11 @@ public class GeoObjectType implements Serializable
   /**
    * Removes the given {@link AttributeType} as an attribute defined on this {@link GeoObjectType}.
    * 
-   * @param attributeType {@link AttributeType} to remove from this {@link GeoObjectType}.
+   * @param attributeName {@link AttributeType} to remove from this {@link GeoObjectType}.
    */
-  public void removeAttribute(AttributeType attributeType)
+  public void removeAttribute(String attributeName)
   {
-    this.attributeMap.remove(attributeType.getName());
+    this.attributeMap.remove(attributeName);
   }
   
   /**

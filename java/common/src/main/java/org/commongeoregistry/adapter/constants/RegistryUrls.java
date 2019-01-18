@@ -63,7 +63,7 @@ public class RegistryUrls
   
   public static final String GEO_OBJECT_TYPE_DELETE_ATTRIBUTE        = "geoobjecttype/deleteattribute";
   public static final String GEO_OBJECT_TYPE_DELETE_ATTRIBUTE_PARAM = "geoObjTypeId";
-  public static final String GEO_OBJECT_TYPE_DELETE_ATTRIBUTE_TYPE_PARAM = "attributeType";
+  public static final String GEO_OBJECT_TYPE_DELETE_ATTRIBUTE_TYPE_PARAM = "attributeName";
   
   /**
    * Hierarchy Types
