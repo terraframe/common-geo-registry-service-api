@@ -57,6 +57,14 @@ public class RegistryUrls
   
   public static final String GEO_OBJECT_TYPE_DELETE   = "geoobjecttype/delete";
   
+  public static final String GEO_OBJECT_TYPE_ADD_ATTRIBUTE        = "geoobjecttype/addattribute";
+  public static final String GEO_OBJECT_TYPE_ADD_ATTRIBUTE_PARAM = "geoObjTypeId";
+  public static final String GEO_OBJECT_TYPE_ADD_ATTRIBUTE_TYPE_PARAM = "attributeType";
+  
+  public static final String GEO_OBJECT_TYPE_DELETE_ATTRIBUTE        = "geoobjecttype/deleteattribute";
+  public static final String GEO_OBJECT_TYPE_DELETE_ATTRIBUTE_PARAM = "geoObjTypeId";
+  public static final String GEO_OBJECT_TYPE_DELETE_ATTRIBUTE_TYPE_PARAM = "attributeType";
+  
   /**
    * Hierarchy Types
    */
@@ -74,9 +82,16 @@ public class RegistryUrls
   public static final String HIERARCHY_TYPE_REMOVE   = "hierarchytype/remove";
   
   /**
+   * Terms
+   */
+  
+  public static final String TERMS_GET   = "terms/get-all";
+  
+  /**
    * Miscellaneous
    */
   
   public static final String EXECUTE_ACTIONS         = "executeActions";
   public static final String EXECUTE_ACTIONS_PARAM_ACTIONS = "actions";
+  public static final String HIERARCHY_TERM_SEARCH	 = "search";
 }

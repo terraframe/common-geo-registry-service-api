@@ -56,6 +56,17 @@ public class Term implements Serializable
   {
     return this.children;
   }
+  
+  public static JsonArray toJSON(Term[] terms)
+  {
+	  JsonArray json = new JsonArray();
+	  for(Term term : terms)
+	  {
+		  json.add(term.toJSON());
+	  }
+	  
+	  return json;
+  }
 
   public JsonObject toJSON()
   {

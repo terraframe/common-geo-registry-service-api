@@ -9,8 +9,8 @@ public class AttributeBooleanType extends AttributeType
   
   public static String TYPE = "boolean";
   
-  public AttributeBooleanType(String _name, String _localizedLabel, String _localizedDescription)
+  public AttributeBooleanType(String _name, String _localizedLabel, String _localizedDescription, boolean _isDefault)
   {
-    super(_name, _localizedLabel, _localizedDescription, TYPE);
+    super(_name, _localizedLabel, _localizedDescription, TYPE, _isDefault);
   }
 }
