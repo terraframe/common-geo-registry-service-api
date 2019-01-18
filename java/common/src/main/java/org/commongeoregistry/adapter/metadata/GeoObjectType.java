@@ -265,13 +265,23 @@ public class GeoObjectType implements Serializable
   }
   
   /**
-   * Adds the given {@link AttributeType} as an attribute defined on this {@link GeoObjectType}s.
+   * Adds the given {@link AttributeType} as an attribute defined on this {@link GeoObjectType}.
    * 
    * @param attributeType {@link AttributeType} to add to this {@link GeoObjectType}.
    */
   public void addAttribute(AttributeType attributeType)
   {
     this.attributeMap.put(attributeType.getName(), attributeType);
+  }
+  
+  /**
+   * Removes the given {@link AttributeType} as an attribute defined on this {@link GeoObjectType}.
+   * 
+   * @param attributeType {@link AttributeType} to remove from this {@link GeoObjectType}.
+   */
+  public void removeAttribute(AttributeType attributeType)
+  {
+    this.attributeMap.remove(attributeType.getName());
   }
   
   /**
