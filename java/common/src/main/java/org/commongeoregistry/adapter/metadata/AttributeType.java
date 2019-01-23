@@ -141,8 +141,13 @@ public abstract class AttributeType implements Serializable
     
     return attributeType;
   }
-
+  
   public JsonObject toJSON()
+  {
+    return this.toJSON(new DefaultSerializer());
+  }
+
+  public JsonObject toJSON(CustomSerializer serializer)
   {
     JsonObject json = new JsonObject();
     
@@ -155,6 +160,8 @@ public abstract class AttributeType implements Serializable
     json.addProperty(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription());
     
     json.addProperty(JSON_IS_DEFAULT, this.getIsDefault());
+    
+    serializer.configure(this, json);
     
     return json;
   }

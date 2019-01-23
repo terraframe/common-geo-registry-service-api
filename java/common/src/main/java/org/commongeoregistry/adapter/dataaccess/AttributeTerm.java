@@ -35,10 +35,10 @@ public class AttributeTerm extends Attribute
   }
 
   @Override
-  public void setValue(Object integer)
+  public void setValue(Object value)
   {
     this.terms.clear();
-    this.addTerm((Term) integer);
+    this.addTerm((Term) value);
   }
 
   public void addTerm(Term term)
