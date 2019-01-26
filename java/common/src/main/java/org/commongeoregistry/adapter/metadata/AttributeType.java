@@ -158,4 +158,13 @@ public abstract class AttributeType implements Serializable
     
     return json;
   }
+  
+  /**
+   * Populates any additional attributes from JSON that were not populated in
+   * {@link GeoObjectType#fromJSON(String, org.commongeoregistry.adapter.RegistryAdapter)} 
+   * 
+   * @param attrObj
+   * @return {@link AttributeType}
+   */
+  public void fromJSON(JsonObject attrObj) {}
 }

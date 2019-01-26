@@ -376,6 +376,9 @@ public class GeoObjectType implements Serializable
       String name = joAttr.get(AttributeType.JSON_NAME).getAsString();
       
       AttributeType attrType = AttributeType.factory(name, joAttr.get(AttributeType.JSON_LOCALIZED_LABEL).getAsString(), joAttr.get(AttributeType.JSON_LOCALIZED_DESCRIPTION).getAsString(), joAttr.get(AttributeType.JSON_TYPE).getAsString());
+      
+      attrType.fromJSON(joAttr);
+      
       attributeMap.put(name, attrType);
     }
     

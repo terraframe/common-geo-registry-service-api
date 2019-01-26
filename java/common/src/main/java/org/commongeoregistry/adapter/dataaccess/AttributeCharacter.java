@@ -38,12 +38,4 @@ public class AttributeCharacter extends Attribute
     return this.value;
   }
 
-  public JsonObject toJSON()
-  {
-    JsonObject obj = new JsonObject();
-    obj.addProperty(this.getName(), this.getValue());
-
-    return obj;
-  }
-
 }

@@ -2,22 +2,25 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.GeometryType;
+import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 
 public class GeoObject implements Serializable
 {
@@ -252,18 +255,35 @@ public class GeoObject implements Serializable
   } 
   
   /**
-   * Returns the status 
+   * Returns the status code
    * 
    * @return
    */
   public Term getStatus()
   {
-    return ((AttributeTerm)this.getAttribute(DefaultAttribute.STATUS.getName())).getValue().get(0);
+	Term term = null;
+
+    Optional<AttributeType> optionalAttributeType = this.getType().getAttribute(DefaultAttribute.STATUS.getName());
+
+    if (optionalAttributeType.isPresent())
+    {
+      AttributeTermType attributeTermType = (AttributeTermType)optionalAttributeType.get();
+      
+      String termCode = (String)this.getValue(DefaultAttribute.STATUS.getName());
+      Optional<Term> optionalTerm = attributeTermType.getTermByCode(termCode);
+      
+      if (optionalTerm.isPresent())
+      {
+        term = optionalTerm.get();
+      }
+    }    
+    
+    return term;
   }
   
   public void setStatus(Term status)
   {
-    this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(status);
+    this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(status.getCode());
   }
   
   /**
@@ -276,14 +296,14 @@ public class GeoObject implements Serializable
    * 
    * @return {@link GeoObject} from the given JSON.
    */
-  public static GeoObject fromJSON(RegistryAdapter _registry, String _sJson)
+  public static GeoObject fromJSON(RegistryAdapter registry, String sJson)
   {
     JsonParser parser = new JsonParser();
     
-    JsonObject oJson = parser.parse(_sJson).getAsJsonObject();
+    JsonObject oJson = parser.parse(sJson).getAsJsonObject();
     JsonObject oJsonProps = oJson.getAsJsonObject(JSON_PROPERTIES);
     
-    GeoObject geoObj = _registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString());
+    GeoObject geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString());
     
     JsonElement oGeom = oJson.get(JSON_GEOMETRY);
     if (oGeom != null)
@@ -300,7 +320,7 @@ public class GeoObject implements Serializable
       
       if (oJsonProps.has(key))
       {
-        attr.fromJSON(oJsonProps.get(key), _registry);
+        attr.fromJSON(oJsonProps.get(key), registry);
       }
     }
     

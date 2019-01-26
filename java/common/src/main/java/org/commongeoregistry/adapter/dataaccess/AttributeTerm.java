@@ -1,21 +1,21 @@
 package org.commongeoregistry.adapter.dataaccess;
 
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class AttributeTerm extends Attribute
-{
-
-  private List<Term>        terms;
+{ 
+  private Set<String>      termCodes;
 
   /**
    * 
@@ -26,77 +26,124 @@ public class AttributeTerm extends Attribute
   {
     super(name, AttributeTermType.TYPE);
 
-    this.terms = Collections.synchronizedList(new LinkedList<Term>());
+    this.termCodes = Collections.synchronizedSet(new HashSet<String>());
   }
 
-  public List<Term> getTerms()
+  public Iterator<String> getTermCodes()
   {
-    return this.terms;
+    return this.termCodes.iterator();
   }
 
+  /**
+   * Clears any existing term references and sets it to the given reference
+   * 
+   */
   @Override
-  public void setValue(Object integer)
+  public void setValue(Object termCode)
   {
-    this.terms.clear();
-    this.addTerm((Term) integer);
+	if (termCode instanceof Term)
+	{
+      this.setValue((Term)termCode);
+	}
+	else
+	{
+      this.setTerm((String) termCode);
+	}
+  }
+  
+  /**
+   * Clears any existing term references and sets it to the given reference
+   * 
+   */
+  public void setValue(Term term)
+  {
+    this.setTerm(term.getCode());
   }
 
-  public void addTerm(Term term)
+
+  public void setTerm(String termCode)
+  {
+    this.termCodes.clear();
+	this.addTerm((String) termCode);
+  }
+  
+  
+  public void addTerm(String termCode)
   {
     // TODO add validation to ensure that the provided term is one of the
     // allowed terms on this type
-    this.terms.add(term);
+    this.termCodes.add(termCode);
+  }
+  
+  /**
+   * 
+   * 
+   * @param termCode
+   */
+  public void removeTerm(String termCode)
+  {
+    this.termCodes.remove(termCode);
   }
 
   public void clearTerms()
   {
-    this.terms.clear();
+    this.termCodes.clear();
   }
 
   @Override
-  public List<Term> getValue()
+  public Iterator<String> getValue()
   {
-    return this.terms;
+    return this.termCodes.iterator();
   }
 
   @Override
   public void toJSON(JsonObject geoObjProps)
-  {
-    List<Term> terms = this.getTerms();
-    
-    JsonObject joTerm = null;
-    if (terms.size() > 0)
-    {
-      joTerm = this.getTerms().get(0).toJSON();
+  {    
+    JsonArray termCodesJson = new JsonArray();
+
+    if (this.termCodes.size() > 0)
+    {      
+      for (String termCode : this.termCodes)
+      {
+    	termCodesJson.add(termCode);
+      }
     }
     
-    geoObjProps.add(this.getName(), joTerm);
+    geoObjProps.add(this.getName(), termCodesJson);
   }
+  
   
   @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-    if (!jValue.isJsonObject()) // They may have passed us a JsonNull
+    if (!jValue.isJsonArray()) // They may have passed us a JsonNull
     {
       this.clearTerms();
       return;
     }
     
-    JsonObject jTerm = jValue.getAsJsonObject();
-    String code = jTerm.get("code").getAsString();
+    JsonArray termCodesJson = jValue.getAsJsonArray();
     
-    Optional<Term> opTerm = registry.getMetadataCache().getTerm(code);
-    
-    if (opTerm.isPresent())
+    for (JsonElement jsonElement : termCodesJson)
     {
-      this.terms = Collections.synchronizedList(new LinkedList<Term>());
-      
-      this.terms.add(opTerm.get());
+      this.addTerm(jsonElement.getAsString());
     }
-    else
-    {
-      throw new RuntimeException("Unable to find term with code [" + code + "].");
-    }
+
+//    JsonObject jTerm = jValue.getAsJsonObject();
+//    String code = jTerm.get("code").getAsString();
+//    
+//    Optional<Term> opTerm = registry.getMetadataCache().getTerm(code);
+//    
+//    if (opTerm.isPresent())
+//    {
+//      this.terms = Collections.synchronizedList(new LinkedList<Term>());
+//      
+//      this.terms.add(opTerm.get());
+//    }
+//    else
+//    {
+//      throw new RuntimeException("Unable to find term with code [" + code + "].");
+//    }
   }
 
   @Override
@@ -106,9 +153,9 @@ public class AttributeTerm extends Attribute
 
     toString += " Terms: ";
 
-    for (Term term : this.terms)
+    for (String termCode : this.termCodes)
     {
-      toString += term.toString();
+      toString += termCode.toString();
     }
 
     return toString;

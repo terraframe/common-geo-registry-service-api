@@ -1,7 +1,7 @@
 package org.commongeoregistry.adapter;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Iterator;
 
 import org.commongeoregistry.adapter.action.AbstractAction;
 import org.commongeoregistry.adapter.action.AddChildAction;
@@ -25,8 +25,31 @@ import org.commongeoregistry.adapter.metadata.MetadataFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.gson.JsonObject;
+
 public class SerializationTest
 {
+	
+  @Test
+  public void testTerm()
+  {
+    Term facilityType = new Term("FACILITY_TYPE", "Facility Type", "...");
+	Term clinic = new Term("CLINIC", "Clinic", "...");
+	Term matWard = new Term("MATERNITY_WARD", "Maternity Ward", "...");
+	facilityType.addChild(clinic);
+	facilityType.addChild(matWard);
+	  
+	JsonObject jsonObject = facilityType.toJSON();
+	    
+	Term facilityType2 = Term.fromJSON(jsonObject);
+	  
+	Assert.assertEquals(facilityType.getCode(), facilityType2.getCode());
+	Assert.assertEquals(facilityType.getLocalizedLabel(), facilityType2.getLocalizedLabel());
+	Assert.assertEquals(facilityType.getLocalizedDescription(), facilityType2.getLocalizedDescription());
+	  
+	Assert.assertEquals(facilityType.getChildren().size(), facilityType2.getChildren().size());
+  }
+	
   @Test
   public void testGeoObject()
   {
@@ -131,8 +154,8 @@ public class SerializationTest
     Assert.assertEquals(geoObject.getValue("testDate"), geoObject2.getValue("testDate"));
     Assert.assertEquals(geoObject.getValue("testInteger"), geoObject2.getValue("testInteger"));
     Assert.assertEquals(geoObject.getValue("testBoolean"), geoObject2.getValue("testBoolean"));
-
-    Assert.assertEquals(((List<Term>)geoObject.getValue("testTerm")).get(0).getCode(), ((List<Term>)geoObject2.getValue("testTerm")).get(0).getCode());
+    
+    Assert.assertEquals(((Iterator<String>)geoObject.getValue("testTerm")).next(), ((Iterator<String>)geoObject2.getValue("testTerm")).next());
   }
     
   /**

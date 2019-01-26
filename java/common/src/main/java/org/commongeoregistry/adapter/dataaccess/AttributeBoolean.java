@@ -39,14 +39,6 @@ public class AttributeBoolean extends Attribute
     return this.value;
   }
 
-  public JsonObject toJSON()
-  {
-    JsonObject obj = new JsonObject();
-    obj.addProperty(this.getName(), this.getValue().toString());
-
-    return obj;
-  }
-
   @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
