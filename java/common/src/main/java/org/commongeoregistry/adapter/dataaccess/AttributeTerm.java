@@ -29,25 +29,20 @@ public class AttributeTerm extends Attribute
     this.termCodes = Collections.synchronizedSet(new HashSet<String>());
   }
 
-  public Iterator<String> getTermCodes()
-  {
-    return this.termCodes.iterator();
-  }
-
   /**
    * Clears any existing term references and sets it to the given reference
    * 
    */
   @Override
-  public void setValue(Object termCode)
+  public void setValue(Object value)
   {
-	if (termCode instanceof Term)
+	if (value instanceof Term)
 	{
-      this.setValue((Term)termCode);
+      this.setValue((Term)value);
 	}
 	else
 	{
-      this.setTerm((String) termCode);
+      this.setTerm((String)value);
 	}
   }
   

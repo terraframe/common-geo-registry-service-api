@@ -1,6 +1,7 @@
 package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -269,7 +270,8 @@ public class GeoObject implements Serializable
     {
       AttributeTermType attributeTermType = (AttributeTermType)optionalAttributeType.get();
       
-      String termCode = (String)this.getValue(DefaultAttribute.STATUS.getName());
+      @SuppressWarnings("unchecked")
+	  String termCode = ((Iterator<String>)this.getValue(DefaultAttribute.STATUS.getName())).next();
       Optional<Term> optionalTerm = attributeTermType.getTermByCode(termCode);
       
       if (optionalTerm.isPresent())
