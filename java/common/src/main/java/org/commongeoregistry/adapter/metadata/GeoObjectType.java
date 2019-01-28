@@ -407,7 +407,7 @@ public class GeoObjectType implements Serializable
     for (int i = 0; i < oJsonAttrs.size(); ++i)
     {
       JsonObject joAttr = oJsonAttrs.get(i).getAsJsonObject();
-      String name = joAttr.get(AttributeType.JSON_NAME).getAsString();
+      String name = joAttr.get(AttributeType.JSON_CODE).getAsString();
 
       AttributeType attrType = AttributeType.factory(name, joAttr.get(AttributeType.JSON_LOCALIZED_LABEL).getAsString(), joAttr.get(AttributeType.JSON_LOCALIZED_DESCRIPTION).getAsString(), joAttr.get(AttributeType.JSON_TYPE).getAsString());
       

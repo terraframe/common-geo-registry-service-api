@@ -19,7 +19,7 @@ public abstract class AttributeType implements Serializable
    */
   private static final long serialVersionUID                = -2037233821367602621L;
   
-  public static final String JSON_NAME                      = "name";
+  public static final String JSON_CODE                      = "code";
   
   public static final String JSON_LOCALIZED_LABEL           = "localizedLabel";
   
@@ -65,9 +65,19 @@ public abstract class AttributeType implements Serializable
     return this.localizedLabel;
   }
   
+  public void setLocalizedLabel(String localizedLabel)
+  {
+    this.localizedLabel = localizedLabel;
+  }
+  
   public String getLocalizedDescription()
   {
     return this.localizedDescription;
+  }
+  
+  public void setLocalizedDescription(String localizedDescription)
+  {
+    this.localizedDescription = localizedDescription;
   }
   
   public boolean getIsDefault()
@@ -151,7 +161,7 @@ public abstract class AttributeType implements Serializable
   {
     JsonObject json = new JsonObject();
     
-    json.addProperty(JSON_NAME, this.getName());
+    json.addProperty(JSON_CODE, this.getName());
     
     json.addProperty(JSON_TYPE, this.getType());
     
