@@ -68,9 +68,10 @@ public class AttributeTermType extends AttributeType
     return Optional.of(term);
   }
   
-  public JsonObject toJSON()
+  @Override
+  public JsonObject toJSON(CustomSerializer serializer)
   {
-	JsonObject json  = super.toJSON();
+	JsonObject json  = super.toJSON(serializer);
     
 	if (this.rootTerm != null)
 	{
