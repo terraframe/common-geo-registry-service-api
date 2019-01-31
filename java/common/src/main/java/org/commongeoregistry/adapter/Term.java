@@ -131,7 +131,14 @@ public class Term implements Serializable
 	
 	return term;
   }
-
+  
+  @Override
+  public boolean equals(Object obj)
+  {
+    return (obj instanceof Term) && ((Term)obj).getCode().equals(this.getCode());
+  }
+  
+  @Override
   public String toString()
   {
     String toString = "Term: " + this.code + " ";
