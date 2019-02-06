@@ -142,7 +142,7 @@ public class SerializationTest
 
     geoObject.setValue("testChar", "Test Character Value");
     geoObject.setValue("testDate", new Date());
-    geoObject.setValue("testInteger", 3);
+    geoObject.setValue("testInteger", 3L);
     geoObject.setValue("testBoolean", false);
     geoObject.setValue("testTerm", registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.PENDING.code).get());
 

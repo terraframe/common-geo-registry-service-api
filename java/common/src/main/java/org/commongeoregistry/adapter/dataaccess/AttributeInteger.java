@@ -15,7 +15,7 @@ public class AttributeInteger extends Attribute
    */
   private static final long serialVersionUID = -2116815892488790274L;
   
-  private Integer integer;
+  private Long integer;
   
   public AttributeInteger(String name)
   {
@@ -27,16 +27,16 @@ public class AttributeInteger extends Attribute
   @Override
   public void setValue(Object integer)
   {
-    this.setInteger((Integer)integer);
+    this.setInteger((Long)integer);
   }
   
-  public void setInteger(Integer integer)
+  public void setInteger(Long integer)
   {
     this.integer = integer;
   }
   
   @Override
-  public Integer getValue()
+  public Long getValue()
   {
     return this.integer;
   }
@@ -50,7 +50,7 @@ public class AttributeInteger extends Attribute
   {
     if (!(jValue instanceof JsonNull))
     {
-      this.setValue(jValue.getAsInt());
+      this.setValue(jValue.getAsLong());
     }
   }
 
