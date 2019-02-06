@@ -14,28 +14,27 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public abstract class Attribute implements Serializable
-{  
+{
   /**
    * 
    */
   private static final long serialVersionUID = -6682494916732516027L;
-  
-  private String name;
-  
-  private String type;
-  
+
+  private String            name;
+
+  private String            type;
+
   public Attribute(String name, String type)
   {
     this.name = name;
     this.type = type;
   }
-  
-  
+
   public String getName()
   {
     return this.name;
   }
-  
+
   /**
    * 
    * @return
@@ -44,15 +43,20 @@ public abstract class Attribute implements Serializable
   {
     return this.type;
   }
-  
+
+  public void validate(AttributeType attributeType, Object _value)
+  {
+    // Stub method for optional validation
+  }
+
   public abstract Object getValue();
-  
+
   public abstract void setValue(Object value);
-  
+
   public static Attribute attributeFactory(AttributeType attributeType)
   {
-    Attribute attribute; 
-    
+    Attribute attribute;
+
     if (attributeType instanceof AttributeDateType)
     {
       attribute = new AttributeDate(attributeType.getName());
@@ -73,17 +77,17 @@ public abstract class Attribute implements Serializable
     {
       attribute = new AttributeBoolean(attributeType.getName());
     }
-    else 
+    else
     {
       attribute = new AttributeCharacter(attributeType.getName());
     }
-    
+
     return attribute;
   }
-  
+
   public String toString()
   {
-    return this.getName()+": "+this.getValue();
+    return this.getName() + ": " + this.getValue();
   }
 
   public void toJSON(JsonObject geoObjProps)
@@ -93,13 +97,13 @@ public abstract class Attribute implements Serializable
     {
       value = "";
     }
-    
+
     geoObjProps.addProperty(this.getName(), value.toString());
   }
-  
+
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
     this.setValue(jValue.getAsString());
   }
-  
+
 }

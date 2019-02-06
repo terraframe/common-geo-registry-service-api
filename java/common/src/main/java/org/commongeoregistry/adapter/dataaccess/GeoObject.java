@@ -29,21 +29,21 @@ public class GeoObject implements Serializable
   /**
    * 
    */
-  private static final long      serialVersionUID          = 7686140708200106783L;
-  
-  public static final String     UID                       = DefaultAttribute.UID.getName();
-  
-  public static final String     CODE                      = DefaultAttribute.CODE.getName();
-  
-  public static final String     LOCALIZED_DISPLAY_LABEL   = DefaultAttribute.LOCALIZED_DISPLAY_LABEL.getName();
-  
-  public static final String     JSON_PROPERTIES           = "properties";
-  
-  public static final String     JSON_TYPE                 = "type";
-  
-  public static final String     JSON_GEOMETRY             = "geometry";
-  
-  public static final String     JSON_FEATURE              = "Feature";
+  private static final long      serialVersionUID        = 7686140708200106783L;
+
+  public static final String     UID                     = DefaultAttribute.UID.getName();
+
+  public static final String     CODE                    = DefaultAttribute.CODE.getName();
+
+  public static final String     LOCALIZED_DISPLAY_LABEL = DefaultAttribute.LOCALIZED_DISPLAY_LABEL.getName();
+
+  public static final String     JSON_PROPERTIES         = "properties";
+
+  public static final String     JSON_TYPE               = "type";
+
+  public static final String     JSON_GEOMETRY           = "geometry";
+
+  public static final String     JSON_FEATURE            = "Feature";
 
   private GeoObjectType          geoObjectType;
 
@@ -54,14 +54,14 @@ public class GeoObject implements Serializable
   private Map<String, Attribute> attributeMap;
 
   /**
-   * Use the factory method on the {@link RegistryAdapter} to create new instances of a {@link GeoObject}
+   * Use the factory method on the {@link RegistryAdapter} to create new
+   * instances of a {@link GeoObject}
    * 
    * @param geoObjectType
    * @param geometryType
    * @param attributeMap
    */
-  public GeoObject(GeoObjectType geoObjectType, GeometryType geometryType,
-      Map<String, Attribute> attributeMap)
+  public GeoObject(GeoObjectType geoObjectType, GeometryType geometryType, Map<String, Attribute> attributeMap)
   {
     this.geoObjectType = geoObjectType;
 
@@ -70,37 +70,41 @@ public class GeoObject implements Serializable
     this.geometry = null;
 
     this.attributeMap = attributeMap;
-    
+
     this.getAttribute(DefaultAttribute.TYPE.getName()).setValue(geoObjectType.getCode());
   }
-  
+
   /**
-   * Returns a map of {@link Attribute} objects for a {@link GeoObject} of the given {@link GeoObjectType}. 
+   * Returns a map of {@link Attribute} objects for a {@link GeoObject} of the
+   * given {@link GeoObjectType}.
    * 
    * @param geoObjectType
    * 
-   * @return map of {@link Attribute} objects for a {@link GeoObject} of the given {@link GeoObjectType}. 
+   * @return map of {@link Attribute} objects for a {@link GeoObject} of the
+   *         given {@link GeoObjectType}.
    */
   public static Map<String, Attribute> buildAttributeMap(GeoObjectType geoObjectType)
   {
     Map<String, AttributeType> attributeTypeMap = geoObjectType.getAttributeMap();
-    
+
     Map<String, Attribute> attributeMap = new ConcurrentHashMap<String, Attribute>();
-    
+
     for (AttributeType attributeType : attributeTypeMap.values())
     {
       Attribute attribute = Attribute.attributeFactory(attributeType);
-      
+
       attributeMap.put(attribute.getName(), attribute);
     }
-    
+
     return attributeMap;
   }
 
   /**
-   * Returns a reference to the {@link GeoObjectType} that defines this {@link GeoObject}.
+   * Returns a reference to the {@link GeoObjectType} that defines this
+   * {@link GeoObject}.
    * 
-   * @return a reference to the {@link GeoObjectType} that defines this {@link GeoObject}.
+   * @return a reference to the {@link GeoObjectType} that defines this
+   *         {@link GeoObject}.
    */
   public GeoObjectType getType()
   {
@@ -136,7 +140,7 @@ public class GeoObject implements Serializable
   {
     this.geometry = geometry;
   }
-  
+
   /**
    * Set the WKT geometry on this Geometry Type.
    * 
@@ -163,17 +167,17 @@ public class GeoObject implements Serializable
    * Returns the value of the attribute with the given name.
    * 
    * @pre attribute with the given name is defined on the {@link GeoObjectType}
-   * that defines this {@link GeoObject}.
+   *      that defines this {@link GeoObject}.
    * 
    * @param attributeName
    * 
-   * @return  value of the attribute with the given name.
+   * @return value of the attribute with the given name.
    */
   public Object getValue(String attributeName)
   {
     return this.attributeMap.get(attributeName).getValue();
   }
-  
+
   /**
    * Sets the value of the {@link attribute} object with the given name.
    * 
@@ -182,14 +186,23 @@ public class GeoObject implements Serializable
    */
   public void setValue(String attributeName, Object _value)
   {
-    this.attributeMap.get(attributeName).setValue(_value);
+    Attribute attribute = this.attributeMap.get(attributeName);
+
+    Optional<AttributeType> optional = this.getType().getAttribute(attributeName);
+
+    if (optional.isPresent())
+    {
+      optional.get().validate(_value);
+    }
+
+    attribute.setValue(_value);
   }
 
   /**
    * Returns the {@link attribute} object with the given name.
    * 
    * @pre attribute with the given name is defined on the {@link GeoObjectType}
-   * that defines this {@link GeoObject}.
+   *      that defines this {@link GeoObject}.
    * 
    * @param attributeName
    * 
@@ -199,17 +212,17 @@ public class GeoObject implements Serializable
   {
     return this.attributeMap.get(attributeName);
   }
-  
+
   /**
    * Sets the code of this {@link GeoObject}.
    * 
-   * @param code 
+   * @param code
    */
   public void setCode(String code)
   {
     this.attributeMap.get(CODE).setValue(code);
   }
-  
+
   /**
    * Returns the code id of this {@link GeoObject}
    * 
@@ -219,7 +232,7 @@ public class GeoObject implements Serializable
   {
     return (String) this.attributeMap.get(CODE).getValue();
   }
-  
+
   /**
    * Sets the UID of this {@link GeoObject}.
    * 
@@ -229,7 +242,7 @@ public class GeoObject implements Serializable
   {
     this.attributeMap.get(UID).setValue(uid);
   }
-  
+
   /**
    * Returns the UID of this {@link GeoObject}.
    * 
@@ -239,9 +252,9 @@ public class GeoObject implements Serializable
   {
     return (String) this.attributeMap.get(UID).getValue();
   }
-  
+
   /**
-   * Returns the localized 
+   * Returns the localized
    * 
    * @return
    */
@@ -249,12 +262,12 @@ public class GeoObject implements Serializable
   {
     return (String) this.attributeMap.get(LOCALIZED_DISPLAY_LABEL).getValue();
   }
-  
+
   public void setLocalizedDisplayLabel(String _displayLabel)
   {
     this.attributeMap.get(LOCALIZED_DISPLAY_LABEL).setValue(_displayLabel);
-  } 
-  
+  }
+
   /**
    * Returns the status code
    * 
@@ -262,36 +275,37 @@ public class GeoObject implements Serializable
    */
   public Term getStatus()
   {
-	Term term = null;
+    Term term = null;
 
     Optional<AttributeType> optionalAttributeType = this.getType().getAttribute(DefaultAttribute.STATUS.getName());
 
     if (optionalAttributeType.isPresent())
     {
-      AttributeTermType attributeTermType = (AttributeTermType)optionalAttributeType.get();
-      
+      AttributeTermType attributeTermType = (AttributeTermType) optionalAttributeType.get();
+
       @SuppressWarnings("unchecked")
-	  String termCode = ((Iterator<String>)this.getValue(DefaultAttribute.STATUS.getName())).next();
+      String termCode = ( (Iterator<String>) this.getValue(DefaultAttribute.STATUS.getName()) ).next();
       Optional<Term> optionalTerm = attributeTermType.getTermByCode(termCode);
-      
+
       if (optionalTerm.isPresent())
       {
         term = optionalTerm.get();
       }
-    }    
-    
+    }
+
     return term;
   }
-  
+
   public void setStatus(Term status)
   {
     this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(status.getCode());
   }
-  
+
   /**
    * Creates a {@link GeoObject} from the given JSON.
    * 
-   * @pre assumes the attributes on the JSON are valid attributes defined by the {@link GeoObjectType}
+   * @pre assumes the attributes on the JSON are valid attributes defined by the
+   *      {@link GeoObjectType}
    * 
    * @param _registry
    * @param _sJson
@@ -301,34 +315,34 @@ public class GeoObject implements Serializable
   public static GeoObject fromJSON(RegistryAdapter registry, String sJson)
   {
     JsonParser parser = new JsonParser();
-    
+
     JsonObject oJson = parser.parse(sJson).getAsJsonObject();
     JsonObject oJsonProps = oJson.getAsJsonObject(JSON_PROPERTIES);
-    
+
     GeoObject geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString());
-    
+
     JsonElement oGeom = oJson.get(JSON_GEOMETRY);
     if (oGeom != null)
     {
       GeoJSONReader reader = new GeoJSONReader();
       Geometry jtsGeom = reader.read(oGeom.toString());
-      
+
       geoObj.setGeometry(jtsGeom);
     }
-    
+
     for (String key : geoObj.attributeMap.keySet())
     {
       Attribute attr = geoObj.attributeMap.get(key);
-      
+
       if (oJsonProps.has(key))
       {
         attr.fromJSON(oJsonProps.get(key), registry);
       }
     }
-    
+
     return geoObj;
   }
-  
+
   /**
    * Return the JSON representation of this [@link GeoObject}
    * 
@@ -347,50 +361,50 @@ public class GeoObject implements Serializable
     {
       GeoJSONWriter gw = new GeoJSONWriter();
       org.wololo.geojson.Geometry gJSON = gw.write(this.getGeometry());
-      
+
       JsonParser parser = new JsonParser();
       JsonObject geomObj = parser.parse(gJSON.toString()).getAsJsonObject();
-      
+
       jsonObj.add(JSON_GEOMETRY, geomObj);
     }
-    
+
     JsonObject props = new JsonObject();
     for (String key : this.attributeMap.keySet())
     {
       Attribute attr = this.attributeMap.get(key);
-      
+
       attr.toJSON(props);
-      
-//      if(attr instanceof AttributeTerm)
-//      {
-//        attrs.add(key, attr.toJSON());
-//      }
-//      else
-//      {
-//        
-//        System.out.println(attr.toJSON());
-//        
-//        // TODO: All these attributes are required by the CGR spec. Adding an
-//        // empty string is a temporary step for me to work on another area of 
-//        // the adapter. Ensure that Values are always present and handle 
-//        // NULLs as errors.
-//        if(attr.getValue() == null )
-//        {
-//          attrs.addProperty(key, ""); 
-//        }
-//        else
-//        {
-//          attrs.addProperty(key, attr.getValue().toString() );
-//        }
-//      }
-      
-//      JsonParser attrParser = new JsonParser();
-//      JsonObject geomObj = attrParser.parse(attr.toJSON().toString()).getAsJsonObject();
-      
+
+      // if(attr instanceof AttributeTerm)
+      // {
+      // attrs.add(key, attr.toJSON());
+      // }
+      // else
+      // {
+      //
+      // System.out.println(attr.toJSON());
+      //
+      // // TODO: All these attributes are required by the CGR spec. Adding an
+      // // empty string is a temporary step for me to work on another area of
+      // // the adapter. Ensure that Values are always present and handle
+      // // NULLs as errors.
+      // if(attr.getValue() == null )
+      // {
+      // attrs.addProperty(key, "");
+      // }
+      // else
+      // {
+      // attrs.addProperty(key, attr.getValue().toString() );
+      // }
+      // }
+
+      // JsonParser attrParser = new JsonParser();
+      // JsonObject geomObj =
+      // attrParser.parse(attr.toJSON().toString()).getAsJsonObject();
+
     }
 
     jsonObj.add(JSON_PROPERTIES, props);
-    
 
     return jsonObj;
   }

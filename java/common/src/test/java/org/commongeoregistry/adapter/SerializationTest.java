@@ -14,6 +14,7 @@ import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
+import org.commongeoregistry.adapter.dataaccess.UnknownTermException;
 import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
@@ -30,27 +31,27 @@ import com.google.gson.JsonObject;
 
 public class SerializationTest
 {
-	
+
   @Test
   public void testTerm()
   {
     Term facilityType = new Term("FACILITY_TYPE", "Facility Type", "...");
-	Term clinic = new Term("CLINIC", "Clinic", "...");
-	Term matWard = new Term("MATERNITY_WARD", "Maternity Ward", "...");
-	facilityType.addChild(clinic);
-	facilityType.addChild(matWard);
-	  
-	JsonObject jsonObject = facilityType.toJSON();
-	    
-	Term facilityType2 = Term.fromJSON(jsonObject);
-	  
-	Assert.assertEquals(facilityType.getCode(), facilityType2.getCode());
-	Assert.assertEquals(facilityType.getLocalizedLabel(), facilityType2.getLocalizedLabel());
-	Assert.assertEquals(facilityType.getLocalizedDescription(), facilityType2.getLocalizedDescription());
-	  
-	Assert.assertEquals(facilityType.getChildren().size(), facilityType2.getChildren().size());
+    Term clinic = new Term("CLINIC", "Clinic", "...");
+    Term matWard = new Term("MATERNITY_WARD", "Maternity Ward", "...");
+    facilityType.addChild(clinic);
+    facilityType.addChild(matWard);
+
+    JsonObject jsonObject = facilityType.toJSON();
+
+    Term facilityType2 = Term.fromJSON(jsonObject);
+
+    Assert.assertEquals(facilityType.getCode(), facilityType2.getCode());
+    Assert.assertEquals(facilityType.getLocalizedLabel(), facilityType2.getLocalizedLabel());
+    Assert.assertEquals(facilityType.getLocalizedDescription(), facilityType2.getLocalizedDescription());
+
+    Assert.assertEquals(facilityType.getChildren().size(), facilityType2.getChildren().size());
   }
-	
+
   @Test
   public void testGeoObject()
   {
@@ -123,9 +124,8 @@ public class SerializationTest
     AttributeType testDate = AttributeType.factory("testDate", "testDateLocalName", "testDateLocalDescrip", AttributeDateType.TYPE);
     AttributeType testInteger = AttributeType.factory("testInteger", "testIntegerLocalName", "testIntegerLocalDescrip", AttributeIntegerType.TYPE);
     AttributeType testBoolean = AttributeType.factory("testBoolean", "testBooleanName", "testBooleanDescrip", AttributeBooleanType.TYPE);
-    AttributeType testTerm = AttributeType.factory("testTerm", "testTermLocalName", "testTermLocalDescrip", AttributeTermType.TYPE);
-
-    ( (AttributeTermType) testTerm ).setRootTerm(registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get());
+    AttributeTermType testTerm = (AttributeTermType) AttributeType.factory("testTerm", "testTermLocalName", "testTermLocalDescrip", AttributeTermType.TYPE);
+    testTerm.setRootTerm(registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get());
 
     state.addAttribute(testChar);
     state.addAttribute(testDate);
@@ -143,7 +143,7 @@ public class SerializationTest
 
     geoObject.setValue("testChar", "Test Character Value");
     geoObject.setValue("testDate", new Date());
-    geoObject.setValue("testInteger", 3);
+    geoObject.setValue("testInteger", 3L);
     geoObject.setValue("testBoolean", false);
     geoObject.setValue("testTerm", registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.PENDING.code).get());
 
@@ -156,8 +156,30 @@ public class SerializationTest
     Assert.assertEquals(geoObject.getValue("testDate"), geoObject2.getValue("testDate"));
     Assert.assertEquals(geoObject.getValue("testInteger"), geoObject2.getValue("testInteger"));
     Assert.assertEquals(geoObject.getValue("testBoolean"), geoObject2.getValue("testBoolean"));
-    
-    Assert.assertEquals(((Iterator<String>)geoObject.getValue("testTerm")).next(), ((Iterator<String>)geoObject2.getValue("testTerm")).next());
+
+    Assert.assertEquals( ( (Iterator<String>) geoObject.getValue("testTerm") ).next(), ( (Iterator<String>) geoObject2.getValue("testTerm") ).next());
+  }
+
+  @Test(expected = UnknownTermException.class)
+  public void testGeoObjectBadTerm()
+  {
+    RegistryAdapterServer registryServerInterface = new RegistryAdapterServer(new MockIdService());
+
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registryServerInterface);
+
+    AttributeTermType testTerm = (AttributeTermType) AttributeType.factory("testTerm", "testTermLocalName", "testTermLocalDescrip", AttributeTermType.TYPE);
+    testTerm.setRootTerm(registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get());
+
+    state.addAttribute(testTerm);
+
+    String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
+
+    GeoObject geoObject = registryServerInterface.newGeoObjectInstance("State");
+
+    geoObject.setWKTGeometry(geom);
+    geoObject.setCode("Colorado");
+    geoObject.setUid("CO");
+    geoObject.setValue("testTerm", "Bad");
   }
 
   /**
