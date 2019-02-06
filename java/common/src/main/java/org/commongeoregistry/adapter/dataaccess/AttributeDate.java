@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
+import org.commongeoregistry.adapter.constants.AdapterConstants;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 
 import com.google.gson.JsonElement;
@@ -18,8 +19,6 @@ public class AttributeDate extends Attribute
   private static final long serialVersionUID = 5532076653984789765L;
   
   private Date date;
-  
-  private static final String FORMAT = "yyyy-MM-dd G HH-mm-ss-SS Z";
   
   public AttributeDate(String name)
   {
@@ -51,7 +50,7 @@ public class AttributeDate extends Attribute
   {  
     if (this.date != null)
     {
-      String sDate = new java.text.SimpleDateFormat(FORMAT).format(this.date);
+      String sDate = new java.text.SimpleDateFormat(AdapterConstants.DATE_FORMAT).format(this.date);
       
       geoObjProps.addProperty(this.getName(), sDate);
     }
@@ -62,7 +61,7 @@ public class AttributeDate extends Attribute
   {
     try
     {
-      this.setValue(new java.text.SimpleDateFormat(FORMAT).parse(jValue.getAsString()));
+      this.setValue(new java.text.SimpleDateFormat(AdapterConstants.DATE_FORMAT).parse(jValue.getAsString()));
     }
     catch (ParseException e)
     {

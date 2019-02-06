@@ -1,13 +1,14 @@
 package org.commongeoregistry.adapter;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
-import org.commongeoregistry.adapter.action.AbstractAction;
-import org.commongeoregistry.adapter.action.AddChildAction;
-import org.commongeoregistry.adapter.action.CreateAction;
-import org.commongeoregistry.adapter.action.DeleteAction;
-import org.commongeoregistry.adapter.action.UpdateAction;
+import org.commongeoregistry.adapter.action.AbstractActionDTO;
+import org.commongeoregistry.adapter.action.geoobject.CreateGeoObjectActionDTO;
+import org.commongeoregistry.adapter.action.geoobject.UpdateGeoObjectActionDTO;
+import org.commongeoregistry.adapter.action.tree.AddChildActionDTO;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
@@ -318,61 +319,73 @@ public class SerializationTest
     RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
     TestFixture.defineExampleHierarchies(registry);
     GeoObject geoObj1 = TestFixture.createGeoObject(registry, "PROV_ONE", TestFixture.PROVINCE);
-    GeoObject geoObj2 = TestFixture.createGeoObject(registry, "PROV_ONE", TestFixture.PROVINCE);
+    GeoObject geoObj2 = TestFixture.createGeoObject(registry, "DIST_ONE", TestFixture.DISTRICT);
     GeoObjectType province = geoObj1.getType();
     HierarchyType geoPolitical = registry.getMetadataCache().getHierachyType(TestFixture.GEOPOLITICAL).get();
 
-    AbstractAction[] actions = new AbstractAction[6];
+    List<AbstractActionDTO> actions = new ArrayList<AbstractActionDTO>();
     int i = 0;
 
-    // Add Child
-    AddChildAction addChild = new AddChildAction(geoObj1.getUid(), geoObj1.getType().getCode(), geoObj2.getUid(), geoObj2.getType().getCode(), geoPolitical.getCode());
+    /*
+     *  Add Child
+     */
+    AddChildActionDTO addChild = new AddChildActionDTO();
+    addChild.setParentId(geoObj1.getUid());
+    addChild.setParentTypeCode(geoObj1.getType().getCode());
+    addChild.setChildId(geoObj2.getUid());
+    addChild.setChildTypeCode(geoObj2.getType().getCode());
+    addChild.setHierarchyCode(geoPolitical.getCode());
+    
     String addChildJson = addChild.toJSON().toString();
-    String addChildJson2 = AddChildAction.fromJSON(addChildJson).toJSON().toString();
+    String addChildJson2 = AbstractActionDTO.parseAction(addChildJson).toJSON().toString();
     Assert.assertEquals(addChildJson, addChildJson2);
-    actions[i++] = addChild;
+    actions.add(addChild);
 
+    // Add Parent TODO
+    
     // Remove Child ??
     // TODO
 
-    // Create a GeoObject
-    CreateAction create = new CreateAction(geoObj1);
+    /*
+     *  Create a GeoObject
+     */
+    CreateGeoObjectActionDTO create = new CreateGeoObjectActionDTO();
+    create.setGeoObject(geoObj1.toJSON());
+    
     String createJson = create.toJSON().toString();
-    String createJson2 = CreateAction.fromJSON(createJson).toJSON().toString();
+    String createJson2 = AbstractActionDTO.parseAction(createJson).toJSON().toString();
     Assert.assertEquals(createJson, createJson2);
-    actions[i++] = create;
+    actions.add(create);
 
-    // Update a GeoObject
-    UpdateAction update = new UpdateAction(geoObj1);
+    /*
+     *  Update a GeoObject
+     */
+    UpdateGeoObjectActionDTO update = new UpdateGeoObjectActionDTO();
+    update.setGeoObject(geoObj1.toJSON());
+    
     String updateJson = update.toJSON().toString();
-    String updateJson2 = UpdateAction.fromJSON(updateJson).toJSON().toString();
+    String updateJson2 = AbstractActionDTO.parseAction(updateJson).toJSON().toString();
     Assert.assertEquals(updateJson, updateJson2);
-    actions[i++] = create;
+    actions.add(create);
 
-    // Update a GeoObjectType
-    UpdateAction createGOT = new UpdateAction(province);
+    /*
+     *  Update a GeoObjectType
+     */
+    UpdateGeoObjectActionDTO createGOT = new UpdateGeoObjectActionDTO();
+    createGOT.setGeoObject(province.toJSON());
+    
     String createGOTJson = createGOT.toJSON().toString();
-    String createGOTJson2 = UpdateAction.fromJSON(createGOTJson).toJSON().toString();
+    String createGOTJson2 = AbstractActionDTO.parseAction(createGOTJson).toJSON().toString();
     Assert.assertEquals(createGOTJson, createGOTJson2);
-    actions[i++] = createGOT;
+    actions.add(createGOT);
 
-    // Delete a GeoObject
-    DeleteAction deleteGO = new DeleteAction(geoObj1);
-    String deleteGOJson = deleteGO.toJSON().toString();
-    String deleteGOJson2 = DeleteAction.fromJSON(deleteGOJson).toJSON().toString();
-    Assert.assertEquals(deleteGOJson, deleteGOJson2);
-    actions[i++] = deleteGO;
-
-    // Delete a GeoObjectType
-    DeleteAction deleteGOT = new DeleteAction(province);
-    String deleteGOTJson = deleteGOT.toJSON().toString();
-    String deleteGOTJson2 = DeleteAction.fromJSON(deleteGOTJson).toJSON().toString();
-    Assert.assertEquals(deleteGOTJson, deleteGOTJson2);
-    actions[i++] = deleteGOT;
-
-    // Serialize the actions
-    String sActions = AbstractAction.serializeActions(actions).toString();
-    String sActions2 = AbstractAction.serializeActions(AbstractAction.parseActions(sActions)).toString();
+    /*
+     *  Serialize the actions
+     */
+    String sActions = AbstractActionDTO.serializeActions(actions).toString();
+    String sActions2 = AbstractActionDTO.serializeActions(AbstractActionDTO.parseActions(sActions)).toString();
     Assert.assertEquals(sActions, sActions2);
+    
+    System.out.println(sActions);
   }
 }

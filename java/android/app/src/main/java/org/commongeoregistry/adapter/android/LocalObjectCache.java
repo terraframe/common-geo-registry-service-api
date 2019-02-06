@@ -10,20 +10,14 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
-import org.commongeoregistry.adapter.action.AbstractAction;
-import org.commongeoregistry.adapter.action.AddChildAction;
-import org.commongeoregistry.adapter.action.CreateAction;
-import org.commongeoregistry.adapter.action.DeleteAction;
-import org.commongeoregistry.adapter.action.UpdateAction;
-import org.commongeoregistry.adapter.action.AbstractAction;
-import org.commongeoregistry.adapter.action.AddChildAction;
-import org.commongeoregistry.adapter.action.DeleteAction;
-import org.commongeoregistry.adapter.action.UpdateAction;
+import org.commongeoregistry.adapter.action.AbstractActionDTO;
+import org.commongeoregistry.adapter.action.tree.AddChildActionDTO;
+import org.commongeoregistry.adapter.action.geoobject.CreateGeoObjectActionDTO;
+import org.commongeoregistry.adapter.action.geoobject.UpdateGeoObjectActionDTO;
 import org.commongeoregistry.adapter.android.sql.LocalCacheContract;
 import org.commongeoregistry.adapter.android.sql.LocalCacheContract.GeoObjectEntry;
 import org.commongeoregistry.adapter.android.sql.LocalCacheContract.TreeNodeEntry;
 import org.commongeoregistry.adapter.android.sql.LocalCacheDbHelper;
-import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
@@ -36,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -86,19 +81,21 @@ public class LocalObjectCache implements Serializable {
         this.adapter = adapter;
     }
 
-    private void insertLastPushId(int lastId, SQLiteDatabase db)
+    void saveLastPushDate(long lastPush)
     {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
         ContentValues values = new ContentValues();
         values.put(LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_ID, 0);
-        values.put(LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_LAST_ID, lastId);
+        values.put(LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_LAST_PUSH_DATE, lastPush);
 
         db.insertWithOnConflict(LocalCacheContract.ActionPushHistoryEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
-    private int getLastPushId(SQLiteDatabase db)
+    private long getLastPushDate(SQLiteDatabase db)
     {
         String[] select_columns = {
-            LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_LAST_ID
+            LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_LAST_PUSH_DATE
         };
 
         // Filter results WHERE "title" = 'My Title'
@@ -124,7 +121,9 @@ public class LocalObjectCache implements Serializable {
                 return -1;
             }
 
-            return cursor.getInt(0);
+            long longDate = cursor.getLong(0);
+
+            return longDate;
 
         } finally {
             if (cursor != null) {
@@ -221,31 +220,30 @@ public class LocalObjectCache implements Serializable {
     }
 
     /**
-     * Returns all action history that has been recorded since the last time this method was invoked.
+     * Returns all action history that has been recorded since the last time we have pushed to the server
      *
      * @return
      */
-    public AbstractAction[] getUnpushedActionHistory()
+    public List<AbstractActionDTO> getUnpushedActionHistory()
     {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        int lastPush = getLastPushId(db);
+        long lastPush = getLastPushDate(db);
 
         String[] projection = {
             LocalCacheContract.ActionEntry.COLUMN_NAME_ID,
-            LocalCacheContract.ActionEntry.COLUMN_NAME_TYPE,
+            LocalCacheContract.ActionEntry.COLUMN_NAME_CREATE_ACTION_DATE,
             LocalCacheContract.ActionEntry.COLUMN_NAME_JSON
         };
 
         // Filter results WHERE "title" = 'My Title'
-        String selection = LocalCacheContract.ActionEntry.COLUMN_NAME_ID + " > ?";
+        String selection = LocalCacheContract.ActionEntry.COLUMN_NAME_CREATE_ACTION_DATE + " >= ?";
         String[] selectionArgs = {String.valueOf(lastPush)};
 
         // How you want the results sorted in the resulting Cursor
         String sortOrder = LocalCacheContract.ActionEntry.COLUMN_NAME_ID + " ASC";
 
-        ArrayList<AbstractAction> history = new ArrayList<AbstractAction>();
-        int lastId = lastPush;
+        ArrayList<AbstractActionDTO> history = new ArrayList<AbstractActionDTO>();
 
         Cursor cursor = null;
         try {
@@ -261,33 +259,12 @@ public class LocalObjectCache implements Serializable {
 
             int i = 0;
             while (cursor.moveToNext()) {
-//                String id = cursor.getString(0);
                 int id = cursor.getInt(0);
-                String type = cursor.getString(1);
+                long createActionDate = cursor.getLong(1);
                 String json = cursor.getString(2);
 
-                if (type.equals(UpdateAction.class.getName()))
-                {
-                    history.add(UpdateAction.fromJSON(json));
-                }
-                else if (type.equals(CreateAction.class.getName()))
-                {
-                    history.add(CreateAction.fromJSON(json));
-                }
-                else if (type.equals(DeleteAction.class.getName()))
-                {
-                    history.add(DeleteAction.fromJSON(json));
-                }
-                else if (type.equals(AddChildAction.class.getName()))
-                {
-                    history.add(AddChildAction.fromJSON(json));
-                }
-                else
-                {
-                    throw new UnsupportedOperationException("Unsupported action type [" + type + "].");
-                }
-
-                lastId = id;
+                AbstractActionDTO action = AbstractActionDTO.parseAction(json);
+                history.add(action);
             }
         } finally {
             if (cursor != null) {
@@ -295,21 +272,19 @@ public class LocalObjectCache implements Serializable {
             }
         }
 
-        insertLastPushId(lastId, db);
-
-        return history.toArray(new AbstractAction[history.size()]);
+        return history;
     }
 
     /**
      * Returns the history of all actions performed on the cache. This is used when
      * pushing changes made in offline mode to the server.
      */
-    public AbstractAction[] getAllActionHistory()
+    public List<AbstractActionDTO> getAllActionHistory()
     {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
-                LocalCacheContract.ActionEntry.COLUMN_NAME_TYPE,
+                LocalCacheContract.ActionEntry.COLUMN_NAME_CREATE_ACTION_DATE,
                 LocalCacheContract.ActionEntry.COLUMN_NAME_JSON
         };
 
@@ -328,36 +303,18 @@ public class LocalObjectCache implements Serializable {
                     sortOrder               // The sort order
             );
 
-            ArrayList<AbstractAction> history = new ArrayList<AbstractAction>();
+            ArrayList<AbstractActionDTO> history = new ArrayList<AbstractActionDTO>();
 
             int i = 0;
             while (cursor.moveToNext()) {
-                String type = cursor.getString(0);
+                long createActionDate = cursor.getLong(0);
                 String json = cursor.getString(1);
 
-                if (type.equals(UpdateAction.class.getName()))
-                {
-                    history.add(UpdateAction.fromJSON(json));
-                }
-                else if (type.equals(CreateAction.class.getName()))
-                {
-                    history.add(CreateAction.fromJSON(json));
-                }
-                else if (type.equals(DeleteAction.class.getName()))
-                {
-                    history.add(DeleteAction.fromJSON(json));
-                }
-                else if (type.equals(AddChildAction.class.getName()))
-                {
-                    history.add(AddChildAction.fromJSON(json));
-                }
-                else
-                {
-                    throw new UnsupportedOperationException("Unsupported action type [" + type + "].");
-                }
+                AbstractActionDTO action = AbstractActionDTO.parseAction(json);
+                history.add(action);
             }
 
-            return history.toArray(new AbstractAction[history.size()]);
+            return history;
 
         } finally {
             if (cursor != null) {
@@ -447,7 +404,13 @@ public class LocalObjectCache implements Serializable {
 
             this.cache(treeNode, db);
 
-            this.insertAction(new AddChildAction(childGeoObject.getUid(), childGeoObject.getType().getCode(), parentGeoObject.getUid(), parentGeoObject.getType().getCode(), hierarchyType.getCode()), db);
+            AddChildActionDTO action = new AddChildActionDTO();
+            action.setChildId(childGeoObject.getUid());
+            action.setChildTypeCode(childGeoObject.getType().getCode());
+            action.setParentId(parentGeoObject.getUid());
+            action.setParentTypeCode(parentGeoObject.getType().getCode());
+            action.setHierarchyCode(hierarchyType.getCode());
+            this.insertAction(action, db);
 
             db.setTransactionSuccessful();
         } catch (SQLException e) {
@@ -491,7 +454,9 @@ public class LocalObjectCache implements Serializable {
 
             this.insertGeoObject(geoObject, db);
 
-            this.insertAction(new UpdateAction(geoObject), db);
+            UpdateGeoObjectActionDTO action = new UpdateGeoObjectActionDTO();
+            action.setGeoObject(geoObject.toJSON());
+            this.insertAction(action, db);
 
             db.setTransactionSuccessful();
         } catch (SQLException e) {
@@ -515,7 +480,9 @@ public class LocalObjectCache implements Serializable {
 
             this.insertGeoObject(geoObject, db);
 
-            this.insertAction(new CreateAction(geoObject), db);
+            CreateGeoObjectActionDTO action = new CreateGeoObjectActionDTO();
+            action.setGeoObject(geoObject.toJSON());
+            this.insertAction(action, db);
 
             db.setTransactionSuccessful();
         } catch (SQLException e) {
@@ -525,11 +492,11 @@ public class LocalObjectCache implements Serializable {
         }
     }
 
-    public void insertAction(AbstractAction action, SQLiteDatabase db)
+    public void insertAction(AbstractActionDTO action, SQLiteDatabase db)
     {
         ContentValues values = new ContentValues();
         values.put(LocalCacheContract.ActionEntry.COLUMN_NAME_JSON, action.toJSON().toString());
-        values.put(LocalCacheContract.ActionEntry.COLUMN_NAME_TYPE, action.getClass().getName());
+        values.put(LocalCacheContract.ActionEntry.COLUMN_NAME_CREATE_ACTION_DATE, action.getCreateActionDate().getTime());
 
         db.insertWithOnConflict(LocalCacheContract.ActionEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_FAIL);
     }

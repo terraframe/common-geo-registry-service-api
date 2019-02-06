@@ -31,10 +31,9 @@ public class AndroidIntegrationTest
     {
         Context context = InstrumentationRegistry.getTargetContext();
 
-        // TODO : Not sure how to parameterize this
-        AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector(); // TODO : This needs to save the id cache to the android database
+        AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();
         connector.setCredentials("admin", "_nm8P4gfdWxGqNRQ#8");
-        connector.setServerUrl("https://192.168.0.23:8443/georegistry");
+        connector.setServerUrl("https://192.168.0.31:8443/georegistry");
         connector.initialize();
 
         client = new AndroidRegistryClient(connector, context);
@@ -140,7 +139,7 @@ public class AndroidIntegrationTest
         goCali.setLocalizedDisplayLabel(newLabel);
         client.getLocalCache().updateGeoObject(goCali);
 
-        Assert.assertEquals(2, client.getLocalCache().getAllActionHistory().length);
+        Assert.assertEquals(2, client.getLocalCache().getAllActionHistory().size());
         client.pushObjectsToRegistry();
 
         // Fetch California and make sure it has our new display label
@@ -156,7 +155,7 @@ public class AndroidIntegrationTest
         client.getLocalCache().updateGeoObject(goCali);
 
         // Make sure that when we push it only pushes our new update and not the old ones again
-        Assert.assertEquals(1, client.getLocalCache().getUnpushedActionHistory().length);
+        Assert.assertEquals(1, client.getLocalCache().getUnpushedActionHistory().size());
     }
 
     @Test
