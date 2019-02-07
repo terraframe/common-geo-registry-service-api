@@ -14,7 +14,7 @@ public class AttributeFloat extends Attribute
    */
   private static final long serialVersionUID = 585645995864808480L;
   
-  private Float floatValue;
+  private Double floatValue;
   
   public AttributeFloat(String name)
   {
@@ -26,16 +26,16 @@ public class AttributeFloat extends Attribute
   @Override
   public void setValue(Object floatValue)
   {
-    this.setFloat((Float)floatValue);
+    this.setFloat((Double)floatValue);
   }
   
-  public void setFloat(Float floatValue)
+  public void setFloat(Double floatValue)
   {
     this.floatValue = floatValue;
   }
   
   @Override
-  public Float getValue()
+  public Double getValue()
   {
     return this.floatValue;
   }
@@ -47,7 +47,7 @@ public class AttributeFloat extends Attribute
   
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-    this.setValue(jValue.getAsFloat());
+    this.setValue(jValue.getAsDouble());
   }
 
 

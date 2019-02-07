@@ -10,11 +10,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.commongeoregistry.adapter.HttpRegistryClient;
 import org.commongeoregistry.adapter.MockIdService;
 import org.commongeoregistry.adapter.Term;
-import org.commongeoregistry.adapter.action.AbstractAction;
-import org.commongeoregistry.adapter.action.AddChildAction;
-import org.commongeoregistry.adapter.action.CreateAction;
-import org.commongeoregistry.adapter.action.DeleteAction;
-import org.commongeoregistry.adapter.action.UpdateAction;
+import org.commongeoregistry.adapter.action.AbstractActionDTO;
+import org.commongeoregistry.adapter.action.geoobject.CreateGeoObjectActionDTO;
+import org.commongeoregistry.adapter.action.geoobject.UpdateGeoObjectActionDTO;
+import org.commongeoregistry.adapter.action.tree.AddChildActionDTO;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
@@ -31,6 +30,7 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -501,27 +501,32 @@ public class LocalObjectCacheTest {
         geoObj1.setCode("TEST_MODIFIED_CODE");
         cache.updateGeoObject(geoObj1);
 
-        AbstractAction[] actions = cache.getAllActionHistory();
+        List<AbstractActionDTO> actions = cache.getAllActionHistory();
 
-        Assert.assertEquals(4, actions.length);
+        Assert.assertEquals(4, actions.size());
 
-        Assert.assertEquals(action1GeoObj1,((CreateAction)actions[0]).getObjJson().toString());
-        Assert.assertEquals(geoObj2.toJSON().toString(),((CreateAction)actions[1]).getObjJson().toString());
+        Assert.assertEquals(action1GeoObj1,((CreateGeoObjectActionDTO)actions.get(0)).getGeoObject().toString());
+        Assert.assertEquals(geoObj2.toJSON().toString(),((CreateGeoObjectActionDTO)actions.get(1)).getGeoObject().toString());
 
-        AddChildAction aca = (AddChildAction) actions[2];
+        AddChildActionDTO aca = (AddChildActionDTO) actions.get(2);
         Assert.assertEquals(geoObj1.getUid(), aca.getChildId());
         Assert.assertEquals(geoObj2.getUid(), aca.getParentId());
         Assert.assertEquals(geoPolitical.getCode(), aca.getHierarchyCode());
 
-        Assert.assertEquals(geoObj1.toJSON().toString(),((UpdateAction)actions[3]).getObjJson().toString());
+        Assert.assertEquals(geoObj1.toJSON().toString(),((UpdateGeoObjectActionDTO)actions.get(3)).getGeoObject().toString());
 
-        // Test the 'unpushed action history' method
-        Assert.assertEquals(4, cache.getUnpushedActionHistory().length);
-        Assert.assertEquals(0, cache.getUnpushedActionHistory().length);
+        /*
+         * Test the 'unpushed action history' method
+         */
+        Assert.assertEquals(4, cache.getUnpushedActionHistory().size());
+        Assert.assertEquals(4, cache.getUnpushedActionHistory().size());
+        cache.saveLastPushDate(new Date().getTime());
+        Assert.assertEquals(0, cache.getUnpushedActionHistory().size());
 
         cache.updateGeoObject(geoObj1);
-        Assert.assertEquals(1, cache.getUnpushedActionHistory().length);
-        Assert.assertEquals(0, cache.getUnpushedActionHistory().length);
+        Assert.assertEquals(1, cache.getUnpushedActionHistory().size());
+        cache.saveLastPushDate(new Date().getTime());
+        Assert.assertEquals(0, cache.getUnpushedActionHistory().size());
     }
 
     @Test

@@ -85,6 +85,11 @@ public abstract class AttributeType implements Serializable
 	  return this.isDefault;
   }
   
+  public void validate(Object _value)
+  {
+    // Stub method used to validate the value according to the metadata of the AttributeType
+  }
+  
   public static AttributeType factory(String _name, String _localizedLabel, String _localizedDescription, String _type)
   {
     AttributeType attributeType = null;

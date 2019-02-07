@@ -1,21 +1,17 @@
 package org.commongeoregistry.adapter.android;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
 import com.google.gson.JsonObject;
 
 import org.commongeoregistry.adapter.HttpRegistryClient;
-import org.commongeoregistry.adapter.action.AbstractAction;
+import org.commongeoregistry.adapter.action.AbstractActionDTO;
 import org.commongeoregistry.adapter.constants.RegistryUrls;
-import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
-import org.commongeoregistry.adapter.dataaccess.GeoObject;
-import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
-import org.commongeoregistry.adapter.http.AbstractHttpConnector;
 import org.commongeoregistry.adapter.http.Connector;
 import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseProcessor;
+
+import java.util.Date;
+import java.util.List;
 
 
 public class AndroidRegistryClient extends HttpRegistryClient
@@ -69,14 +65,16 @@ public class AndroidRegistryClient extends HttpRegistryClient
    */
   public void pushObjectsToRegistry()
   {
-    AbstractAction[] actions = this.localObjectCache.getUnpushedActionHistory();
+    List<AbstractActionDTO> actions = this.localObjectCache.getUnpushedActionHistory();
 
-    String sActions = AbstractAction.serializeActions(actions).toString();
+    String sActions = AbstractActionDTO.serializeActions(actions).toString();
 
     JsonObject params = new JsonObject();
-    params.addProperty(RegistryUrls.EXECUTE_ACTIONS_PARAM_ACTIONS, sActions);
+    params.addProperty(RegistryUrls.SUBMIT_CHANGE_REQUEST_PARAM_ACTIONS, sActions);
 
-    HttpResponse resp = this.getConnector().httpPost(RegistryUrls.EXECUTE_ACTIONS, params.toString());
+    HttpResponse resp = this.getConnector().httpPost(RegistryUrls.SUBMIT_CHANGE_REQUEST, params.toString());
     ResponseProcessor.validateStatusCode(resp);
+
+    this.localObjectCache.saveLastPushDate(new Date().getTime());
   }
 }

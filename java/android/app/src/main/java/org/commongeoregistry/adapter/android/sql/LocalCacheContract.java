@@ -25,20 +25,20 @@ public final class LocalCacheContract {
 
     public static class ActionEntry implements BaseColumns {
         public static final String TABLE_NAME = "action_history";
-        public static final String COLUMN_NAME_TYPE = "type";
-        public static final String COLUMN_NAME_JSON = "json";
         public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_JSON = "json";
+        public static final String COLUMN_NAME_CREATE_ACTION_DATE = "create_action_date";
     }
 
     public static class ActionPushHistoryEntry implements BaseColumns {
         public static final String TABLE_NAME = "action_push_history";
-        public static final String COLUMN_NAME_LAST_ID = "lastid";
         public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_LAST_PUSH_DATE = "last_push_date";
     }
 
     public static class RegistryIdEntry implements BaseColumns {
+        public static final String COLUMN_NAME_ID = "id";
         public static final String TABLE_NAME = "registry_ids";
         public static final String COLUMN_NAME_REGISTRY_ID = "registryid";
-        public static final String COLUMN_NAME_ID = "id";
     }
 }

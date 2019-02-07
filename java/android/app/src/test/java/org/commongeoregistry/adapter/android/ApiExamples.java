@@ -18,16 +18,16 @@ public class ApiExamples
 
   public void tutorialExamples()
   {
-//    // Instantiate a mobile adapter reference,
-//
-//    // URL to the
-//    String commonGeoRegistryURL = "";
-//
-//    AndroidRegistryClient registryAdapter = new AndroidRegistryClient(commonGeoRegistryURL);
-//
-//
-//    // Populate the registry instance with meadata from the registry
-//    registryAdapter.refreshMetadataCache();
+    // Instantiate a mobile adapter reference,
+
+    // URL to the
+    String commonGeoRegistryURL = "";
+
+    AndroidRegistryClient registryAdapter = null; // = new AndroidRegistryClient();
+
+
+    // Populate the registry instance with meadata from the registry
+    registryAdapter.getMetadataCache().getAllGeoObjectTypes();
 //
 //    // Create a new and empty instance of a {@link GeoObject} to populate with values by the mobile host.
 //    // Pass in the code of the {@link GeoObjectType}/

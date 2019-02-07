@@ -28,9 +28,9 @@ public class LocalCacheDbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ACTION_ENTRY =
             "CREATE TABLE " + ActionEntry.TABLE_NAME + " ( " +
-                    ActionEntry.COLUMN_NAME_TYPE + " TEXT NOT NULL, " +
+                    ActionEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     ActionEntry.COLUMN_NAME_JSON + " TEXT NOT NULL, " +
-                    ActionEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY )";
+                    ActionEntry.COLUMN_NAME_CREATE_ACTION_DATE + " INTEGER " + " )"; // https://stackoverflow.com/questions/7363112/best-way-to-work-with-dates-in-android-sqlite
     
     private static final String SQL_REGISTRY_ID =
         "CREATE TABLE " + LocalCacheContract.RegistryIdEntry.TABLE_NAME + " ( " +
@@ -39,8 +39,8 @@ public class LocalCacheDbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_PUSH_HISTORY =
             "CREATE TABLE " + LocalCacheContract.ActionPushHistoryEntry.TABLE_NAME + " ( " +
-                    LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " +
-                    LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_LAST_ID + " INTEGER )";
+                    LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    LocalCacheContract.ActionPushHistoryEntry.COLUMN_NAME_LAST_PUSH_DATE + " INTEGER )";
 
     private static final String SQL_DELETE_OBJECT_ENTRY =
             "DROP TABLE IF EXISTS " + GeoObjectEntry.TABLE_NAME;
