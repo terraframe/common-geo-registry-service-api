@@ -74,7 +74,7 @@ public class SerializationTest
     Assert.assertEquals("Colorado", geoObject2.getCode());
     Assert.assertEquals("CO", geoObject2.getUid());
     Assert.assertEquals("Colorado Display Label", geoObject2.getLocalizedDisplayLabel());
-    Assert.assertEquals(geoObject.getStatus(), geoObject2.getStatus());
+    Assert.assertEquals(geoObject.getStatus().getCode(), geoObject2.getStatus().getCode());
   }
 
   /**
@@ -104,9 +104,10 @@ public class SerializationTest
     GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
 
     String sJson = state.toJSON().toString();
+    
     GeoObjectType state2 = GeoObjectType.fromJSON(sJson, registry);
     String sJson2 = state2.toJSON().toString();
-
+    
     Assert.assertEquals(sJson, sJson2);
   }
 
