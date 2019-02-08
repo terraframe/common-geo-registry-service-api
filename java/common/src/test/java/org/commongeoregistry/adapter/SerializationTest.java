@@ -9,6 +9,7 @@ import org.commongeoregistry.adapter.action.AbstractActionDTO;
 import org.commongeoregistry.adapter.action.geoobject.CreateGeoObjectActionDTO;
 import org.commongeoregistry.adapter.action.geoobject.UpdateGeoObjectActionDTO;
 import org.commongeoregistry.adapter.action.tree.AddChildActionDTO;
+import org.commongeoregistry.adapter.action.tree.RemoveChildActionDTO;
 import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
@@ -347,7 +348,6 @@ public class SerializationTest
     HierarchyType geoPolitical = registry.getMetadataCache().getHierachyType(TestFixture.GEOPOLITICAL).get();
 
     List<AbstractActionDTO> actions = new ArrayList<AbstractActionDTO>();
-    int i = 0;
 
     /*
      *  Add Child
@@ -364,10 +364,20 @@ public class SerializationTest
     Assert.assertEquals(addChildJson, addChildJson2);
     actions.add(addChild);
 
-    // Add Parent TODO
+    /*
+     * Remove Child
+     */
+    RemoveChildActionDTO removeChild = new RemoveChildActionDTO();
+    removeChild.setParentId(geoObj1.getUid());
+    removeChild.setParentTypeCode(geoObj1.getType().getCode());
+    removeChild.setChildId(geoObj2.getUid());
+    removeChild.setChildTypeCode(geoObj2.getType().getCode());
+    removeChild.setHierarchyCode(geoPolitical.getCode());
     
-    // Remove Child ??
-    // TODO
+    String removeChildJson = removeChild.toJSON().toString();
+    String removeChildJson2 = AbstractActionDTO.parseAction(removeChildJson).toJSON().toString();
+    Assert.assertEquals(removeChildJson, removeChildJson2);
+    actions.add(removeChild);
 
     /*
      *  Create a GeoObject

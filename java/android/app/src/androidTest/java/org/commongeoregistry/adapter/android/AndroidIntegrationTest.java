@@ -142,20 +142,22 @@ public class AndroidIntegrationTest
         Assert.assertEquals(2, client.getLocalCache().getAllActionHistory().size());
         client.pushObjectsToRegistry();
 
-        // Fetch California and make sure it has our new display label
-        GeoObject goCali2 = client.getGeoObjectByCode(CALIFORNIA.getCode(), CALIFORNIA.getUniversal().getCode());
-
-        CALIFORNIA.setUid(goCali2.getUid());
-        CALIFORNIA.setDisplayLabel(newLabel);
-        CALIFORNIA.assertEquals(goCali2);
-
-        // Update that GeoObject again
-        final String newLabel2 = "MODIFIED DISPLAY LABEL2";
-        goCali.setLocalizedDisplayLabel(newLabel2);
-        client.getLocalCache().updateGeoObject(goCali);
-
-        // Make sure that when we push it only pushes our new update and not the old ones again
-        Assert.assertEquals(1, client.getLocalCache().getUnpushedActionHistory().size());
+        // TODO : This test isn't even possible anymore. Actions are not executed immediately when
+        // they are received.
+//        // Fetch California and make sure it has our new display label
+//        GeoObject goCali2 = client.getGeoObjectByCode(CALIFORNIA.getCode(), CALIFORNIA.getUniversal().getCode());
+//
+//        CALIFORNIA.setUid(goCali2.getUid());
+//        CALIFORNIA.setDisplayLabel(newLabel);
+//        CALIFORNIA.assertEquals(goCali2);
+//
+//        // Update that GeoObject again
+//        final String newLabel2 = "MODIFIED DISPLAY LABEL2";
+//        goCali.setLocalizedDisplayLabel(newLabel2);
+//        client.getLocalCache().updateGeoObject(goCali);
+//
+//        // Make sure that when we push it only pushes our new update and not the old ones again
+//        Assert.assertEquals(1, client.getLocalCache().getUnpushedActionHistory().size());
     }
 
     @Test

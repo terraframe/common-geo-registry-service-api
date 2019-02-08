@@ -117,6 +117,8 @@ public class AttributeTerm extends Attribute
       return;
     }
     
+    this.clearTerms();
+    
     JsonArray termCodesJson = jValue.getAsJsonArray();
     
     for (JsonElement jsonElement : termCodesJson)

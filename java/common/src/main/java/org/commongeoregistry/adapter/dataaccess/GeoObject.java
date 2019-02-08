@@ -300,6 +300,11 @@ public class GeoObject implements Serializable
   {
     this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(status.getCode());
   }
+  
+  public void setStatus(String statusCode)
+  {
+    this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(statusCode);
+  }
 
   /**
    * Creates a {@link GeoObject} from the given JSON.
