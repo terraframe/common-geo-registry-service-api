@@ -132,6 +132,9 @@ public class LocalObjectCache implements Serializable {
         }
     }
 
+    /**
+     * Returns the number of ids saved in our database.
+     */
     public int countNumberRegistryIds()
     {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
@@ -156,7 +159,7 @@ public class LocalObjectCache implements Serializable {
         }
     }
 
-    public void addRegistryIds(Collection<String> newIds)
+    void addRegistryIds(Collection<String> newIds)
     {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -168,7 +171,7 @@ public class LocalObjectCache implements Serializable {
         }
     }
 
-    public String nextRegistryId()
+    String nextRegistryId()
     {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -492,7 +495,7 @@ public class LocalObjectCache implements Serializable {
         }
     }
 
-    public void insertAction(AbstractActionDTO action, SQLiteDatabase db)
+    private void insertAction(AbstractActionDTO action, SQLiteDatabase db)
     {
         ContentValues values = new ContentValues();
         values.put(LocalCacheContract.ActionEntry.COLUMN_NAME_JSON, action.toJSON().toString());
@@ -589,6 +592,13 @@ public class LocalObjectCache implements Serializable {
         return node;
     }
 
+    /**
+     * Adds all children from the local cache to the provided ChildTreeNode.
+     *
+     * @param parent The tree node to add the children to.
+     * @param childrenTypes The type code of the children to fetch
+     * @param recursive If set to true we will include the full descendent graph (all children of children)
+     */
     public void addChildren(ChildTreeNode parent, String[] childrenTypes, Boolean recursive) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -673,6 +683,13 @@ public class LocalObjectCache implements Serializable {
         return node;
     }
 
+    /**
+     * Adds all parents from the local cache to the provided ParentTreeNode.
+     *
+     * @param child The tree node to add the children to.
+     * @param parentTypes The type code of the parents to fetch.
+     * @param recursive If set to true we will include the full ancestor graph (all parents of parents)
+     */
     public void addParents(ParentTreeNode child, String[] parentTypes, Boolean recursive) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -735,11 +752,15 @@ public class LocalObjectCache implements Serializable {
         return db.rawQuery(sql.toString(), params.toArray(new String[params.size()]));
     }
 
+    /**
+     * Drops all data from the database. Use carefully.
+     */
     public void clear() {
         this.mDbHelper.recreate(this.mDbHelper.getWritableDatabase());
     }
 
-    public void close() {
+
+    void close() {
         this.mDbHelper.close();
     }
 }

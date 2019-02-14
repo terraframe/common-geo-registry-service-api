@@ -35,7 +35,7 @@ public abstract class RegistryAdapter implements Serializable
     return this.metadataCache;
   }
   
-  public AdapterIdServiceIF getIdSerivce()
+  public AdapterIdServiceIF getIdService()
   {
     return this.idService;
   }

@@ -47,7 +47,7 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     super(new MemoryOnlyIdService());
     this.connector = connector;
-    ((MemoryOnlyIdService)this.getIdSerivce()).setClient(this);
+    ((MemoryOnlyIdService)this.getIdService()).setClient(this);
   }
   
   public HttpRegistryClient(Connector connector, AdapterIdServiceIF idService)

@@ -116,7 +116,7 @@ public class HttpRegistryClientTest
      */
     MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getIdSerivce().populate(500);
+    client.getIdService().populate(500);
     
     MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
@@ -187,7 +187,7 @@ public class HttpRegistryClientTest
         new MockHttpRequest(new HttpResponse("", 201))
     });
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getIdSerivce().populate(500);
+    client.getIdService().populate(500);
 
     MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
@@ -238,7 +238,7 @@ public class HttpRegistryClientTest
         new MockHttpRequest(new HttpResponse("", 201))
     });
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getIdSerivce().populate(500);
+    client.getIdService().populate(500);
 
     MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
 
@@ -284,7 +284,7 @@ public class HttpRegistryClientTest
   {
     MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getIdSerivce().populate(500);
+    client.getIdService().populate(500);
     
     /*
      * Setup mock objects
@@ -399,7 +399,7 @@ public class HttpRegistryClientTest
   {
     MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getIdSerivce().populate(500);
+    client.getIdService().populate(500);
 
     /*
      * Setup mock objects
@@ -503,7 +503,7 @@ public class HttpRegistryClientTest
   {
     MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getIdSerivce().populate(500);
+    client.getIdService().populate(500);
 
     /*
      * Setup mock objects
