@@ -57,4 +57,66 @@
       <url>http://www.gnu.org/licenses/lgpl.html</url>
     </license>
   </licenses>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+      </plugin>
+      
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.11</version>
+        <configuration>
+          <header>${basedir}/LICENSE_HEADER</header>
+          <excludes>
+            <exclude>target/**</exclude>
+            <exclude>m2-target/**</exclude>
+            <exclude>**/*.properties</exclude>
+            <exclude>**/*.launch</exclude>
+            <exclude>**/*.vsd</exclude>
+            <exclude>**/*.gitignore</exclude>
+            <exclude>**/*.LESSER</exclude>
+            <exclude>**/*.xls</exclude>
+            <exclude>**/doc/**</exclude>
+            <exclude>**/launches/**</exclude>
+            <exclude>**/*.jar</exclude>
+            <exclude>LICENSE_HEADER</exclude>
+            <exclude>**/*.markdown</exclude>
+            <exclude>**/COPYING</exclude>
+            <exclude>**/logs/**</exclude>
+            <exclude>**/*.png</exclude>
+            <exclude>**/thirdparty/**</exclude>
+            <exclude>**/yui2/**</exclude>
+            <exclude>**/yui3/**</exclude>
+            <exclude>**/.git/**</exclude>
+            <exclude>**/ajcore*.txt</exclude>
+            <exclude>**/.directory</exclude>
+            <exclude>**/.keystore</exclude>
+            <exclude>**/metadata.xml</exclude>
+            <exclude>**/pom.xml</exclude>
+            <exclude>pom.xml</exclude>
+          </excludes>
+          <properties>
+            <name>${project.name}</name>
+            <year>${project.inceptionYear}</year>
+            <holder>Terraframe</holder>
+            <contact>terraframe.com</contact>
+          </properties>
+          <encoding>UTF-8</encoding>
+        </configuration>
+        <!-- <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions> -->
+      </plugin>
+    </plugins>
+  </build>
 </project>
