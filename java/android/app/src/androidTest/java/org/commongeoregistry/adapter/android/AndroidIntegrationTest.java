@@ -37,8 +37,9 @@ public class AndroidIntegrationTest
         connector.initialize();
 
         client = new AndroidRegistryClient(connector, context);
+        client.getLocalCache().clear();
         client.refreshMetadataCache();
-        client.getIdSerivce().populate(500);
+        client.getIdService().populate(500);
 
         data = new USATestData(client);
         // These objects are predefined:
@@ -190,4 +191,36 @@ public class AndroidIntegrationTest
         }
         Assert.assertTrue("Did not find our test object in the list of returned children", found);
     }
+
+    // TODO
+//    @Test
+//    public void testRemoveChild()
+//    {
+//        ParentTreeNode ptnTestState = client.addChild(data.WASHINGTON.getUid(), data.WASHINGTON.getUniversal().getCode(), TEST_ADD_CHILD.getUid(), TEST_ADD_CHILD.getUniversal().getCode(), data.LOCATED_IN.getCode());
+//
+//        boolean found = false;
+//        for (ParentTreeNode ptnUSA : ptnTestState.getParents())
+//        {
+//            if (ptnUSA.getGeoObject().getCode().equals(data.WASHINGTON.getCode()))
+//            {
+//                found = true;
+//                break;
+//            }
+//        }
+//        Assert.assertTrue("Did not find our test object in the list of returned children", found);
+//        TEST_ADD_CHILD.assertEquals(ptnTestState.getGeoObject());
+//
+//        ChildTreeNode ctnUSA2 = client.getChildGeoObjects(data.WASHINGTON.getUid(), data.WASHINGTON.getUniversal().getCode(), new String[]{data.DISTRICT.getCode()}, false);
+//
+//        found = false;
+//        for (ChildTreeNode ctnState : ctnUSA2.getChildren())
+//        {
+//            if (ctnState.getGeoObject().getCode().equals(TEST_ADD_CHILD.getCode()))
+//            {
+//                found = true;
+//                break;
+//            }
+//        }
+//        Assert.assertTrue("Did not find our test object in the list of returned children", found);
+//    }
 }
