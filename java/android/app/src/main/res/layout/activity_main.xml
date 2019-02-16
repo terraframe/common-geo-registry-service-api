@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="android.adapter.commongeoregistry.org.android.MainActivity">
+    tools:context="android.client.commongeoregistry.org.android.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
