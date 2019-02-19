@@ -362,7 +362,6 @@ public class SerializationTest
     TestFixture.defineExampleHierarchies(registry);
     GeoObject geoObj1 = TestFixture.createGeoObject(registry, "PROV_ONE", TestFixture.PROVINCE);
     GeoObject geoObj2 = TestFixture.createGeoObject(registry, "DIST_ONE", TestFixture.DISTRICT);
-    GeoObjectType province = geoObj1.getType();
     HierarchyType geoPolitical = registry.getMetadataCache().getHierachyType(TestFixture.GEOPOLITICAL).get();
 
     List<AbstractActionDTO> actions = new ArrayList<AbstractActionDTO>();
@@ -376,6 +375,7 @@ public class SerializationTest
     addChild.setChildId(geoObj2.getUid());
     addChild.setChildTypeCode(geoObj2.getType().getCode());
     addChild.setHierarchyCode(geoPolitical.getCode());
+    addChild.setContributorNotes("Test add child note");
     
     String addChildJson = addChild.toJSON().toString();
     String addChildJson2 = AbstractActionDTO.parseAction(addChildJson).toJSON().toString();
@@ -391,6 +391,7 @@ public class SerializationTest
     removeChild.setChildId(geoObj2.getUid());
     removeChild.setChildTypeCode(geoObj2.getType().getCode());
     removeChild.setHierarchyCode(geoPolitical.getCode());
+    removeChild.setContributorNotes("Test remove child note");
     
     String removeChildJson = removeChild.toJSON().toString();
     String removeChildJson2 = AbstractActionDTO.parseAction(removeChildJson).toJSON().toString();
@@ -402,6 +403,7 @@ public class SerializationTest
      */
     CreateGeoObjectActionDTO create = new CreateGeoObjectActionDTO();
     create.setGeoObject(geoObj1.toJSON());
+    create.setContributorNotes("Test create note");
     
     String createJson = create.toJSON().toString();
     String createJson2 = AbstractActionDTO.parseAction(createJson).toJSON().toString();
@@ -413,22 +415,12 @@ public class SerializationTest
      */
     UpdateGeoObjectActionDTO update = new UpdateGeoObjectActionDTO();
     update.setGeoObject(geoObj1.toJSON());
+    update.setContributorNotes("Test update note");
     
     String updateJson = update.toJSON().toString();
     String updateJson2 = AbstractActionDTO.parseAction(updateJson).toJSON().toString();
     Assert.assertEquals(updateJson, updateJson2);
     actions.add(create);
-
-    /*
-     *  Update a GeoObjectType
-     */
-    UpdateGeoObjectActionDTO createGOT = new UpdateGeoObjectActionDTO();
-    createGOT.setGeoObject(province.toJSON());
-    
-    String createGOTJson = createGOT.toJSON().toString();
-    String createGOTJson2 = AbstractActionDTO.parseAction(createGOTJson).toJSON().toString();
-    Assert.assertEquals(createGOTJson, createGOTJson2);
-    actions.add(createGOT);
 
     /*
      *  Serialize the actions

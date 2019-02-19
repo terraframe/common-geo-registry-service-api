@@ -36,17 +36,22 @@ abstract public class AbstractActionDTO
   
   public static final String CREATE_ACTION_DATE = "createActionDate";
   
+  public static final String CONTRIBUTOR_NOTES = "contributorNotes";
+  
   private String apiVersion;
   
   private Date createActionDate;
 
   private String actionType;
   
+  private String contributorNotes;
+  
   public AbstractActionDTO(String actionType)
   {
     this.apiVersion = CGRAdapterProperties.getApiVersion();
     this.createActionDate = new Date();
     this.actionType = actionType;
+    this.contributorNotes = "";
   }
   
   public static JsonArray serializeActions(List<AbstractActionDTO> actions)
@@ -104,6 +109,8 @@ abstract public class AbstractActionDTO
     this.apiVersion = json.get(API_VERSION).getAsString();
     
     this.createActionDate = new Date(json.get(CREATE_ACTION_DATE).getAsLong());
+    
+    this.contributorNotes = json.get(CONTRIBUTOR_NOTES).getAsString();
   }
   
   protected void buildJson(JsonObject json)
@@ -113,6 +120,18 @@ abstract public class AbstractActionDTO
     json.addProperty(API_VERSION, this.apiVersion);
     
     json.addProperty(CREATE_ACTION_DATE, this.createActionDate.getTime());
+    
+    json.addProperty(CONTRIBUTOR_NOTES, this.contributorNotes);
+  }
+  
+  public String getContributorNotes()
+  {
+    return contributorNotes;
+  }
+
+  public void setContributorNotes(String contributorNotes)
+  {
+    this.contributorNotes = contributorNotes;
   }
 
   public String getApiVersion()
