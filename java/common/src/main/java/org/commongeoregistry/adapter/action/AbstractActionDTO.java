@@ -38,6 +38,8 @@ abstract public class AbstractActionDTO
   
   public static final String CONTRIBUTOR_NOTES = "contributorNotes";
   
+  public static final String MAINTAINER_NOTES = "maintainerNotes";
+  
   private String apiVersion;
   
   private Date createActionDate;
@@ -45,6 +47,8 @@ abstract public class AbstractActionDTO
   private String actionType;
   
   private String contributorNotes;
+  
+  private String maintainerNotes;
   
   public AbstractActionDTO(String actionType)
   {
@@ -111,6 +115,11 @@ abstract public class AbstractActionDTO
     this.createActionDate = new Date(json.get(CREATE_ACTION_DATE).getAsLong());
     
     this.contributorNotes = json.get(CONTRIBUTOR_NOTES).getAsString();
+    
+    if (json.has(MAINTAINER_NOTES) && !json.get(MAINTAINER_NOTES).isJsonNull())
+    {
+      this.maintainerNotes = json.get(MAINTAINER_NOTES).getAsString();
+    }
   }
   
   protected void buildJson(JsonObject json)
@@ -119,11 +128,23 @@ abstract public class AbstractActionDTO
     
     json.addProperty(API_VERSION, this.apiVersion);
     
-    json.addProperty(CREATE_ACTION_DATE, this.createActionDate.getTime());
+    json.addProperty(CREATE_ACTION_DATE, String.valueOf(this.createActionDate.getTime()));
     
     json.addProperty(CONTRIBUTOR_NOTES, this.contributorNotes);
+    
+    json.addProperty(MAINTAINER_NOTES, this.maintainerNotes);
   }
   
+  public String getMaintainerNotes()
+  {
+    return maintainerNotes;
+  }
+
+  public void setMaintainerNotes(String maintainerNotes)
+  {
+    this.maintainerNotes = maintainerNotes;
+  }
+
   public String getContributorNotes()
   {
     return contributorNotes;
