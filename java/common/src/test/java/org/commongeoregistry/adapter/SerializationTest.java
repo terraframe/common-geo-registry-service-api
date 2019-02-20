@@ -37,6 +37,7 @@ import org.commongeoregistry.adapter.dataaccess.UnknownTermException;
 import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
+import org.commongeoregistry.adapter.metadata.AttributeFloatType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
@@ -143,6 +144,7 @@ public class SerializationTest
     AttributeType testChar = AttributeType.factory("testChar", "testCharLocalName", "testCharLocalDescrip", AttributeCharacterType.TYPE);
     AttributeType testDate = AttributeType.factory("testDate", "testDateLocalName", "testDateLocalDescrip", AttributeDateType.TYPE);
     AttributeType testInteger = AttributeType.factory("testInteger", "testIntegerLocalName", "testIntegerLocalDescrip", AttributeIntegerType.TYPE);
+    AttributeType testFloat = AttributeType.factory("testFloat", "testFloatLocalName", "testFloatLocalDescrip", AttributeFloatType.TYPE);
     AttributeType testBoolean = AttributeType.factory("testBoolean", "testBooleanName", "testBooleanDescrip", AttributeBooleanType.TYPE);
     AttributeTermType testTerm = (AttributeTermType) AttributeType.factory("testTerm", "testTermLocalName", "testTermLocalDescrip", AttributeTermType.TYPE);
     testTerm.setRootTerm(registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get());
@@ -152,6 +154,7 @@ public class SerializationTest
     state.addAttribute(testInteger);
     state.addAttribute(testBoolean);
     state.addAttribute(testTerm);
+    state.addAttribute(testFloat);
 
     String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
 
@@ -164,12 +167,16 @@ public class SerializationTest
     geoObject.setValue("testChar", "Test Character Value");
     geoObject.setValue("testDate", new Date());
     geoObject.setValue("testInteger", 3L);
+    geoObject.setValue("testFloat", 1.111);
     geoObject.setValue("testBoolean", false);
     geoObject.setValue("testTerm", registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.PENDING.code).get());
 
     String sJson = geoObject.toJSON().toString();
     GeoObject geoObject2 = GeoObject.fromJSON(registryServerInterface, sJson);
     String sJson2 = geoObject2.toJSON().toString();
+    
+    System.out.println("this is it");
+    System.out.println(sJson);
 
     Assert.assertEquals(sJson, sJson2);
     Assert.assertEquals(geoObject.getValue("testChar"), geoObject2.getValue("testChar"));
