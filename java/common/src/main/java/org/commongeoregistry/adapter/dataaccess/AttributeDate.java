@@ -36,7 +36,7 @@ public class AttributeDate extends Attribute
    */
   private static final long serialVersionUID = 5532076653984789765L;
   
-  private Date date;
+  private Long date;
   
   public AttributeDate(String name)
   {
@@ -48,17 +48,23 @@ public class AttributeDate extends Attribute
   @Override
   public void setValue(Object date)
   {
-    this.setDate((Date)date);
+    if(date instanceof Long)
+    {
+      this.setDate((Long)date);
+    }
   }
   
 
-  public void setDate(Date date)
+  public void setDate(Long date)
   {
-    this.date = date;
+    if(date instanceof Long)
+    {
+      this.date = (Long) date;
+    }
   }
   
   @Override
-  public Date getValue()
+  public Long getValue()
   {
     return this.date;
   }
@@ -68,7 +74,7 @@ public class AttributeDate extends Attribute
   {  
     if (this.date != null)
     {
-      String sDate = new java.text.SimpleDateFormat(AdapterConstants.DATE_FORMAT).format(this.date);
+      String sDate = this.date.toString();
       
       geoObjProps.addProperty(this.getName(), sDate);
     }
@@ -77,13 +83,6 @@ public class AttributeDate extends Attribute
   @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-    try
-    {
-      this.setValue(new java.text.SimpleDateFormat(AdapterConstants.DATE_FORMAT).parse(jValue.getAsString()));
-    }
-    catch (ParseException e)
-    {
-      throw new RuntimeException(e);
-    }
+    this.setValue(jValue.getAsString());
   }
 }
