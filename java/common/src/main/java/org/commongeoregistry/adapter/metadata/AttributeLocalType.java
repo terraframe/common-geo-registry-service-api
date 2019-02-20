@@ -20,15 +20,16 @@ package org.commongeoregistry.adapter.metadata;
 
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 
-public class AttributeDateType extends AttributePrimitiveType
+public class AttributeLocalType extends AttributePrimitiveType
 {
   /**
    * 
    */
-  private static final long serialVersionUID = 1543071656686171731L;
-  public static String TYPE = "date";
+  private static final long serialVersionUID = -4241500416669749156L;
   
-  public AttributeDateType(String _name, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription, boolean _isDefault)
+  public static String TYPE = "local";
+  
+  public AttributeLocalType(String _name, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription, boolean _isDefault)
   {
     super(_name, _localizedLabel, _localizedDescription, TYPE, _isDefault);
   }

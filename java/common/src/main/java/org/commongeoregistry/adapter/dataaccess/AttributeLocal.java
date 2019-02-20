@@ -17,21 +17,47 @@
  * along with Common Geo Registry Adapter(tm). If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package org.commongeoregistry.adapter.metadata;
+package org.commongeoregistry.adapter.dataaccess;
 
-import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
-public class AttributeCharacterType extends AttributePrimitiveType
+import org.commongeoregistry.adapter.metadata.AttributeLocalType;
+
+public class AttributeLocal extends Attribute
 {
+
   /**
    * 
    */
-  private static final long serialVersionUID = -4241500416669749156L;
+  private static final long serialVersionUID = -506321096607959557L;
 
-  public static String      TYPE             = "character";
+  private LocalizedValue    value;
 
-  public AttributeCharacterType(String _name, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription, boolean _isDefault)
+  public AttributeLocal(String name)
   {
-    super(_name, _localizedLabel, _localizedDescription, TYPE, _isDefault);
+    super(name, AttributeLocalType.TYPE);
   }
+
+  @Override
+  public void setValue(Object value)
+  {
+    if (value instanceof LocalizedValue)
+    {
+      this.value = (LocalizedValue) value;
+    }
+  }
+
+  public void setValue(Locale locale, String value)
+  {
+    this.value.setValue(locale, value);
+  }
+
+  @Override
+  public Object getValue()
+  {
+    return this.value;
+  }
+
 }

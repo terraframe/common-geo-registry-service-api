@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.metadata;
 
@@ -24,6 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.Term;
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.UnknownTermException;
 
 import com.google.gson.JsonElement;
@@ -44,7 +46,7 @@ public class AttributeTermType extends AttributeType
 
   private Map<String, Term>  termMap          = null;
 
-  public AttributeTermType(String _name, String _localizedLabel, String _localizedDescription, boolean _isDefault)
+  public AttributeTermType(String _name, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription, boolean _isDefault)
   {
     super(_name, _localizedLabel, _localizedDescription, TYPE, _isDefault);
 

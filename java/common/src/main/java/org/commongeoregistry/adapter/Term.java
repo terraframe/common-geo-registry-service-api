@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter;
 
@@ -22,6 +23,8 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -32,25 +35,25 @@ public class Term implements Serializable
   /**
    * 
    */
-  private static final long serialVersionUID                = 8658638930185089125L;
-  
-  public static final String JSON_CODE			            = "code";
-  
-  public static final String JSON_LOCALIZED_LABEL           = "localizedLabel";
-  
-  public static final String JSON_LOCALIZED_DESCRIPTION     = "localizedDescription";
-  
-  public static final String JSON_CHILDREN                  = "children";
+  private static final long  serialVersionUID           = 8658638930185089125L;
 
-  private String            code;
+  public static final String JSON_CODE                  = "code";
 
-  private String            localizedLabel;
+  public static final String JSON_LOCALIZED_LABEL       = "localizedLabel";
 
-  private String            localizedDescription;
+  public static final String JSON_LOCALIZED_DESCRIPTION = "localizedDescription";
 
-  private List<Term>        children;
+  public static final String JSON_CHILDREN              = "children";
 
-  public Term(String code, String localizedLabel, String localizedDescription)
+  private String             code;
+
+  private LocalizedValue              localizedLabel;
+
+  private LocalizedValue              localizedDescription;
+
+  private List<Term>         children;
+
+  public Term(String code, LocalizedValue localizedLabel, LocalizedValue localizedDescription)
   {
     this.code = code;
     this.localizedLabel = localizedLabel;
@@ -58,18 +61,18 @@ public class Term implements Serializable
 
     this.children = Collections.synchronizedList(new LinkedList<Term>());
   }
-  
+
   public String getCode()
   {
     return this.code;
   }
 
-  public String getLocalizedLabel()
+  public LocalizedValue getLocalizedLabel()
   {
     return this.localizedLabel;
   }
 
-  public String getLocalizedDescription()
+  public LocalizedValue getLocalizedDescription()
   {
     return this.localizedDescription;
   }
@@ -83,28 +86,29 @@ public class Term implements Serializable
   {
     return this.children;
   }
-  
+
   public static JsonArray toJSON(Term[] terms)
   {
     JsonArray json = new JsonArray();
-	for(Term term : terms)
+    for (Term term : terms)
     {
       json.add(term.toJSON());
-	}
-	  
-	return json;
+    }
+
+    return json;
   }
 
   public JsonObject toJSON()
   {
     JsonObject obj = new JsonObject();
     obj.addProperty(JSON_CODE, this.getCode());
-    obj.addProperty(JSON_LOCALIZED_LABEL, this.getLocalizedLabel());
-    obj.addProperty(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription());
-    
-    // Child Terms are not stored in a hierarchy structure. They are flattened in an array. 
+    obj.add(JSON_LOCALIZED_LABEL, this.getLocalizedLabel().toJSON());
+    obj.add(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription().toJSON());
+
+    // Child Terms are not stored in a hierarchy structure. They are flattened
+    // in an array.
     JsonArray childTerms = new JsonArray();
-    for(int i=0; i<this.getChildren().size(); i++)
+    for (int i = 0; i < this.getChildren().size(); i++)
     {
       Term child = this.getChildren().get(i);
       childTerms.add(child.toJSON());
@@ -114,7 +118,6 @@ public class Term implements Serializable
     return obj;
   }
 
-  
   /**
    * Creates a {@link Term} object including references to child terms.
    * 
@@ -124,38 +127,38 @@ public class Term implements Serializable
   public static Term fromJSON(JsonObject termObj)
   {
     String code = termObj.get(Term.JSON_CODE).getAsString();
-	String localizedLabel = termObj.get(Term.JSON_LOCALIZED_LABEL).getAsString();
-	String localizedDescription = termObj.get(Term.JSON_LOCALIZED_DESCRIPTION).getAsString();
-	
-	Term term = new Term(code, localizedLabel, localizedDescription);
-	
-	JsonElement children = termObj.get(Term.JSON_CHILDREN);
-	
-	if (children != null && !children.isJsonNull() && children.isJsonArray())
-	{
-	  JsonArray childrenArray = children.getAsJsonArray();
-	  
-	  for (JsonElement jsonElement : childrenArray)
-	  {
-	    if (jsonElement.isJsonObject())
-	    {
-	      JsonObject childTermObj = jsonElement.getAsJsonObject();
-	      
-	      Term childTerm = Term.fromJSON(childTermObj);
-	      term.addChild(childTerm);
-	    }
-	  }
-	}
-	
-	return term;
+    LocalizedValue localizedLabel = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_LABEL).getAsJsonObject());
+    LocalizedValue localizedDescription = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
+
+    Term term = new Term(code, localizedLabel, localizedDescription);
+
+    JsonElement children = termObj.get(Term.JSON_CHILDREN);
+
+    if (children != null && !children.isJsonNull() && children.isJsonArray())
+    {
+      JsonArray childrenArray = children.getAsJsonArray();
+
+      for (JsonElement jsonElement : childrenArray)
+      {
+        if (jsonElement.isJsonObject())
+        {
+          JsonObject childTermObj = jsonElement.getAsJsonObject();
+
+          Term childTerm = Term.fromJSON(childTermObj);
+          term.addChild(childTerm);
+        }
+      }
+    }
+
+    return term;
   }
-  
+
   @Override
   public boolean equals(Object obj)
   {
-    return (obj instanceof Term) && ((Term)obj).getCode().equals(this.getCode());
+    return ( obj instanceof Term ) && ( (Term) obj ).getCode().equals(this.getCode());
   }
-  
+
   @Override
   public String toString()
   {

@@ -18,6 +18,8 @@
  */
 package org.commongeoregistry.adapter.metadata;
 
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
+
 public class AttributeFloatType extends AttributeNumericType
 {
   /**
@@ -27,7 +29,7 @@ public class AttributeFloatType extends AttributeNumericType
 
   public static String TYPE = "float";
   
-  public AttributeFloatType(String _name, String _localizedLabel, String _localizedDescription, boolean _isDefault)
+  public AttributeFloatType(String _name, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription, boolean _isDefault)
   {
     super(_name, _localizedLabel, _localizedDescription, TYPE, _isDefault);
   }
