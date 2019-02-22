@@ -33,7 +33,7 @@ public class AndroidIntegrationTest
 
         AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();
         connector.setCredentials("admin", "_nm8P4gfdWxGqNRQ#8");
-        connector.setServerUrl("https://192.168.0.31:8443/georegistry");
+        connector.setServerUrl("https://192.168.122.1:8443/georegistry");
         connector.initialize();
 
         client = new AndroidRegistryClient(connector, context);
