@@ -294,6 +294,25 @@ public class GeoObject implements Serializable
   }
 
   /**
+   * Returns the localized
+   * 
+   * @return
+   */
+  public LocalizedValue getDisplayLabel()
+  {
+    AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
+    LocalizedValue value = (LocalizedValue) attribute.getValue();
+    
+    return value;
+  }
+  
+  public void setDisplayLabel(LocalizedValue _displayLabel)
+  {
+    AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
+    attribute.setValue(_displayLabel);
+  }
+  
+  /**
    * Returns the status code
    * 
    * @return
