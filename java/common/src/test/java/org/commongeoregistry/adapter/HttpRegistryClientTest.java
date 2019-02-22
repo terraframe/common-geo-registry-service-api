@@ -93,8 +93,8 @@ public class HttpRegistryClientTest
     GeoObjectType test = optional.get();
 
     Assert.assertEquals(state.getCode(), test.getCode());
-    Assert.assertEquals(state.getLocalizedDescription().getValue(), test.getLocalizedDescription().getValue());
-    Assert.assertEquals(state.getLocalizedLabel().getValue(), test.getLocalizedLabel().getValue());
+    Assert.assertEquals(state.getDescription().getValue(), test.getDescription().getValue());
+    Assert.assertEquals(state.getLabel().getValue(), test.getLabel().getValue());
     
     /*
      * Validate the hierarchy type request
@@ -109,8 +109,8 @@ public class HttpRegistryClientTest
     HierarchyType htCache = htOpt.get();
 
     Assert.assertEquals(locatedIn.getCode(), htCache.getCode());
-    Assert.assertEquals(locatedIn.getLocalizedDescription().getValue(), htCache.getLocalizedDescription().getValue());
-    Assert.assertEquals(locatedIn.getLocalizedLabel().getValue(), htCache.getLocalizedLabel().getValue());
+    Assert.assertEquals(locatedIn.getDescription().getValue(), htCache.getDescription().getValue());
+    Assert.assertEquals(locatedIn.getLabel().getValue(), htCache.getLabel().getValue());
   }
 
   @Test(expected = ResponseException.class)

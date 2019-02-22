@@ -60,20 +60,20 @@ public class DefaultTerms
 
     public String code;
 
-    public String localizedLabel;
+    public String label;
 
-    public String localizedDescription;
+    public String description;
 
-    private GeoObjectStatusTerm(String _code, String _localizedLabel, String _localizedDescription)
+    private GeoObjectStatusTerm(String _code, String _label, String _description)
     {
       this.code = _code;
-      this.localizedLabel = _localizedLabel;
-      this.localizedDescription = _localizedDescription;
+      this.label = _label;
+      this.description = _description;
     }
 
     public Term construct(RegistryAdapter registry)
     {
-      return MetadataFactory.newTerm(this.code, new LocalizedValue(this.localizedLabel), new LocalizedValue(this.localizedDescription), registry);
+      return MetadataFactory.newTerm(this.code, new LocalizedValue(this.label), new LocalizedValue(this.description), registry);
     }
   }
 }

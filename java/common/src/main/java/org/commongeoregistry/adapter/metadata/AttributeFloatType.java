@@ -29,8 +29,8 @@ public class AttributeFloatType extends AttributeNumericType
 
   public static String TYPE = "float";
   
-  public AttributeFloatType(String _name, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription, boolean _isDefault)
+  public AttributeFloatType(String _name, LocalizedValue _label, LocalizedValue _description, boolean _isDefault)
   {
-    super(_name, _localizedLabel, _localizedDescription, TYPE, _isDefault);
+    super(_name, _label, _description, TYPE, _isDefault);
   }
 }

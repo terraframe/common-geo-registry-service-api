@@ -11,7 +11,7 @@ public class LocalizedValue
 {
   private static final String LOCALIZED_VALUE = "localizedValue";
 
-  private static final String LOCALE_MAP      = "localeMap";
+  private static final String LOCALE_VALUES   = "localeValues";
 
   private static final String LOCALE          = "locale";
 
@@ -88,15 +88,20 @@ public class LocalizedValue
     });
 
     JsonObject object = new JsonObject();
-    object.addProperty(LOCALIZED_VALUE, this.localizedValue);
-    object.add(LOCALE_MAP, array);
+
+    if (this.localizedValue != null)
+    {
+      object.addProperty(LOCALIZED_VALUE, this.localizedValue);
+    }
+
+    object.add(LOCALE_VALUES, array);
     return object;
   }
 
   public static LocalizedValue fromJSON(JsonObject jObject)
   {
-    String localizedValue = jObject.get(LOCALIZED_VALUE).getAsString();
-    JsonArray locales = jObject.get(LOCALE_MAP).getAsJsonArray();
+    String localizedValue = jObject.has(LOCALIZED_VALUE) ? jObject.get(LOCALIZED_VALUE).getAsString() : null;
+    JsonArray locales = jObject.get(LOCALE_VALUES).getAsJsonArray();
 
     Map<String, String> map = new HashMap<String, String>();
 

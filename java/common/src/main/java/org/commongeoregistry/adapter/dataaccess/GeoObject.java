@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.dataaccess;
 
@@ -47,21 +48,21 @@ public class GeoObject implements Serializable
   /**
    * 
    */
-  private static final long      serialVersionUID        = 7686140708200106783L;
+  private static final long      serialVersionUID = 7686140708200106783L;
 
-  public static final String     UID                     = DefaultAttribute.UID.getName();
+  public static final String     UID              = DefaultAttribute.UID.getName();
 
-  public static final String     CODE                    = DefaultAttribute.CODE.getName();
+  public static final String     CODE             = DefaultAttribute.CODE.getName();
 
-  public static final String     LOCALIZED_DISPLAY_LABEL = DefaultAttribute.LOCALIZED_DISPLAY_LABEL.getName();
+  public static final String     DISPLAY_LABEL    = DefaultAttribute.DISPLAY_LABEL.getName();
 
-  public static final String     JSON_PROPERTIES         = "properties";
+  public static final String     JSON_PROPERTIES  = "properties";
 
-  public static final String     JSON_TYPE               = "type";
+  public static final String     JSON_TYPE        = "type";
 
-  public static final String     JSON_GEOMETRY           = "geometry";
+  public static final String     JSON_GEOMETRY    = "geometry";
 
-  public static final String     JSON_FEATURE            = "Feature";
+  public static final String     JSON_FEATURE     = "Feature";
 
   private GeoObjectType          geoObjectType;
 
@@ -278,12 +279,18 @@ public class GeoObject implements Serializable
    */
   public String getLocalizedDisplayLabel()
   {
-    return (String) this.attributeMap.get(LOCALIZED_DISPLAY_LABEL).getValue();
+    AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
+    LocalizedValue value = (LocalizedValue) attribute.getValue();
+
+    return value.getValue();
   }
 
   public void setLocalizedDisplayLabel(String _displayLabel)
   {
-    this.attributeMap.get(LOCALIZED_DISPLAY_LABEL).setValue(_displayLabel);
+    AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
+    LocalizedValue value = (LocalizedValue) attribute.getValue();
+
+    value.setValue(_displayLabel);
   }
 
   /**
@@ -318,7 +325,7 @@ public class GeoObject implements Serializable
   {
     this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(status.getCode());
   }
-  
+
   public void setStatus(String statusCode)
   {
     this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(statusCode);

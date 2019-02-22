@@ -25,27 +25,27 @@ import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 
 public class MetadataFactory
 {
-  public static Term newTerm(String code, LocalizedValue localizedLabel, LocalizedValue localizedDescription, RegistryAdapter registry)
+  public static Term newTerm(String code, LocalizedValue label, LocalizedValue description, RegistryAdapter registry)
   {
-    Term t = new Term(code, localizedLabel, localizedDescription);
+    Term t = new Term(code, label, description);
     
     registry.getMetadataCache().addTerm(t);
     
     return t;
   }
   
-  public static HierarchyType newHierarchyType(String code, LocalizedValue localizedLabel, LocalizedValue localizedDescription, RegistryAdapter registry)
+  public static HierarchyType newHierarchyType(String code, LocalizedValue label, LocalizedValue description, RegistryAdapter registry)
   {
-    HierarchyType ht = new HierarchyType(code, localizedLabel, localizedDescription);
+    HierarchyType ht = new HierarchyType(code, label, description);
     
     registry.getMetadataCache().addHierarchyType(ht);
     
     return ht;
   }
   
-  public static GeoObjectType newGeoObjectType(String code, GeometryType geometryType, LocalizedValue localizedLabel, LocalizedValue localizedDescription, Boolean isLeaf, RegistryAdapter registry)
+  public static GeoObjectType newGeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, RegistryAdapter registry)
   {
-    GeoObjectType got = new GeoObjectType(code, geometryType, localizedLabel, localizedDescription, isLeaf, registry);
+    GeoObjectType got = new GeoObjectType(code, geometryType, label, description, isLeaf, registry);
     
     registry.getMetadataCache().addGeoObjectType(got);
     

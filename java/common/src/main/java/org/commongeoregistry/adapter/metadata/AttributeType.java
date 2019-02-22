@@ -42,9 +42,9 @@ public abstract class AttributeType implements Serializable
 
   public static final String JSON_CODE                  = "code";
 
-  public static final String JSON_LOCALIZED_LABEL       = "localizedLabel";
+  public static final String JSON_LOCALIZED_LABEL       = "label";
 
-  public static final String JSON_LOCALIZED_DESCRIPTION = "localizedDescription";
+  public static final String JSON_LOCALIZED_DESCRIPTION = "description";
 
   public static final String JSON_TYPE                  = "type";
 
@@ -52,9 +52,9 @@ public abstract class AttributeType implements Serializable
 
   private String             name;
 
-  private LocalizedValue              localizedLabel;
+  private LocalizedValue              label;
 
-  private LocalizedValue              localizedDescription;
+  private LocalizedValue              description;
 
   private String             type;                                               // Attribute
                                                                                  // Type
@@ -64,11 +64,11 @@ public abstract class AttributeType implements Serializable
 
   // TODO add a boolean for if the attribute is required or not
 
-  public AttributeType(String _name, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription, String _type, boolean _isDefault)
+  public AttributeType(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _isDefault)
   {
     this.name = _name;
-    this.localizedLabel = _localizedLabel;
-    this.localizedDescription = _localizedDescription;
+    this.label = _label;
+    this.description = _description;
     this.type = _type;
     this.isDefault = _isDefault;
   }
@@ -83,44 +83,44 @@ public abstract class AttributeType implements Serializable
     return this.type;
   }
 
-  public LocalizedValue getLocalizedLabel()
+  public LocalizedValue getLabel()
   {
-    return this.localizedLabel;
+    return this.label;
   }
 
-  public void setLocalizedLabel(LocalizedValue localizedLabel)
+  public void setLabel(LocalizedValue label)
   {
-    this.localizedLabel = localizedLabel;
+    this.label = label;
   }
 
-  public void setLocalizedLabel(String localizedLabel)
+  public void setLabel(String label)
   {
-    this.localizedLabel.setValue(localizedLabel);
+    this.label.setValue(label);
   }
 
-  public void setLocalizedLabel(Locale locale, String localizedLabel)
+  public void setLabel(Locale locale, String label)
   {
-    this.localizedLabel.setValue(locale, localizedLabel);
+    this.label.setValue(locale, label);
   }
 
-  public LocalizedValue getLocalizedDescription()
+  public LocalizedValue getDescription()
   {
-    return this.localizedDescription;
+    return this.description;
   }
 
-  public void setLocalizedDescription(LocalizedValue localizedDescription)
+  public void setDescription(LocalizedValue description)
   {
-    this.localizedDescription = localizedDescription;
+    this.description = description;
   }
 
-  public void setLocalizedDescription(String localizedDescription)
+  public void setDescription(String description)
   {
-    this.localizedDescription.setValue(localizedDescription);
+    this.description.setValue(description);
   }
 
-  public void setLocalizedDescription(Locale locale, String localizedDescription)
+  public void setDescription(Locale locale, String description)
   {
-    this.localizedDescription.setValue(locale, localizedDescription);
+    this.description.setValue(locale, description);
   }
 
   public boolean getIsDefault()
@@ -134,7 +134,7 @@ public abstract class AttributeType implements Serializable
     // AttributeType
   }
 
-  public static AttributeType factory(String _name, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription, String _type)
+  public static AttributeType factory(String _name, LocalizedValue _label, LocalizedValue _description, String _type)
   {
     AttributeType attributeType = null;
 
@@ -147,9 +147,9 @@ public abstract class AttributeType implements Serializable
     {
       _isDefault = DefaultAttribute.CODE.getIsDefault();
     }
-    else if (DefaultAttribute.LOCALIZED_DISPLAY_LABEL.getName().equals(_name))
+    else if (DefaultAttribute.DISPLAY_LABEL.getName().equals(_name))
     {
-      _isDefault = DefaultAttribute.LOCALIZED_DISPLAY_LABEL.getIsDefault();
+      _isDefault = DefaultAttribute.DISPLAY_LABEL.getIsDefault();
     }
     else if (DefaultAttribute.TYPE.getName().equals(_name))
     {
@@ -174,27 +174,31 @@ public abstract class AttributeType implements Serializable
 
     if (_type.equals(AttributeCharacterType.TYPE))
     {
-      attributeType = new AttributeCharacterType(_name, _localizedLabel, _localizedDescription, _isDefault);
+      attributeType = new AttributeCharacterType(_name, _label, _description, _isDefault);
+    }
+    else if (_type.equals(AttributeLocalType.TYPE))
+    {
+      attributeType = new AttributeLocalType(_name, _label, _description, _isDefault);
     }
     else if (_type.equals(AttributeDateType.TYPE))
     {
-      attributeType = new AttributeDateType(_name, _localizedLabel, _localizedDescription, _isDefault);
+      attributeType = new AttributeDateType(_name, _label, _description, _isDefault);
     }
     else if (_type.equals(AttributeIntegerType.TYPE))
     {
-      attributeType = new AttributeIntegerType(_name, _localizedLabel, _localizedDescription, _isDefault);
+      attributeType = new AttributeIntegerType(_name, _label, _description, _isDefault);
     }
     else if (_type.equals(AttributeFloatType.TYPE))
     {
-      attributeType = new AttributeFloatType(_name, _localizedLabel, _localizedDescription, _isDefault);
+      attributeType = new AttributeFloatType(_name, _label, _description, _isDefault);
     }
     else if (_type.equals(AttributeTermType.TYPE))
     {
-      attributeType = new AttributeTermType(_name, _localizedLabel, _localizedDescription, _isDefault);
+      attributeType = new AttributeTermType(_name, _label, _description, _isDefault);
     }
     else if (_type.equals(AttributeBooleanType.TYPE))
     {
-      attributeType = new AttributeBooleanType(_name, _localizedLabel, _localizedDescription, _isDefault);
+      attributeType = new AttributeBooleanType(_name, _label, _description, _isDefault);
     }
 
     return attributeType;
@@ -213,9 +217,9 @@ public abstract class AttributeType implements Serializable
 
     json.addProperty(JSON_TYPE, this.getType());
 
-    json.add(JSON_LOCALIZED_LABEL, this.getLocalizedLabel().toJSON());
+    json.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON());
 
-    json.add(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription().toJSON());
+    json.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON());
 
     json.addProperty(JSON_IS_DEFAULT, this.getIsDefault());
 

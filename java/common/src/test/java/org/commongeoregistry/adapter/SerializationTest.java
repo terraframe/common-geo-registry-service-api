@@ -68,8 +68,8 @@ public class SerializationTest
     Term facilityType2 = Term.fromJSON(jsonObject);
 
     Assert.assertEquals(facilityType.getCode(), facilityType2.getCode());
-    Assert.assertEquals(facilityType.getLocalizedLabel().getValue(), facilityType2.getLocalizedLabel().getValue());
-    Assert.assertEquals(facilityType.getLocalizedDescription().getValue(), facilityType2.getLocalizedDescription().getValue());
+    Assert.assertEquals(facilityType.getLabel().getValue(), facilityType2.getLabel().getValue());
+    Assert.assertEquals(facilityType.getDescription().getValue(), facilityType2.getDescription().getValue());
 
     Assert.assertEquals(facilityType.getChildren().size(), facilityType2.getChildren().size());
   }
@@ -267,8 +267,8 @@ public class SerializationTest
 
     Assert.assertEquals(geoPoliticalJson, geoPoliticalJson2);
     Assert.assertEquals(geoPolitical.getCode(), geoPolitical2.getCode());
-    Assert.assertEquals(geoPolitical.getLocalizedDescription().getValue(), geoPolitical2.getLocalizedDescription().getValue());
-    Assert.assertEquals(geoPolitical.getLocalizedLabel().getValue(), geoPolitical2.getLocalizedLabel().getValue());
+    Assert.assertEquals(geoPolitical.getDescription().getValue(), geoPolitical2.getDescription().getValue());
+    Assert.assertEquals(geoPolitical.getLabel().getValue(), geoPolitical2.getLabel().getValue());
     Assert.assertEquals(geoPolitical.getRootGeoObjectTypes().size(), geoPolitical2.getRootGeoObjectTypes().size());
     Assert.assertEquals(geoPolitical.getRootGeoObjectTypes().get(0).getChildren().size(), geoPolitical2.getRootGeoObjectTypes().get(0).getChildren().size());
   }

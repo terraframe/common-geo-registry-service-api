@@ -39,25 +39,25 @@ public class Term implements Serializable
 
   public static final String JSON_CODE                  = "code";
 
-  public static final String JSON_LOCALIZED_LABEL       = "localizedLabel";
+  public static final String JSON_LOCALIZED_LABEL       = "label";
 
-  public static final String JSON_LOCALIZED_DESCRIPTION = "localizedDescription";
+  public static final String JSON_LOCALIZED_DESCRIPTION = "description";
 
   public static final String JSON_CHILDREN              = "children";
 
   private String             code;
 
-  private LocalizedValue              localizedLabel;
+  private LocalizedValue     label;
 
-  private LocalizedValue              localizedDescription;
+  private LocalizedValue     description;
 
   private List<Term>         children;
 
-  public Term(String code, LocalizedValue localizedLabel, LocalizedValue localizedDescription)
+  public Term(String code, LocalizedValue label, LocalizedValue description)
   {
     this.code = code;
-    this.localizedLabel = localizedLabel;
-    this.localizedDescription = localizedDescription;
+    this.label = label;
+    this.description = description;
 
     this.children = Collections.synchronizedList(new LinkedList<Term>());
   }
@@ -67,14 +67,14 @@ public class Term implements Serializable
     return this.code;
   }
 
-  public LocalizedValue getLocalizedLabel()
+  public LocalizedValue getLabel()
   {
-    return this.localizedLabel;
+    return this.label;
   }
 
-  public LocalizedValue getLocalizedDescription()
+  public LocalizedValue getDescription()
   {
-    return this.localizedDescription;
+    return this.description;
   }
 
   public void addChild(Term childTerm)
@@ -102,8 +102,8 @@ public class Term implements Serializable
   {
     JsonObject obj = new JsonObject();
     obj.addProperty(JSON_CODE, this.getCode());
-    obj.add(JSON_LOCALIZED_LABEL, this.getLocalizedLabel().toJSON());
-    obj.add(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription().toJSON());
+    obj.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON());
+    obj.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON());
 
     // Child Terms are not stored in a hierarchy structure. They are flattened
     // in an array.
@@ -127,10 +127,10 @@ public class Term implements Serializable
   public static Term fromJSON(JsonObject termObj)
   {
     String code = termObj.get(Term.JSON_CODE).getAsString();
-    LocalizedValue localizedLabel = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_LABEL).getAsJsonObject());
-    LocalizedValue localizedDescription = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
+    LocalizedValue label = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_LABEL).getAsJsonObject());
+    LocalizedValue description = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
 
-    Term term = new Term(code, localizedLabel, localizedDescription);
+    Term term = new Term(code, label, description);
 
     JsonElement children = termObj.get(Term.JSON_CHILDREN);
 

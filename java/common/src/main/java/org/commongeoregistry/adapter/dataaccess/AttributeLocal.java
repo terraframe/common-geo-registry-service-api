@@ -19,11 +19,13 @@
  */
 package org.commongeoregistry.adapter.dataaccess;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
+import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeLocalType;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class AttributeLocal extends Attribute
 {
@@ -38,6 +40,8 @@ public class AttributeLocal extends Attribute
   public AttributeLocal(String name)
   {
     super(name, AttributeLocalType.TYPE);
+
+    this.value = new LocalizedValue(null);
   }
 
   @Override
@@ -46,6 +50,10 @@ public class AttributeLocal extends Attribute
     if (value instanceof LocalizedValue)
     {
       this.value = (LocalizedValue) value;
+    }
+    else if (value instanceof String)
+    {
+      this.value.setValue((String) value);
     }
   }
 
@@ -60,4 +68,15 @@ public class AttributeLocal extends Attribute
     return this.value;
   }
 
+  @Override
+  public void toJSON(JsonObject geoObjProps)
+  {
+    geoObjProps.add(this.getName(), value.toJSON());
+  }
+
+  @Override
+  public void fromJSON(JsonElement jValue, RegistryAdapter registry)
+  {
+    this.setValue(LocalizedValue.fromJSON(jValue.getAsJsonObject()));
+  }
 }

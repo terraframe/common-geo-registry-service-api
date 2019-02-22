@@ -29,8 +29,8 @@ public class AttributeLocalType extends AttributePrimitiveType
   
   public static String TYPE = "local";
   
-  public AttributeLocalType(String _name, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription, boolean _isDefault)
+  public AttributeLocalType(String _name, LocalizedValue _label, LocalizedValue _description, boolean _isDefault)
   {
-    super(_name, _localizedLabel, _localizedDescription, TYPE, _isDefault);
+    super(_name, _label, _description, TYPE, _isDefault);
   }
 }

@@ -156,8 +156,8 @@ public class USATestData
     public void assertEquals(GeoObjectType got)
     {
       Assert.assertEquals(code, got.getCode());
-      Assert.assertEquals(displayLabel, got.getLocalizedLabel());
-      Assert.assertEquals(description, got.getLocalizedDescription());
+      Assert.assertEquals(displayLabel, got.getLabel());
+      Assert.assertEquals(description, got.getDescription());
       // TOOD : check the uid
     }
     
@@ -213,8 +213,8 @@ public class USATestData
 //        MdRelationship allowedIn = MdRelationship.getMdRelationship(relationshipType);
 //
 //        Assert.assertEquals(allowedIn.getKey(), compare.getCode());
-//        Assert.assertEquals(allowedIn.getDescription().getValue(), compare.getLocalizedDescription());
-//        Assert.assertEquals(allowedIn.getDisplayLabel().getValue(), compare.getLocalizedLabel());
+//        Assert.assertEquals(allowedIn.getDescription().getValue(), compare.getDescription());
+//        Assert.assertEquals(allowedIn.getDisplayLabel().getValue(), compare.getLabel());
 
 //    compare.getRootGeoObjectTypes() // TODO
     }

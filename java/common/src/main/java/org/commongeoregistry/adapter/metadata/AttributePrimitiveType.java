@@ -28,8 +28,8 @@ public abstract class AttributePrimitiveType extends AttributeType
    */
   private static final long serialVersionUID = 7553432124777528154L;
 
-  public AttributePrimitiveType(String _name, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription, String _type, boolean _isDefault)
+  public AttributePrimitiveType(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _isDefault)
   {
-    super(_name, _localizedLabel, _localizedDescription, _type, _isDefault);
+    super(_name, _label, _description, _type, _isDefault);
   }
 }

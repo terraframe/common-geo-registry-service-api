@@ -23,6 +23,7 @@ import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
+import org.commongeoregistry.adapter.metadata.AttributeLocalType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 
@@ -31,7 +32,7 @@ public enum DefaultAttribute {
 
   CODE("code", "Code", "Human readable unique identified", AttributeCharacterType.TYPE, true),
 
-  LOCALIZED_DISPLAY_LABEL("localizedDisplayLabel", "Localized Display Label", "Localized locaiton ", AttributeCharacterType.TYPE, true),
+  DISPLAY_LABEL("displayLabel", "Display Label", "Label of the location", AttributeLocalType.TYPE, true),
 
   TYPE("type", "Type", "The type of the GeoObject", AttributeCharacterType.TYPE, true),
 
@@ -45,21 +46,21 @@ public enum DefaultAttribute {
 
   private String  name;
 
-  private String  defaultLocalizedLabel;
+  private String  defaultLabel;
 
-  private String  defaultLocalizedDescription;
+  private String  defaultDescription;
 
   private String  type;
 
   private boolean isDefault;
 
-  private DefaultAttribute(String _name, String _defaultLocalizedLabel, String _defaultLocalizedDescription, String _type, boolean _isDefault)
+  private DefaultAttribute(String _name, String _defaultLabel, String _defaultDescription, String _type, boolean _isDefault)
   {
     this.name = _name;
 
-    this.defaultLocalizedLabel = _defaultLocalizedLabel;
+    this.defaultLabel = _defaultLabel;
 
-    this.defaultLocalizedDescription = _defaultLocalizedDescription;
+    this.defaultDescription = _defaultDescription;
 
     this.type = _type;
 
@@ -74,12 +75,12 @@ public enum DefaultAttribute {
 
   public String getDefaultLocalizedName()
   {
-    return this.defaultLocalizedLabel;
+    return this.defaultLabel;
   }
 
-  public String getDefaultLocalizedDescription()
+  public String getDefaultDescription()
   {
-    return this.defaultLocalizedDescription;
+    return this.defaultDescription;
   }
 
   public String getType()
@@ -95,7 +96,7 @@ public enum DefaultAttribute {
   public AttributeType createAttributeType()
   {
     LocalizedValue label = new LocalizedValue(this.getDefaultLocalizedName());
-    LocalizedValue description = new LocalizedValue(this.getDefaultLocalizedDescription());
+    LocalizedValue description = new LocalizedValue(this.getDefaultDescription());
 
     return AttributeType.factory(this.getName(), label, description, this.getType());
   }

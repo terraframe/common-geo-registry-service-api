@@ -45,9 +45,9 @@ public class HierarchyType implements Serializable
 
   public static final String  JSON_CODE                  = "code";
 
-  public static final String  JSON_LOCALIZED_LABEL       = "localizedLabel";
+  public static final String  JSON_LOCALIZED_LABEL       = "label";
 
-  public static final String  JSON_LOCALIZED_DESCRIPTION = "localizedDescription";
+  public static final String  JSON_LOCALIZED_DESCRIPTION = "description";
 
   public static final String  JSON_ROOT_GEOOBJECTTYPES   = "rootGeoObjectTypes";
 
@@ -63,20 +63,20 @@ public class HierarchyType implements Serializable
   /**
    * The localized label of the hierarchy type for the presentation tier.
    */
-  private LocalizedValue               localizedLabel;
+  private LocalizedValue               label;
 
   /**
    * The localized description of the hierarchy type for the presentation tier.
    */
-  private LocalizedValue               localizedDescription;
+  private LocalizedValue               description;
 
   private List<HierarchyNode> rootGeoObjectTypes;
 
-  public HierarchyType(String _code, LocalizedValue _localizedLabel, LocalizedValue _localizedDescription)
+  public HierarchyType(String _code, LocalizedValue _label, LocalizedValue _description)
   {
     this.code = _code;
-    this.localizedLabel = _localizedLabel;
-    this.localizedDescription = _localizedDescription;
+    this.label = _label;
+    this.description = _description;
     this.rootGeoObjectTypes = Collections.synchronizedList(new LinkedList<HierarchyNode>());
   }
 
@@ -85,24 +85,24 @@ public class HierarchyType implements Serializable
     return this.code;
   }
 
-  public LocalizedValue getLocalizedLabel()
+  public LocalizedValue getLabel()
   {
-    return this.localizedLabel;
+    return this.label;
   }
 
-  public void setLocalizedLabel(LocalizedValue localizedLabel)
+  public void setLabel(LocalizedValue label)
   {
-    this.localizedLabel = localizedLabel;
+    this.label = label;
   }
 
-  public LocalizedValue getLocalizedDescription()
+  public LocalizedValue getDescription()
   {
-    return this.localizedDescription;
+    return this.description;
   }
 
-  public void setLocalizedDescription(LocalizedValue localizedDescription)
+  public void setDescription(LocalizedValue description)
   {
-    this.localizedDescription = localizedDescription;
+    this.description = description;
   }
 
   public List<HierarchyNode> getRootGeoObjectTypes()
@@ -247,9 +247,9 @@ public class HierarchyType implements Serializable
 
     jsonObj.addProperty(JSON_CODE, this.getCode());
 
-    jsonObj.add(JSON_LOCALIZED_LABEL, this.getLocalizedLabel().toJSON());
+    jsonObj.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON());
 
-    jsonObj.add(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription().toJSON());
+    jsonObj.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON());
 
     JsonArray jaRoots = new JsonArray();
     for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
@@ -278,10 +278,10 @@ public class HierarchyType implements Serializable
     JsonObject oJson = parser.parse(_sJson).getAsJsonObject();
 
     String code = oJson.get(JSON_CODE).getAsString();
-    LocalizedValue localizedLabel = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_LABEL).getAsJsonObject());
-    LocalizedValue localizedDescription = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
+    LocalizedValue label = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_LABEL).getAsJsonObject());
+    LocalizedValue description = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
 
-    HierarchyType ht = new HierarchyType(code, localizedLabel, localizedDescription);
+    HierarchyType ht = new HierarchyType(code, label, description);
 
     JsonArray rootGeoObjectTypes = oJson.getAsJsonArray(JSON_ROOT_GEOOBJECTTYPES);
     if (rootGeoObjectTypes != null)
