@@ -31,6 +31,8 @@ import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
+import org.commongeoregistry.adapter.metadata.DefaultSerializer;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
@@ -302,16 +304,22 @@ public class GeoObject implements Serializable
   {
     AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
     LocalizedValue value = (LocalizedValue) attribute.getValue();
-    
+
     return value;
   }
-  
+
   public void setDisplayLabel(LocalizedValue _displayLabel)
   {
     AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
     attribute.setValue(_displayLabel);
   }
-  
+
+  public void setDisplayLabel(String _key, String _displayLabel)
+  {
+    AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
+    attribute.setValue(_key, _displayLabel);
+  }
+
   /**
    * Returns the status code
    * 
@@ -392,12 +400,12 @@ public class GeoObject implements Serializable
     return geoObj;
   }
 
-  /**
-   * Return the JSON representation of this [@link GeoObject}
-   * 
-   * @return JSON representation of this [@link GeoObject}
-   */
   public JsonObject toJSON()
+  {
+    return toJSON(new DefaultSerializer());
+  }
+
+  public JsonObject toJSON(CustomSerializer serializer)
   {
     JsonObject jsonObj = new JsonObject();
 
@@ -422,7 +430,7 @@ public class GeoObject implements Serializable
     {
       Attribute attr = this.attributeMap.get(key);
 
-      attr.toJSON(props);
+      attr.toJSON(props, serializer);
 
       // if(attr instanceof AttributeTerm)
       // {

@@ -63,12 +63,12 @@ public class HierarchyType implements Serializable
   /**
    * The localized label of the hierarchy type for the presentation tier.
    */
-  private LocalizedValue               label;
+  private LocalizedValue      label;
 
   /**
    * The localized description of the hierarchy type for the presentation tier.
    */
-  private LocalizedValue               description;
+  private LocalizedValue      description;
 
   private List<HierarchyNode> rootGeoObjectTypes;
 
@@ -236,20 +236,20 @@ public class HierarchyType implements Serializable
     }
   }
 
-  /**
-   * Return the JSON representation of this metadata
-   * 
-   * @return
-   */
   public JsonObject toJSON()
+  {
+    return toJSON(new DefaultSerializer());
+  }
+
+  public JsonObject toJSON(CustomSerializer serializer)
   {
     JsonObject jsonObj = new JsonObject();
 
     jsonObj.addProperty(JSON_CODE, this.getCode());
 
-    jsonObj.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON());
+    jsonObj.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON(serializer));
 
-    jsonObj.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON());
+    jsonObj.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON(serializer));
 
     JsonArray jaRoots = new JsonArray();
     for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
@@ -260,6 +260,8 @@ public class HierarchyType implements Serializable
     }
 
     jsonObj.add(JSON_ROOT_GEOOBJECTTYPES, jaRoots);
+
+    serializer.configure(this, jsonObj);
 
     return jsonObj;
   }

@@ -251,6 +251,16 @@ public class GeoObjectType implements Serializable
   }
 
   /**
+   * Sets the localized display label of this {@link GeoObjectType}.
+   * 
+   * @param label
+   */
+  public void setLabel(String key, String value)
+  {
+    this.label.setValue(key, value);
+  }
+
+  /**
    * Returns true if the type is a leaf node, false otherwise.
    * 
    * @return true if the type is a leaf node, false otherwise.
@@ -290,6 +300,16 @@ public class GeoObjectType implements Serializable
   public void setDescription(LocalizedValue description)
   {
     this.description = description;
+  }
+
+  /**
+   * Sets the localized display label of this {@link GeoObjectType}.
+   * 
+   * @param description
+   */
+  public void setDescription(String key, String value)
+  {
+    this.description.setValue(key, value);
   }
 
   /**
@@ -424,19 +444,13 @@ public class GeoObjectType implements Serializable
     Boolean isLeaf = Boolean.valueOf(oJson.get(JSON_IS_LEAF).getAsString());
 
     Map<String, AttributeType> attributeMap = buildDefaultAttributes(registry);
+
     for (int i = 0; i < oJsonAttrs.size(); ++i)
     {
       JsonObject joAttr = oJsonAttrs.get(i).getAsJsonObject();
-      String name = joAttr.get(AttributeType.JSON_CODE).getAsString();
+      AttributeType attrType = AttributeType.parse(joAttr);
 
-      LocalizedValue attributeLabel = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_LABEL).getAsJsonObject());
-      LocalizedValue attributeDescription = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
-
-      AttributeType attrType = AttributeType.factory(name, attributeLabel, attributeDescription, joAttr.get(AttributeType.JSON_TYPE).getAsString());
-
-      attrType.fromJSON(joAttr);
-
-      attributeMap.put(name, attrType);
+      attributeMap.put(attrType.getName(), attrType);
     }
 
     // TODO Need to validate that the default attributes are still defined.
@@ -450,7 +464,7 @@ public class GeoObjectType implements Serializable
    * 
    * @return JSON representation of this {@link GeoObjectType}.
    */
-  public JsonObject toJSON()
+  public final JsonObject toJSON()
   {
     return toJSON(new DefaultSerializer());
   }
@@ -470,9 +484,9 @@ public class GeoObjectType implements Serializable
 
     json.addProperty(JSON_CODE, this.getCode());
 
-    json.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON());
+    json.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON(serializer));
 
-    json.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON());
+    json.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON(serializer));
 
     // TODO: PROPOSED but not yet approved. Required for fromJSON
     // reconstruction.
@@ -490,6 +504,8 @@ public class GeoObjectType implements Serializable
     }
 
     json.add(JSON_ATTRIBUTES, attrs);
+
+    serializer.configure(this, json);
 
     return json;
   }

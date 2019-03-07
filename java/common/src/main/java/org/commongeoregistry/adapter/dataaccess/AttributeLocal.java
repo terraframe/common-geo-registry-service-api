@@ -23,6 +23,7 @@ import java.util.Locale;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeLocalType;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -62,6 +63,11 @@ public class AttributeLocal extends Attribute
     this.value.setValue(locale, value);
   }
 
+  public void setValue(String key, String value)
+  {
+    this.value.setValue(key, value);
+  }
+
   @Override
   public Object getValue()
   {
@@ -69,9 +75,9 @@ public class AttributeLocal extends Attribute
   }
 
   @Override
-  public void toJSON(JsonObject geoObjProps)
+  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
   {
-    geoObjProps.add(this.getName(), value.toJSON());
+    geoObjProps.add(this.getName(), value.toJSON(serializer));
   }
 
   @Override

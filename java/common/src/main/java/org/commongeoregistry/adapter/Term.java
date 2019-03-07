@@ -25,6 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
+import org.commongeoregistry.adapter.metadata.DefaultSerializer;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -100,10 +102,15 @@ public class Term implements Serializable
 
   public JsonObject toJSON()
   {
+    return toJSON(new DefaultSerializer());
+  }
+
+  public JsonObject toJSON(CustomSerializer serializer)
+  {
     JsonObject obj = new JsonObject();
     obj.addProperty(JSON_CODE, this.getCode());
-    obj.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON());
-    obj.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON());
+    obj.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON(serializer));
+    obj.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON(serializer));
 
     // Child Terms are not stored in a hierarchy structure. They are flattened
     // in an array.

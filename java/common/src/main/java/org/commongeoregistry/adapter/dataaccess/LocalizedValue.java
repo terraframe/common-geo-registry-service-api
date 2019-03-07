@@ -4,18 +4,21 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
+import org.commongeoregistry.adapter.metadata.DefaultSerializer;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class LocalizedValue
 {
-  private static final String LOCALIZED_VALUE = "localizedValue";
+  public static final String LOCALIZED_VALUE = "localizedValue";
 
-  private static final String LOCALE_VALUES   = "localeValues";
+  public static final String LOCALE_VALUES   = "localeValues";
 
-  private static final String LOCALE          = "locale";
+  public static final String LOCALE          = "locale";
 
-  private static final String VALUE           = "value";
+  public static final String VALUE           = "value";
 
   private String              localizedValue;
 
@@ -77,6 +80,11 @@ public class LocalizedValue
 
   public JsonObject toJSON()
   {
+    return toJSON(new DefaultSerializer());
+  }
+
+  public JsonObject toJSON(CustomSerializer serializer)
+  {
     JsonArray array = new JsonArray();
 
     this.localeValues.forEach((key, value) -> {
@@ -95,6 +103,9 @@ public class LocalizedValue
     }
 
     object.add(LOCALE_VALUES, array);
+
+    serializer.configure(this, object);
+
     return object;
   }
 

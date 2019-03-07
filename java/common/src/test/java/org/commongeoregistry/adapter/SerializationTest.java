@@ -40,6 +40,7 @@ import org.commongeoregistry.adapter.dataaccess.UnknownTermException;
 import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
+import org.commongeoregistry.adapter.metadata.AttributeFloatType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
@@ -158,11 +159,11 @@ public class SerializationTest
 
     GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, registryServerInterface);
 
-    AttributeType testChar = AttributeType.factory("testChar", new LocalizedValue("testCharLocalName"), new LocalizedValue("testCharLocalDescrip"), AttributeCharacterType.TYPE);
-    AttributeType testDate = AttributeType.factory("testDate", new LocalizedValue("testDateLocalName"), new LocalizedValue("testDateLocalDescrip"), AttributeDateType.TYPE);
-    AttributeType testInteger = AttributeType.factory("testInteger", new LocalizedValue("testIntegerLocalName"), new LocalizedValue("testIntegerLocalDescrip"), AttributeIntegerType.TYPE);
-    AttributeType testBoolean = AttributeType.factory("testBoolean", new LocalizedValue("testBooleanName"), new LocalizedValue("testBooleanDescrip"), AttributeBooleanType.TYPE);
-    AttributeTermType testTerm = (AttributeTermType) AttributeType.factory("testTerm", new LocalizedValue("testTermLocalName"), new LocalizedValue("testTermLocalDescrip"), AttributeTermType.TYPE);
+    AttributeType testChar = AttributeType.factory("testChar", new LocalizedValue("testCharLocalName"), new LocalizedValue("testCharLocalDescrip"), AttributeCharacterType.TYPE, false, false);
+    AttributeType testDate = AttributeType.factory("testDate", new LocalizedValue("testDateLocalName"), new LocalizedValue("testDateLocalDescrip"), AttributeDateType.TYPE, false, false);
+    AttributeType testInteger = AttributeType.factory("testInteger", new LocalizedValue("testIntegerLocalName"), new LocalizedValue("testIntegerLocalDescrip"), AttributeIntegerType.TYPE, false, false);
+    AttributeType testBoolean = AttributeType.factory("testBoolean", new LocalizedValue("testBooleanName"), new LocalizedValue("testBooleanDescrip"), AttributeBooleanType.TYPE, false, false);
+    AttributeTermType testTerm = (AttributeTermType) AttributeType.factory("testTerm", new LocalizedValue("testTermLocalName"), new LocalizedValue("testTermLocalDescrip"), AttributeTermType.TYPE, false, false);
     testTerm.setRootTerm(registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get());
 
     state.addAttribute(testChar);
@@ -205,7 +206,7 @@ public class SerializationTest
 
     GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, registryServerInterface);
 
-    AttributeTermType testTerm = (AttributeTermType) AttributeType.factory("testTerm", new LocalizedValue("testTermLocalName"), new LocalizedValue("testTermLocalDescrip"), AttributeTermType.TYPE);
+    AttributeTermType testTerm = (AttributeTermType) AttributeType.factory("testTerm", new LocalizedValue("testTermLocalName"), new LocalizedValue("testTermLocalDescrip"), AttributeTermType.TYPE, false, false);
     testTerm.setRootTerm(registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get());
 
     state.addAttribute(testTerm);
@@ -231,14 +232,18 @@ public class SerializationTest
 
     GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, registry);
 
-    AttributeType testChar = AttributeType.factory("testChar", new LocalizedValue("testCharLocalName"), new LocalizedValue("testCharLocalDescrip"), AttributeCharacterType.TYPE);
-    AttributeType testDate = AttributeType.factory("testDate", new LocalizedValue("testDateLocalName"), new LocalizedValue("testDateLocalDescrip"), AttributeDateType.TYPE);
-    AttributeType testInteger = AttributeType.factory("testInteger", new LocalizedValue("testIntegerLocalName"), new LocalizedValue("testDateLocalDescrip"), AttributeIntegerType.TYPE);
-    AttributeType testTerm = AttributeType.factory("testTerm", new LocalizedValue("testTermLocalName"), new LocalizedValue("testTermLocalDescrip"), AttributeTermType.TYPE);
+    AttributeType testChar = AttributeType.factory("testChar", new LocalizedValue("testCharLocalName"), new LocalizedValue("testCharLocalDescrip"), AttributeCharacterType.TYPE, true, true);
+    AttributeType testDate = AttributeType.factory("testDate", new LocalizedValue("testDateLocalName"), new LocalizedValue("testDateLocalDescrip"), AttributeDateType.TYPE, false, false);
+    AttributeType testInteger = AttributeType.factory("testInteger", new LocalizedValue("testIntegerLocalName"), new LocalizedValue("testDateLocalDescrip"), AttributeIntegerType.TYPE, false, false);
+    AttributeType testTerm = AttributeType.factory("testTerm", new LocalizedValue("testTermLocalName"), new LocalizedValue("testTermLocalDescrip"), AttributeTermType.TYPE, false, false);
+    AttributeFloatType testFloat = (AttributeFloatType) AttributeType.factory("testFloat", new LocalizedValue("testFloatLocalName"), new LocalizedValue("testFloatLocalDescrip"), AttributeFloatType.TYPE, false, false);
+    testFloat.setPrecision(20);
+    testFloat.setScale(10);
 
     state.addAttribute(testChar);
     state.addAttribute(testDate);
     state.addAttribute(testInteger);
+    state.addAttribute(testFloat);
     state.addAttribute(testTerm);
 
     String sJson = state.toJSON().toString();
@@ -246,10 +251,23 @@ public class SerializationTest
     String sJson2 = state2.toJSON().toString();
 
     Assert.assertEquals(sJson, sJson2);
-    Assert.assertEquals(testChar.getName(), state2.getAttribute("testChar").get().getName());
+
+    AttributeType attribute = state2.getAttribute("testChar").get();
+
+    Assert.assertEquals(testChar.getName(), attribute.getName());
+    Assert.assertEquals(testChar.isRequired(), attribute.isRequired());
+    Assert.assertEquals(testChar.isUnique(), attribute.isUnique());
+    Assert.assertEquals(testChar.getDescription().getValue(), attribute.getDescription().getValue());
+    Assert.assertEquals(testChar.getLabel().getValue(), attribute.getLabel().getValue());
+    Assert.assertEquals(testChar.getIsDefault(), attribute.getIsDefault());
+
+    AttributeFloatType attributeFloat = (AttributeFloatType) state2.getAttribute(testFloat.getName()).get();
+
+    Assert.assertEquals(testFloat.getPrecision(), attributeFloat.getPrecision());
+    Assert.assertEquals(testFloat.getScale(), attributeFloat.getScale());
+
     Assert.assertEquals(testDate.getName(), state2.getAttribute("testDate").get().getName());
     Assert.assertEquals(testInteger.getName(), state2.getAttribute("testInteger").get().getName());
-    Assert.assertEquals(testTerm.getName(), state2.getAttribute("testTerm").get().getName());
   }
 
   @Test

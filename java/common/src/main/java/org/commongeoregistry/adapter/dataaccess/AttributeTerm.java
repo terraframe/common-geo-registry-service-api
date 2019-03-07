@@ -26,6 +26,7 @@ import java.util.Set;
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -110,7 +111,7 @@ public class AttributeTerm extends Attribute
   }
 
   @Override
-  public void toJSON(JsonObject geoObjProps)
+  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
   {    
     JsonArray termCodesJson = new JsonArray();
 

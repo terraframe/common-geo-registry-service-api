@@ -28,6 +28,7 @@ import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeLocalType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -113,7 +114,7 @@ public abstract class Attribute implements Serializable
     return this.getName() + ": " + this.getValue();
   }
 
-  public void toJSON(JsonObject geoObjProps)
+  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
   {
     Object value = this.getValue();
     if (value == null)

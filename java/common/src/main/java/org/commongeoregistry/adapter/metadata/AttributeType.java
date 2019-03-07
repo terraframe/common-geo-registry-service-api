@@ -50,27 +50,55 @@ public abstract class AttributeType implements Serializable
 
   public static final String JSON_IS_DEFAULT            = "isDefault";
 
+  public static final String JSON_REQUIRED              = "required";
+
+  public static final String JSON_UNIQUE                = "unique";
+
+  /**
+   * Unique code of the attribute
+   */
   private String             name;
 
-  private LocalizedValue              label;
+  /**
+   * Label of the attribute
+   */
+  private LocalizedValue     label;
 
-  private LocalizedValue              description;
+  /**
+   * Description of the type
+   */
+  private LocalizedValue     description;
 
-  private String             type;                                               // Attribute
-                                                                                 // Type
-                                                                                 // Constant
+  /**
+   * Attribute type constant
+   */
+  private String             type;
 
+  /**
+   * Flag denoting if the attribute represents a default attribute as opposed to
+   * a custom attribute
+   */
   private boolean            isDefault;
 
-  // TODO add a boolean for if the attribute is required or not
+  /**
+   * Flag denoting if the attribute value is required
+   */
+  private boolean            required;
 
-  public AttributeType(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _isDefault)
+  /**
+   * Flag denoting if the attribute value is unique
+   */
+  private boolean            unique;
+
+  public AttributeType(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _isDefault, boolean _required, boolean _unique)
   {
     this.name = _name;
     this.label = _label;
     this.description = _description;
     this.type = _type;
     this.isDefault = _isDefault;
+    this.required = _required;
+    this.unique = _unique;
   }
 
   public String getName()
@@ -103,6 +131,11 @@ public abstract class AttributeType implements Serializable
     this.label.setValue(locale, label);
   }
 
+  public void setLabel(String key, String label)
+  {
+    this.label.setValue(key, label);
+  }
+
   public LocalizedValue getDescription()
   {
     return this.description;
@@ -123,9 +156,34 @@ public abstract class AttributeType implements Serializable
     this.description.setValue(locale, description);
   }
 
+  public void setDescription(String key, String description)
+  {
+    this.description.setValue(key, description);
+  }
+
   public boolean getIsDefault()
   {
     return this.isDefault;
+  }
+
+  public boolean isRequired()
+  {
+    return required;
+  }
+
+  public void setRequired(boolean required)
+  {
+    this.required = required;
+  }
+
+  public boolean isUnique()
+  {
+    return unique;
+  }
+
+  public void setUnique(boolean unique)
+  {
+    this.unique = unique;
   }
 
   public void validate(Object _value)
@@ -134,10 +192,8 @@ public abstract class AttributeType implements Serializable
     // AttributeType
   }
 
-  public static AttributeType factory(String _name, LocalizedValue _label, LocalizedValue _description, String _type)
+  public static boolean isDefault(String _name)
   {
-    AttributeType attributeType = null;
-
     boolean _isDefault = false;
     if (DefaultAttribute.UID.getName().equals(_name))
     {
@@ -171,40 +227,10 @@ public abstract class AttributeType implements Serializable
     {
       _isDefault = DefaultAttribute.LAST_UPDATE_DATE.getIsDefault();
     }
-
-    if (_type.equals(AttributeCharacterType.TYPE))
-    {
-      attributeType = new AttributeCharacterType(_name, _label, _description, _isDefault);
-    }
-    else if (_type.equals(AttributeLocalType.TYPE))
-    {
-      attributeType = new AttributeLocalType(_name, _label, _description, _isDefault);
-    }
-    else if (_type.equals(AttributeDateType.TYPE))
-    {
-      attributeType = new AttributeDateType(_name, _label, _description, _isDefault);
-    }
-    else if (_type.equals(AttributeIntegerType.TYPE))
-    {
-      attributeType = new AttributeIntegerType(_name, _label, _description, _isDefault);
-    }
-    else if (_type.equals(AttributeFloatType.TYPE))
-    {
-      attributeType = new AttributeFloatType(_name, _label, _description, _isDefault);
-    }
-    else if (_type.equals(AttributeTermType.TYPE))
-    {
-      attributeType = new AttributeTermType(_name, _label, _description, _isDefault);
-    }
-    else if (_type.equals(AttributeBooleanType.TYPE))
-    {
-      attributeType = new AttributeBooleanType(_name, _label, _description, _isDefault);
-    }
-
-    return attributeType;
+    return _isDefault;
   }
 
-  public JsonObject toJSON()
+  public final JsonObject toJSON()
   {
     return this.toJSON(new DefaultSerializer());
   }
@@ -217,11 +243,13 @@ public abstract class AttributeType implements Serializable
 
     json.addProperty(JSON_TYPE, this.getType());
 
-    json.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON());
+    json.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON(serializer));
 
-    json.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON());
+    json.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON(serializer));
 
     json.addProperty(JSON_IS_DEFAULT, this.getIsDefault());
+    json.addProperty(JSON_REQUIRED, this.isRequired());
+    json.addProperty(JSON_UNIQUE, this.isUnique());
 
     serializer.configure(this, json);
 
@@ -238,4 +266,58 @@ public abstract class AttributeType implements Serializable
   public void fromJSON(JsonObject attrObj)
   {
   }
+
+  public static AttributeType factory(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _required, boolean _unique)
+  {
+    AttributeType attributeType = null;
+
+    boolean _isDefault = isDefault(_name);
+
+    if (_type.equals(AttributeCharacterType.TYPE))
+    {
+      attributeType = new AttributeCharacterType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeLocalType.TYPE))
+    {
+      attributeType = new AttributeLocalType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeDateType.TYPE))
+    {
+      attributeType = new AttributeDateType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeIntegerType.TYPE))
+    {
+      attributeType = new AttributeIntegerType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeFloatType.TYPE))
+    {
+      attributeType = new AttributeFloatType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeTermType.TYPE))
+    {
+      attributeType = new AttributeTermType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeBooleanType.TYPE))
+    {
+      attributeType = new AttributeBooleanType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+
+    return attributeType;
+  }
+
+  public static AttributeType parse(JsonObject joAttr)
+  {
+    String name = joAttr.get(AttributeType.JSON_CODE).getAsString();
+    boolean required = joAttr.get(AttributeType.JSON_REQUIRED).getAsBoolean();
+    boolean unique = joAttr.get(AttributeType.JSON_UNIQUE).getAsBoolean();
+
+    LocalizedValue attributeLabel = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_LABEL).getAsJsonObject());
+    LocalizedValue attributeDescription = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
+
+    AttributeType attrType = AttributeType.factory(name, attributeLabel, attributeDescription, joAttr.get(AttributeType.JSON_TYPE).getAsString(), required, unique);
+
+    attrType.fromJSON(joAttr);
+    return attrType;
+  }
+
 }

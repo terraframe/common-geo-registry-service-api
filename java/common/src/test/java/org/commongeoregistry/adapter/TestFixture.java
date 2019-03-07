@@ -115,7 +115,7 @@ public class TestFixture
 
   private static AttributeTermType createHealthFacilityTypeAttribute(RegistryAdapter registry)
   {
-    AttributeTermType attrType = (AttributeTermType) AttributeType.factory(HEALTH_FACILITY_ATTRIBUTE, new LocalizedValue("Health Facility Type"), new LocalizedValue("The type of health facility"), AttributeTermType.TYPE);
+    AttributeTermType attrType = (AttributeTermType) AttributeType.factory(HEALTH_FACILITY_ATTRIBUTE, new LocalizedValue("Health Facility Type"), new LocalizedValue("The type of health facility"), AttributeTermType.TYPE, false, false);
 
     Term rootTerm = createHealthFacilityTerms(registry);
 

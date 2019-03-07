@@ -30,8 +30,8 @@ public class AttributeCharacterType extends AttributePrimitiveType
 
   public static String      TYPE             = "character";
 
-  public AttributeCharacterType(String _name, LocalizedValue _label, LocalizedValue _description, boolean _isDefault)
+  public AttributeCharacterType(String _name, LocalizedValue _label, LocalizedValue _description, boolean _isDefault, boolean _required, boolean _unique)
   {
-    super(_name, _label, _description, TYPE, _isDefault);
+    super(_name, _label, _description, TYPE, _isDefault, _required, _unique);
   }
 }

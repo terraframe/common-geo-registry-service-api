@@ -28,21 +28,21 @@ import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 
 public enum DefaultAttribute {
-  UID("uid", "UID", "The internal globally unique identifier ID", AttributeCharacterType.TYPE, true),
+  UID("uid", "UID", "The internal globally unique identifier ID", AttributeCharacterType.TYPE, true, true, false),
 
-  CODE("code", "Code", "Human readable unique identified", AttributeCharacterType.TYPE, true),
+  CODE("code", "Code", "Human readable unique identified", AttributeCharacterType.TYPE, true, true, false),
 
-  DISPLAY_LABEL("displayLabel", "Display Label", "Label of the location", AttributeLocalType.TYPE, true),
+  DISPLAY_LABEL("displayLabel", "Display Label", "Label of the location", AttributeLocalType.TYPE, true, true, false),
 
-  TYPE("type", "Type", "The type of the GeoObject", AttributeCharacterType.TYPE, true),
+  TYPE("type", "Type", "The type of the GeoObject", AttributeCharacterType.TYPE, true, false, false),
 
-  STATUS("status", "Status", "The status of the GeoObject", AttributeTermType.TYPE, true),
+  STATUS("status", "Status", "The status of the GeoObject", AttributeTermType.TYPE, true, false, false),
 
-  SEQUENCE("sequence", "Sequence", "The sequence number of the GeoObject that is incremented when the object is updated", AttributeIntegerType.TYPE, true),
+  SEQUENCE("sequence", "Sequence", "The sequence number of the GeoObject that is incremented when the object is updated", AttributeIntegerType.TYPE, true, false, false),
 
-  CREATE_DATE("createDate", "Date Created", "The date the object was created", AttributeDateType.TYPE, true),
+  CREATE_DATE("createDate", "Date Created", "The date the object was created", AttributeDateType.TYPE, true, false, false),
 
-  LAST_UPDATE_DATE("lastUpdateDate", "Date Last Updated", "The date the object was updated", AttributeDateType.TYPE, true);
+  LAST_UPDATE_DATE("lastUpdateDate", "Date Last Updated", "The date the object was updated", AttributeDateType.TYPE, true, false, false);
 
   private String  name;
 
@@ -54,18 +54,19 @@ public enum DefaultAttribute {
 
   private boolean isDefault;
 
-  private DefaultAttribute(String _name, String _defaultLabel, String _defaultDescription, String _type, boolean _isDefault)
+  private boolean required;
+
+  private boolean unique;
+
+  private DefaultAttribute(String _name, String _defaultLabel, String _defaultDescription, String _type, boolean _isDefault, boolean _required, boolean _unique)
   {
     this.name = _name;
-
     this.defaultLabel = _defaultLabel;
-
     this.defaultDescription = _defaultDescription;
-
     this.type = _type;
-
     this.isDefault = _isDefault;
-
+    this.required = _required;
+    this.unique = _unique;
   }
 
   public String getName()
@@ -93,11 +94,31 @@ public enum DefaultAttribute {
     return this.isDefault;
   }
 
+  public boolean isRequired()
+  {
+    return required;
+  }
+
+  public void setRequired(boolean required)
+  {
+    this.required = required;
+  }
+
+  public boolean isUnique()
+  {
+    return unique;
+  }
+
+  public void setUnique(boolean unique)
+  {
+    this.unique = unique;
+  }
+
   public AttributeType createAttributeType()
   {
     LocalizedValue label = new LocalizedValue(this.getDefaultLocalizedName());
     LocalizedValue description = new LocalizedValue(this.getDefaultDescription());
 
-    return AttributeType.factory(this.getName(), label, description, this.getType());
+    return AttributeType.factory(this.getName(), label, description, this.getType(), this.isRequired(), this.isUnique());
   }
 }

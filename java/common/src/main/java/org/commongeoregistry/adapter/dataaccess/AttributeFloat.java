@@ -20,6 +20,7 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeFloatType;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -58,7 +59,7 @@ public class AttributeFloat extends Attribute
     return this.floatValue;
   }
   
-  public void toJSON(JsonObject geoObjProps)
+  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
   {
     geoObjProps.addProperty(this.getName(), this.floatValue);
   }

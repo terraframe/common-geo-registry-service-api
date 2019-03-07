@@ -46,9 +46,9 @@ public class AttributeTermType extends AttributeType
 
   private Map<String, Term>  termMap          = null;
 
-  public AttributeTermType(String _name, LocalizedValue _label, LocalizedValue _description, boolean _isDefault)
+  public AttributeTermType(String _name, LocalizedValue _label, LocalizedValue _description, boolean _isDefault, boolean _required, boolean _unique)
   {
-    super(_name, _label, _description, TYPE, _isDefault);
+    super(_name, _label, _description, TYPE, _isDefault, _required, _unique);
 
     this.termMap = new ConcurrentHashMap<String, Term>();
   }
