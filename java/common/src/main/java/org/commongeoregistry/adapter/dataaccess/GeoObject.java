@@ -368,7 +368,15 @@ public class GeoObject implements Serializable
     JsonObject oJson = parser.parse(sJson).getAsJsonObject();
     JsonObject oJsonProps = oJson.getAsJsonObject(JSON_PROPERTIES);
 
-    GeoObject geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString());
+    GeoObject geoObj;
+    if (oJsonProps.has("uid"))
+    {
+      geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString(), false);
+    }
+    else
+    {
+      geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString(), true);
+    }
 
     JsonElement oGeom = oJson.get(JSON_GEOMETRY);
     if (oGeom != null)

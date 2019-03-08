@@ -58,7 +58,6 @@ public abstract class RegistryAdapter implements Serializable
     return this.idService;
   }
   
-  // TODO - Add support for a supplier provided exception.
   /**
    * Creates a new local {@link GeoObject} instance of the given type. If the local id cache is empty, an EmptyIdCacheException is thrown.
    * 
@@ -66,6 +65,11 @@ public abstract class RegistryAdapter implements Serializable
    * @return a new local {@link GeoObject} instance of the given type.
    */
   public GeoObject newGeoObjectInstance(String geoObjectTypeCode) throws EmptyIdCacheException
+  {
+    return newGeoObjectInstance(geoObjectTypeCode, true);
+  }
+  
+  public GeoObject newGeoObjectInstance(String geoObjectTypeCode, boolean genId) throws EmptyIdCacheException
   {
     GeoObjectType geoObjectType = this.getMetadataCache().getGeoObjectType(geoObjectTypeCode).get();
     
@@ -79,10 +83,12 @@ public abstract class RegistryAdapter implements Serializable
     Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
     geoObject.getAttribute(DefaultAttribute.STATUS.getName()).setValue(newStatus);
     
-    String uid = this.idService.next();
-    geoObject.setUid(uid);
+    if (genId)
+    {
+      String uid = this.idService.next();
+      geoObject.setUid(uid);
+    }
     
     return geoObject;
-    
   }
 }

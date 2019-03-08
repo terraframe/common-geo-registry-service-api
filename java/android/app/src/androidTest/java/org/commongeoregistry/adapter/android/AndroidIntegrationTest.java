@@ -77,8 +77,10 @@ public class AndroidIntegrationTest
         UTAH.assertEquals(go2);
 
         // 3. Retrieve the new GeoObject from the server
+        int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
         GeoObject go3 = client.getGeoObject(go2.getUid(), go2.getType().getCode());
         UTAH.assertEquals(go3);
+        Assert.assertEquals(numRegistryIds, client.getLocalCache().countNumberRegistryIds());
 
         // 4. Update the GeoObject
         final String newLabel = "MODIFIED DISPLAY LABEL";
