@@ -12,6 +12,8 @@ import com.google.gson.JsonObject;
 
 public class LocalizedValue
 {
+  public static final String DEFAULT_LOCALE  = "defaultLocale";
+  
   public static final String LOCALIZED_VALUE = "localizedValue";
 
   public static final String LOCALE_VALUES   = "localeValues";

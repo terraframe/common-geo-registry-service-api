@@ -89,7 +89,8 @@ public class SerializationTest
     geoObject.setWKTGeometry(geom);
     geoObject.setCode("Colorado");
     geoObject.setUid("CO");
-    geoObject.setLocalizedDisplayLabel("Colorado Display Label");
+    geoObject.getDisplayLabel().setValue("Colorado Display Label");
+    geoObject.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, "Colorado Display Label");
 
     String sJson = geoObject.toJSON().toString();
     GeoObject geoObject2 = GeoObject.fromJSON(registry, sJson);
@@ -99,6 +100,7 @@ public class SerializationTest
     Assert.assertEquals("Colorado", geoObject2.getCode());
     Assert.assertEquals("CO", geoObject2.getUid());
     Assert.assertEquals("Colorado Display Label", geoObject2.getLocalizedDisplayLabel());
+    Assert.assertEquals("Colorado Display Label", geoObject2.getDisplayLabel().getValue(LocalizedValue.DEFAULT_LOCALE));
     Assert.assertEquals(geoObject.getStatus().getCode(), geoObject2.getStatus().getCode());
   }
 

@@ -7,7 +7,9 @@ import junit.framework.Assert;
 
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +20,7 @@ public class AndroidIntegrationTest
 {
     private USATestData data;
 
-    private AndroidRegistryClient client;
+    private AndroidTestRegistryClient client;
 
     private USATestData.TestGeoObjectInfo UTAH;
 
@@ -36,8 +38,10 @@ public class AndroidIntegrationTest
         connector.setServerUrl("https://192.168.122.1:8443/georegistry");
         connector.initialize();
 
-        client = new AndroidRegistryClient(connector, context);
+        client = new AndroidTestRegistryClient(connector, context);
         client.getLocalCache().clear();
+        client.testSetUp();
+
         client.refreshMetadataCache();
         client.getIdService().populate(500);
 
@@ -49,6 +53,12 @@ public class AndroidIntegrationTest
         // These objects do not exist in the database yet:
         UTAH = data.newTestGeoObjectInfo("Utah", data.STATE);
         CALIFORNIA = data.newTestGeoObjectInfo("California", data.STATE);
+    }
+
+    @After
+    public void cleanUp()
+    {
+        client.testCleanUp();
     }
 
     @Test
@@ -72,7 +82,7 @@ public class AndroidIntegrationTest
 
         // 4. Update the GeoObject
         final String newLabel = "MODIFIED DISPLAY LABEL";
-        go3.setLocalizedDisplayLabel(newLabel);
+        go3.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, newLabel);
         UTAH.setDisplayLabel(newLabel);
         GeoObject go4 = client.updateGeoObject(go3);
         UTAH.assertEquals(go4);
@@ -137,7 +147,7 @@ public class AndroidIntegrationTest
 
         // Update that GeoObject
         final String newLabel = "MODIFIED DISPLAY LABEL";
-        goCali.setLocalizedDisplayLabel(newLabel);
+        goCali.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, newLabel);
         client.getLocalCache().updateGeoObject(goCali);
 
         Assert.assertEquals(2, client.getLocalCache().getAllActionHistory().size());

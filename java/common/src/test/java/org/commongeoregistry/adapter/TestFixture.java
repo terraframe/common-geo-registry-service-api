@@ -108,7 +108,8 @@ public class TestFixture
     geoObject.setWKTGeometry(geom);
     geoObject.setCode(genKey + "_CODE");
     geoObject.setUid(genKey + "_UID");
-    geoObject.setLocalizedDisplayLabel(genKey + " Display Label");
+    geoObject.getDisplayLabel().setValue(genKey + " Display Label");
+    geoObject.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, genKey + " Display Label");
 
     return geoObject;
   }

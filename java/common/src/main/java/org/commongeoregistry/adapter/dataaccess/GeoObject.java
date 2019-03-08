@@ -21,6 +21,7 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -281,18 +282,9 @@ public class GeoObject implements Serializable
    */
   public String getLocalizedDisplayLabel()
   {
-    AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
-    LocalizedValue value = (LocalizedValue) attribute.getValue();
+    LocalizedValue value = this.getDisplayLabel();
 
     return value.getValue();
-  }
-
-  public void setLocalizedDisplayLabel(String _displayLabel)
-  {
-    AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
-    LocalizedValue value = (LocalizedValue) attribute.getValue();
-
-    value.setValue(_displayLabel);
   }
 
   /**
