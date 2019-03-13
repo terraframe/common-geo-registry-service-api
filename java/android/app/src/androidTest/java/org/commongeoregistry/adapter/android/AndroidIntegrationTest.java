@@ -111,6 +111,8 @@ public class AndroidIntegrationTest
     @Test
     public void testGetParentGeoObjects()
     {
+        int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
+      
         String childId = data.CO_D_TWO.getUid();
         String childTypeCode = data.CO_D_TWO.getUniversal().getCode();
         String[] childrenTypes = new String[]{data.COUNTRY.getCode(), data.STATE.getCode()};
@@ -130,11 +132,15 @@ public class AndroidIntegrationTest
         ParentTreeNode tn3 = client.getParentGeoObjects(childId, childTypeCode, countryArr, true);
         data.CO_D_TWO.assertEquals(tn3, countryArr, true);
         Assert.assertEquals(tn3.toJSON().toString(), ParentTreeNode.fromJSON(tn3.toJSON().toString(), client).toJSON().toString());
+        
+        Assert.assertEquals(numRegistryIds, client.getLocalCache().countNumberRegistryIds());
     }
 
     @Test
     public void testGetChildGeObjects()
     {
+        int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
+      
         String[] childrenTypes = new String[]{data.STATE.getCode(), data.DISTRICT.getCode()};
 
         // Recursive
@@ -152,6 +158,8 @@ public class AndroidIntegrationTest
         ChildTreeNode tn3 = client.getChildGeoObjects(data.USA.getUid(), data.USA.getUniversal().getCode(), distArr, true);
         data.USA.assertEquals(tn3, distArr, true);
         Assert.assertEquals(tn3.toJSON().toString(), ChildTreeNode.fromJSON(tn3.toJSON().toString(), client).toJSON().toString());
+        
+        Assert.assertEquals(numRegistryIds, client.getLocalCache().countNumberRegistryIds());
     }
 
     @Test
