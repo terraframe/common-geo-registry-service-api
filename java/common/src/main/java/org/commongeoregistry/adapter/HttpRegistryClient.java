@@ -275,12 +275,11 @@ public class HttpRegistryClient extends RegistryAdapter
    * Returns the {@link GeoObject} with the given UID and its children of the
    * given types.
    * 
-   * Shall we include the hierarchy types as a parameter as well?
-   * 
    * @param parentUid
    *          UID of the parent {@link GeoObject}
    * @param childrenTypes
-   *          an array of object types.
+   *          An array of type codes of the children to be fetched. If null or empty
+   *          string is provided, all non-leaf types will be fetched.
    * @param recursive
    *          true if all recursive children should be fetched, or false if only
    *          immediate children should be fetched.
@@ -300,11 +299,6 @@ public class HttpRegistryClient extends RegistryAdapter
       throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_PARENT_TYPE_CODE);
     }
 
-    if (childrenTypes == null || childrenTypes.length == 0)
-    {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_CHILDREN_TYPES);
-    }
-
     if (recursive == null)
     {
       throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_CHILDREN, RegistryUrls.GEO_OBJECT_GET_CHILDREN_PARAM_RECURSIVE);
@@ -312,9 +306,12 @@ public class HttpRegistryClient extends RegistryAdapter
 
     JsonArray serialized = new JsonArray();
 
-    for (String childType : childrenTypes)
+    if (childrenTypes != null)
     {
-      serialized.add(childType);
+      for (String childType : childrenTypes)
+      {
+        serialized.add(childType);
+      }
     }
 
     HashMap<String, String> params = new HashMap<String, String>();
@@ -342,7 +339,7 @@ public class HttpRegistryClient extends RegistryAdapter
    * @param childTypeCode
    *          The code of the child {@link GeoObjectType}
    * @param parentTypes
-   *          an array of object types.
+   *          An array of type codes of the parents to be fetched.
    * @param recursive
    *          true if all recursive parents should be fetched, or false if only
    *          immediate recursive should be fetched.
@@ -362,11 +359,6 @@ public class HttpRegistryClient extends RegistryAdapter
       throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_CHILD_TYPE_CODE);
     }
 
-    if (parentTypes == null || parentTypes.length == 0)
-    {
-      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_PARENT_TYPES);
-    }
-
     if (recursive == null)
     {
       throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_GET_PARENTS, RegistryUrls.GEO_OBJECT_GET_PARENTS_PARAM_RECURSIVE);
@@ -374,9 +366,12 @@ public class HttpRegistryClient extends RegistryAdapter
 
     JsonArray serialized = new JsonArray();
 
-    for (String parentType : parentTypes)
+    if (parentTypes != null)
     {
-      serialized.add(parentType);
+      for (String parentType : parentTypes)
+      {
+        serialized.add(parentType);
+      }
     }
 
     HashMap<String, String> params = new HashMap<String, String>();

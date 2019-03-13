@@ -108,6 +108,19 @@ public class MetadataCache implements Serializable
   {
     return this.geoGeoObjectTypeMap.values().toArray(new GeoObjectType[this.geoGeoObjectTypeMap.values().size()]);
   }
+  
+  public String[] getAllGeoObjectTypeCodes()
+  {
+    GeoObjectType[] gots = this.getAllGeoObjectTypes();
+    String[] codes = new String[gots.length];
+    
+    for (int i = 0; i < gots.length; ++i)
+    {
+      codes[i] = gots[i].getCode();
+    }
+    
+    return codes;
+  }
 
   public HierarchyType[] getAllHierarchyTypes()
   {

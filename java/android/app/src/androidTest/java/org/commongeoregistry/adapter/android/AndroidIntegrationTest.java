@@ -18,6 +18,12 @@ import org.junit.Test;
  */
 public class AndroidIntegrationTest
 {
+    private static final String serverUrl = "https://192.168.0.23:8443/georegistry";
+
+    private static final String user = "admin";
+
+    private static final String pass = "_nm8P4gfdWxGqNRQ#8";
+
     private USATestData data;
 
     private AndroidTestRegistryClient client;
@@ -34,8 +40,8 @@ public class AndroidIntegrationTest
         Context context = InstrumentationRegistry.getTargetContext();
 
         AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();
-        connector.setCredentials("admin", "_nm8P4gfdWxGqNRQ#8");
-        connector.setServerUrl("https://192.168.122.1:8443/georegistry");
+        connector.setCredentials(user, pass);
+        connector.setServerUrl(serverUrl);
         connector.initialize();
 
         client = new AndroidTestRegistryClient(connector, context);
@@ -61,13 +67,21 @@ public class AndroidIntegrationTest
         client.testCleanUp();
     }
 
+//    @Test(expected = InvalidLoginException.class)
+//    public void testInvalidLoginException()
+//    {
+//        AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();
+//        connector.setCredentials("admin", "bad");
+//        connector.setServerUrl("https://192.168.0.23:8443/georegistry");
+//        connector.initialize();
+//
+//        AndroidRegistryClient client = new AndroidRegistryClient(connector, InstrumentationRegistry.getTargetContext());
+//        client.refreshMetadataCache();
+//    }
+
     @Test
     public void testCreateGetUpdateGeoObject()
     {
-        // TODO : The AndroidRegistryCient seems to be logging in every time we make a request.
-        // This may not be sustainable because we may run out of available sessions.
-        // We should be managing the log in / log out state somehow.
-
         // 1. Create a Geo Object locally
         GeoObject goUtah = UTAH.newGeoObject();
 
