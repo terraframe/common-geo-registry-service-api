@@ -133,31 +133,36 @@ public class Term implements Serializable
    */
   public static Term fromJSON(JsonObject termObj)
   {
-    String code = termObj.get(Term.JSON_CODE).getAsString();
-    LocalizedValue label = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_LABEL).getAsJsonObject());
-    LocalizedValue description = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
-
-    Term term = new Term(code, label, description);
-
-    JsonElement children = termObj.get(Term.JSON_CHILDREN);
-
-    if (children != null && !children.isJsonNull() && children.isJsonArray())
+    if (!termObj.get(Term.JSON_CODE).isJsonNull())
     {
-      JsonArray childrenArray = children.getAsJsonArray();
+      String code = termObj.get(Term.JSON_CODE).getAsString();
+      LocalizedValue label = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_LABEL).getAsJsonObject());
+      LocalizedValue description = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
 
-      for (JsonElement jsonElement : childrenArray)
+      Term term = new Term(code, label, description);
+
+      JsonElement children = termObj.get(Term.JSON_CHILDREN);
+
+      if (children != null && !children.isJsonNull() && children.isJsonArray())
       {
-        if (jsonElement.isJsonObject())
-        {
-          JsonObject childTermObj = jsonElement.getAsJsonObject();
+        JsonArray childrenArray = children.getAsJsonArray();
 
-          Term childTerm = Term.fromJSON(childTermObj);
-          term.addChild(childTerm);
+        for (JsonElement jsonElement : childrenArray)
+        {
+          if (jsonElement.isJsonObject())
+          {
+            JsonObject childTermObj = jsonElement.getAsJsonObject();
+
+            Term childTerm = Term.fromJSON(childTermObj);
+            term.addChild(childTerm);
+          }
         }
       }
-    }
 
-    return term;
+      return term;
+    }
+    
+    return null;
   }
 
   @Override

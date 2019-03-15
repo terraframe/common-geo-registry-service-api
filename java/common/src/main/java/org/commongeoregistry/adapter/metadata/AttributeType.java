@@ -315,8 +315,8 @@ public abstract class AttributeType implements Serializable
     LocalizedValue attributeDescription = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
 
     AttributeType attrType = AttributeType.factory(name, attributeLabel, attributeDescription, joAttr.get(AttributeType.JSON_TYPE).getAsString(), required, unique);
-
     attrType.fromJSON(joAttr);
+    
     return attrType;
   }
 

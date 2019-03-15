@@ -116,10 +116,14 @@ public class AttributeTermType extends AttributeType
 
     JsonElement termElement = attrObj.get(AttributeTermType.JSON_ROOT_TERM);
 
-    if (termElement != null)
+    if (termElement != null && !termElement.isJsonNull())
     {
       Term rootTerm = Term.fromJSON(termElement.getAsJsonObject());
-      this.setRootTerm(rootTerm);
+
+      if (rootTerm != null)
+      {
+        this.setRootTerm(rootTerm);
+      }
     }
   }
 
