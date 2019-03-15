@@ -378,17 +378,6 @@ public class HttpRegistryClientTest
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getChildGeoObjects(null, "foo", new String[] { "Test" }, true);
   }
-
-  @Test(expected = RequiredParameterException.class)
-  public void testGetChildGeoObjectsMissingChildTypes()
-  {
-    /*
-     * Invoke method
-     */
-    MockHttpConnector connector = new MockHttpConnector();
-    HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getChildGeoObjects("Abc", "foo", null, true);
-  }
   
   @Test(expected = RequiredParameterException.class)
   public void testGetChildGeoObjectsMissingChildCode()
@@ -399,17 +388,6 @@ public class HttpRegistryClientTest
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getChildGeoObjects("Abc", null, new String[] { "Test" }, true);
-  }
-
-  @Test(expected = RequiredParameterException.class)
-  public void testGetChildGeoObjectsEmptyChildTypes()
-  {
-    /*
-     * Invoke method
-     */
-    MockHttpConnector connector = new MockHttpConnector();
-    HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getChildGeoObjects("Abc", "foo", new String[] {}, true);
   }
 
   @Test
@@ -492,28 +470,6 @@ public class HttpRegistryClientTest
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getParentGeoObjects(null, "foo", new String[] { "Test" }, true);
-  }
-
-  @Test(expected = RequiredParameterException.class)
-  public void testGetParentGeoObjectsMissingParentTypes()
-  {
-    /*
-     * Invoke method
-     */
-    MockHttpConnector connector = new MockHttpConnector();
-    HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getParentGeoObjects("Abc", "foo", null, true);
-  }
-
-  @Test(expected = RequiredParameterException.class)
-  public void testGetParentGeoObjectsEmptyParentTypes()
-  {
-    /*
-     * Invoke method
-     */
-    MockHttpConnector connector = new MockHttpConnector();
-    HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getParentGeoObjects("Abc", "foo", new String[] {}, true);
   }
 
   @Test
