@@ -20,8 +20,6 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 
-import com.google.gson.JsonObject;
-
 public class AttributeCharacter extends Attribute
 {
 

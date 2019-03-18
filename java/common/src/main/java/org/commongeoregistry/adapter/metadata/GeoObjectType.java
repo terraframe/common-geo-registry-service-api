@@ -494,14 +494,9 @@ public class GeoObjectType implements Serializable
 
     json.addProperty(JSON_IS_LEAF, this.isLeaf().toString());
 
-    JsonArray attrs = new JsonArray();
-
     Collection<AttributeType> attributes = serializer.attributes(this);
 
-    for (AttributeType attribute : attributes)
-    {
-      attrs.add(attribute.toJSON(serializer));
-    }
+    JsonArray attrs = serializer.serialize(this, attributes);
 
     json.add(JSON_ATTRIBUTES, attrs);
 
