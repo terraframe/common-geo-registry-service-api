@@ -475,4 +475,17 @@ public class GeoObject implements Serializable
 
     System.out.println("Geometry: " + this.geometry);
   }
+  
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (!(obj instanceof GeoObject))
+    {
+      return false;
+    }
+    
+    GeoObject go = (GeoObject) obj;
+    
+    return this.getCode().equals(go.getCode()) && this.getType().getCode().equals(go.getType().getCode());
+  }
 }

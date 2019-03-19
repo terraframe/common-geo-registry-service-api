@@ -114,7 +114,10 @@ abstract public class AbstractActionDTO
     
     this.createActionDate = new Date(json.get(CREATE_ACTION_DATE).getAsLong());
     
-    this.contributorNotes = json.get(CONTRIBUTOR_NOTES).getAsString();
+    if (json.has(CONTRIBUTOR_NOTES) && !json.get(CONTRIBUTOR_NOTES).isJsonNull())
+    {
+      this.contributorNotes = json.get(CONTRIBUTOR_NOTES).getAsString();
+    }
     
     if (json.has(MAINTAINER_NOTES) && !json.get(MAINTAINER_NOTES).isJsonNull())
     {
