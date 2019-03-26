@@ -391,7 +391,7 @@ public class GeoObject implements Serializable
     {
       Attribute attr = geoObj.attributeMap.get(key);
 
-      if (oJsonProps.has(key))
+      if (oJsonProps.has(key) && !oJsonProps.get(key).isJsonNull())
       {
         attr.fromJSON(oJsonProps.get(key), registry);
       }
