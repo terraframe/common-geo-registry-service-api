@@ -20,6 +20,7 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -59,7 +60,7 @@ public class AttributeInteger extends Attribute
     return this.integer;
   }
   
-  public void toJSON(JsonObject geoObjProps)
+  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
   {
     geoObjProps.addProperty(this.getName(), this.integer);
   }

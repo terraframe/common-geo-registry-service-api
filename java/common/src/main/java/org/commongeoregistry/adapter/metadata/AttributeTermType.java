@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.Term;
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.UnknownTermException;
 
 import com.google.gson.JsonElement;
@@ -44,9 +45,9 @@ public class AttributeTermType extends AttributeType
 
   private Map<String, Term>  termMap          = null;
 
-  public AttributeTermType(String _name, String _localizedLabel, String _localizedDescription, boolean _isDefault)
+  public AttributeTermType(String _name, LocalizedValue _label, LocalizedValue _description, boolean _isDefault, boolean _required, boolean _unique)
   {
-    super(_name, _localizedLabel, _localizedDescription, TYPE, _isDefault);
+    super(_name, _label, _description, TYPE, _isDefault, _required, _unique);
 
     this.termMap = new ConcurrentHashMap<String, Term>();
   }
@@ -114,10 +115,14 @@ public class AttributeTermType extends AttributeType
 
     JsonElement termElement = attrObj.get(AttributeTermType.JSON_ROOT_TERM);
 
-    if (termElement != null)
+    if (termElement != null && !termElement.isJsonNull())
     {
       Term rootTerm = Term.fromJSON(termElement.getAsJsonObject());
-      this.setRootTerm(rootTerm);
+
+      if (rootTerm != null)
+      {
+        this.setRootTerm(rootTerm);
+      }
     }
   }
 

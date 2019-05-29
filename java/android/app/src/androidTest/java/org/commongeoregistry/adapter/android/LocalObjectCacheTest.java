@@ -17,6 +17,7 @@ import org.commongeoregistry.adapter.action.tree.AddChildActionDTO;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
@@ -77,23 +78,23 @@ public class LocalObjectCacheTest {
         cache.clear();
 
         // Define GeoObject Types
-        GeoObjectType province = MetadataFactory.newGeoObjectType(PROVINCE, GeometryType.POLYGON, "Province", "", false, client);
+        GeoObjectType province = MetadataFactory.newGeoObjectType(PROVINCE, GeometryType.POLYGON, new LocalizedValue("Province"), new LocalizedValue(""), false, client);
 
-        GeoObjectType district = MetadataFactory.newGeoObjectType(DISTRICT, GeometryType.POLYGON, "District", "", false, client);
+        GeoObjectType district = MetadataFactory.newGeoObjectType(DISTRICT, GeometryType.POLYGON, new LocalizedValue("District"), new LocalizedValue(""), false, client);
 
-        GeoObjectType commune = MetadataFactory.newGeoObjectType(COMMUNE, GeometryType.POLYGON, "Commune", "", false, client);
+        GeoObjectType commune = MetadataFactory.newGeoObjectType(COMMUNE, GeometryType.POLYGON, new LocalizedValue("Commune"), new LocalizedValue(""), false, client);
 
-        GeoObjectType village = MetadataFactory.newGeoObjectType(VILLAGE, GeometryType.POLYGON, "Village", "", false, client);
+        GeoObjectType village = MetadataFactory.newGeoObjectType(VILLAGE, GeometryType.POLYGON, new LocalizedValue("Village"), new LocalizedValue(""), false, client);
 
-        GeoObjectType household = MetadataFactory.newGeoObjectType(HOUSEHOLD, GeometryType.POLYGON, "Household", "", false, client);
+        GeoObjectType household = MetadataFactory.newGeoObjectType(HOUSEHOLD, GeometryType.POLYGON, new LocalizedValue("Household"), new LocalizedValue(""), false, client);
 
-        GeoObjectType focusArea = MetadataFactory.newGeoObjectType(FOCUS_AREA, GeometryType.POLYGON, "Focus Area", "", false, client);
+        GeoObjectType focusArea = MetadataFactory.newGeoObjectType(FOCUS_AREA, GeometryType.POLYGON, new LocalizedValue("Focus Area"), new LocalizedValue(""), false, client);
 
-        GeoObjectType healthFacility = MetadataFactory.newGeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, "Health Facility", "", false, client);
+        GeoObjectType healthFacility = MetadataFactory.newGeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, new LocalizedValue("Health Facility"), new LocalizedValue(""), false, client);
         healthFacility.addAttribute(createHealthFacilityTypeAttribute(client));
 
         // Define Geopolitical Hierarchy Type
-        this.geoPolitical = MetadataFactory.newHierarchyType(GEOPOLITICAL, "Geopolitical", "Geopolitical Hierarchy", client);
+        this.geoPolitical = MetadataFactory.newHierarchyType(GEOPOLITICAL, new LocalizedValue("Geopolitical"), new LocalizedValue("Geopolitical Hierarchy"), client);
         HierarchyType.HierarchyNode geoProvinceNode = new HierarchyType.HierarchyNode(province);
         HierarchyType.HierarchyNode geoDistrictNode = new HierarchyType.HierarchyNode(district);
         HierarchyType.HierarchyNode geoCommuneNode = new HierarchyType.HierarchyNode(commune);
@@ -110,7 +111,7 @@ public class LocalObjectCacheTest {
 
     private AttributeTermType createHealthFacilityTypeAttribute(HttpRegistryClient client) {
         AttributeTermType attrType =
-                (AttributeTermType) AttributeType.factory(HEALTH_FACILITY_ATTRIBUTE, "Health Facility Type", "The type of health facility", AttributeTermType.TYPE);
+                (AttributeTermType) AttributeType.factory(HEALTH_FACILITY_ATTRIBUTE, new LocalizedValue("Health Facility Type"), new LocalizedValue("The type of health facility"), AttributeTermType.TYPE, false, false);
 
         Term rootTerm = createHealthFacilityTerms(client);
 
@@ -120,12 +121,12 @@ public class LocalObjectCacheTest {
     }
 
     private static Term createHealthFacilityTerms(HttpRegistryClient registry) {
-        Term rootTerm = MetadataFactory.newTerm("CM:Health-Facility-Types", "Health Facility Types", "The types of health facilities within a country", registry);
-        Term dispensary = MetadataFactory.newTerm("CM:Dispensary", "Dispensary", "", registry);
-        Term privateClinic = MetadataFactory.newTerm("CM:Private-Clinic", "Private Clinic", "", registry);
-        Term publicClinic = MetadataFactory.newTerm("CM:Public-Clinic", "Public Clinic", "", registry);
-        Term matWard = MetadataFactory.newTerm("CM:Maternity-Ward", "Maternity Ward", "", registry);
-        Term nursing = MetadataFactory.newTerm("CM:Nursing-Home", "Nursing Home", "", registry);
+        Term rootTerm = MetadataFactory.newTerm("CM:Health-Facility-Types", new LocalizedValue("Health Facility Types"), new LocalizedValue("The types of health facilities within a country"), registry);
+        Term dispensary = MetadataFactory.newTerm("CM:Dispensary", new LocalizedValue("Dispensary"), new LocalizedValue(""), registry);
+        Term privateClinic = MetadataFactory.newTerm("CM:Private-Clinic", new LocalizedValue("Private Clinic"), new LocalizedValue(""), registry);
+        Term publicClinic = MetadataFactory.newTerm("CM:Public-Clinic", new LocalizedValue("Public Clinic"), new LocalizedValue(""), registry);
+        Term matWard = MetadataFactory.newTerm("CM:Maternity-Ward", new LocalizedValue("Maternity Ward"), new LocalizedValue(""), registry);
+        Term nursing = MetadataFactory.newTerm("CM:Nursing-Home", new LocalizedValue("Nursing Home"), new LocalizedValue(""), registry);
 
         rootTerm.addChild(dispensary);
         rootTerm.addChild(privateClinic);
@@ -145,7 +146,8 @@ public class LocalObjectCacheTest {
         geoObject.setWKTGeometry(geom);
         geoObject.setCode(genKey + "_CODE");
         geoObject.setUid(genKey + "_UID");
-        geoObject.setLocalizedDisplayLabel(genKey + " Display Label");
+        geoObject.getDisplayLabel().setValue(genKey + " Display Label");
+        geoObject.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, genKey + " Display Label");
 
         return geoObject;
     }

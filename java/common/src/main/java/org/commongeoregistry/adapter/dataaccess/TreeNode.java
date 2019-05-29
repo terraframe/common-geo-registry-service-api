@@ -60,7 +60,14 @@ public abstract class TreeNode implements Serializable
   {
     JsonObject json = new JsonObject();
     
-    json.add(JSON_GEO_OBJECT, this.geoObject.toJSON());
+    if (this.geoObject != null)
+    {
+      json.add(JSON_GEO_OBJECT, this.geoObject.toJSON());
+    }
+    else
+    {
+      json.add(JSON_GEO_OBJECT, null);
+    }
     
     if (this.hierarchyType != null) // The hierarchyType is null on the root node
     {

@@ -23,6 +23,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
+import org.commongeoregistry.adapter.metadata.DefaultSerializer;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -32,46 +36,46 @@ public class Term implements Serializable
   /**
    * 
    */
-  private static final long serialVersionUID                = 8658638930185089125L;
-  
-  public static final String JSON_CODE			            = "code";
-  
-  public static final String JSON_LOCALIZED_LABEL           = "localizedLabel";
-  
-  public static final String JSON_LOCALIZED_DESCRIPTION     = "localizedDescription";
-  
-  public static final String JSON_CHILDREN                  = "children";
+  private static final long  serialVersionUID           = 8658638930185089125L;
 
-  private String            code;
+  public static final String JSON_CODE                  = "code";
 
-  private String            localizedLabel;
+  public static final String JSON_LOCALIZED_LABEL       = "label";
 
-  private String            localizedDescription;
+  public static final String JSON_LOCALIZED_DESCRIPTION = "description";
 
-  private List<Term>        children;
+  public static final String JSON_CHILDREN              = "children";
 
-  public Term(String code, String localizedLabel, String localizedDescription)
+  private String             code;
+
+  private LocalizedValue     label;
+
+  private LocalizedValue     description;
+
+  private List<Term>         children;
+
+  public Term(String code, LocalizedValue label, LocalizedValue description)
   {
     this.code = code;
-    this.localizedLabel = localizedLabel;
-    this.localizedDescription = localizedDescription;
+    this.label = label;
+    this.description = description;
 
     this.children = Collections.synchronizedList(new LinkedList<Term>());
   }
-  
+
   public String getCode()
   {
     return this.code;
   }
 
-  public String getLocalizedLabel()
+  public LocalizedValue getLabel()
   {
-    return this.localizedLabel;
+    return this.label;
   }
 
-  public String getLocalizedDescription()
+  public LocalizedValue getDescription()
   {
-    return this.localizedDescription;
+    return this.description;
   }
 
   public void addChild(Term childTerm)
@@ -83,28 +87,34 @@ public class Term implements Serializable
   {
     return this.children;
   }
-  
+
   public static JsonArray toJSON(Term[] terms)
   {
     JsonArray json = new JsonArray();
-	for(Term term : terms)
+    for (Term term : terms)
     {
       json.add(term.toJSON());
-	}
-	  
-	return json;
+    }
+
+    return json;
   }
 
   public JsonObject toJSON()
   {
+    return toJSON(new DefaultSerializer());
+  }
+
+  public JsonObject toJSON(CustomSerializer serializer)
+  {
     JsonObject obj = new JsonObject();
     obj.addProperty(JSON_CODE, this.getCode());
-    obj.addProperty(JSON_LOCALIZED_LABEL, this.getLocalizedLabel());
-    obj.addProperty(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription());
-    
-    // Child Terms are not stored in a hierarchy structure. They are flattened in an array. 
+    obj.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON(serializer));
+    obj.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON(serializer));
+
+    // Child Terms are not stored in a hierarchy structure. They are flattened
+    // in an array.
     JsonArray childTerms = new JsonArray();
-    for(int i=0; i<this.getChildren().size(); i++)
+    for (int i = 0; i < this.getChildren().size(); i++)
     {
       Term child = this.getChildren().get(i);
       childTerms.add(child.toJSON());
@@ -114,7 +124,6 @@ public class Term implements Serializable
     return obj;
   }
 
-  
   /**
    * Creates a {@link Term} object including references to child terms.
    * 
@@ -123,39 +132,44 @@ public class Term implements Serializable
    */
   public static Term fromJSON(JsonObject termObj)
   {
-    String code = termObj.get(Term.JSON_CODE).getAsString();
-	String localizedLabel = termObj.get(Term.JSON_LOCALIZED_LABEL).getAsString();
-	String localizedDescription = termObj.get(Term.JSON_LOCALIZED_DESCRIPTION).getAsString();
-	
-	Term term = new Term(code, localizedLabel, localizedDescription);
-	
-	JsonElement children = termObj.get(Term.JSON_CHILDREN);
-	
-	if (children != null && !children.isJsonNull() && children.isJsonArray())
-	{
-	  JsonArray childrenArray = children.getAsJsonArray();
-	  
-	  for (JsonElement jsonElement : childrenArray)
-	  {
-	    if (jsonElement.isJsonObject())
-	    {
-	      JsonObject childTermObj = jsonElement.getAsJsonObject();
-	      
-	      Term childTerm = Term.fromJSON(childTermObj);
-	      term.addChild(childTerm);
-	    }
-	  }
-	}
-	
-	return term;
+    if (!termObj.get(Term.JSON_CODE).isJsonNull())
+    {
+      String code = termObj.get(Term.JSON_CODE).getAsString();
+      LocalizedValue label = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_LABEL).getAsJsonObject());
+      LocalizedValue description = LocalizedValue.fromJSON(termObj.get(Term.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
+
+      Term term = new Term(code, label, description);
+
+      JsonElement children = termObj.get(Term.JSON_CHILDREN);
+
+      if (children != null && !children.isJsonNull() && children.isJsonArray())
+      {
+        JsonArray childrenArray = children.getAsJsonArray();
+
+        for (JsonElement jsonElement : childrenArray)
+        {
+          if (jsonElement.isJsonObject())
+          {
+            JsonObject childTermObj = jsonElement.getAsJsonObject();
+
+            Term childTerm = Term.fromJSON(childTermObj);
+            term.addChild(childTerm);
+          }
+        }
+      }
+
+      return term;
+    }
+    
+    return null;
   }
-  
+
   @Override
   public boolean equals(Object obj)
   {
-    return (obj instanceof Term) && ((Term)obj).getCode().equals(this.getCode());
+    return ( obj instanceof Term ) && ( (Term) obj ).getCode().equals(this.getCode());
   }
-  
+
   @Override
   public String toString()
   {

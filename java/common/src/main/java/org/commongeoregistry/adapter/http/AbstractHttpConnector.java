@@ -54,6 +54,17 @@ public abstract class AbstractHttpConnector implements Connector
 
     this.serverurl = url;
   }
+  
+  @Override
+  public HttpResponse httpGet(String url, Map<String, String> params)
+  {
+    StringBuilder builder = new StringBuilder();
+    builder.append(RegistryUrls.REGISTRY_CONTROLLER_URL);
+    builder.append("/");
+    builder.append(url);
+    
+    return httpGetRaw(builder.toString(), params);
+  }
 
   /*
    * (non-Javadoc)
@@ -61,15 +72,12 @@ public abstract class AbstractHttpConnector implements Connector
    * @see org.commongeoregistry.adapter.http.Connector#httpGet(java.lang.String,
    * java.util.Map)
    */
-  @Override
-  public HttpResponse httpGet(String url, Map<String, String> params)
+  public HttpResponse httpGetRaw(String url, Map<String, String> params)
   {
     try
     {
       StringBuilder builder = new StringBuilder();
       builder.append(this.getServerUrl());
-      builder.append(RegistryUrls.REGISTRY_CONTROLLER_URL);
-      builder.append("/");
       builder.append(url);
       
       if (params.size() > 0)

@@ -26,6 +26,7 @@ import java.util.Set;
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -110,7 +111,7 @@ public class AttributeTerm extends Attribute
   }
 
   @Override
-  public void toJSON(JsonObject geoObjProps)
+  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
   {    
     JsonArray termCodesJson = new JsonArray();
 
@@ -129,7 +130,7 @@ public class AttributeTerm extends Attribute
   @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-    if (!jValue.isJsonArray()) // They may have passed us a JsonNull
+    if (!(jValue.isJsonArray() || (jValue.isJsonPrimitive() && jValue.getAsJsonPrimitive().isString())))
     {
       this.clearTerms();
       return;
@@ -137,11 +138,20 @@ public class AttributeTerm extends Attribute
     
     this.clearTerms();
     
-    JsonArray termCodesJson = jValue.getAsJsonArray();
-    
-    for (JsonElement jsonElement : termCodesJson)
+    if (jValue.isJsonPrimitive() && jValue.getAsJsonPrimitive().isString())
     {
-      this.addTerm(jsonElement.getAsString());
+      String termCode = jValue.getAsString();
+      
+      this.addTerm(termCode);
+    }
+    else
+    {
+      JsonArray termCodesJson = jValue.getAsJsonArray();
+      
+      for (JsonElement jsonElement : termCodesJson)
+      {
+        this.addTerm(jsonElement.getAsString());
+      }
     }
 
 //    JsonObject jTerm = jValue.getAsJsonObject();

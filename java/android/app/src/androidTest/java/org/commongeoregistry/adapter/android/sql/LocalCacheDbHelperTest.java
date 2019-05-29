@@ -13,6 +13,7 @@ import org.commongeoregistry.adapter.MockIdService;
 import org.commongeoregistry.adapter.android.MockHttpConnector;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.metadata.MetadataFactory;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class LocalCacheDbHelperTest {
         MockHttpConnector connector = new MockHttpConnector();
         HttpRegistryClient client = new HttpRegistryClient(connector, new MockIdService());
 
-        MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
+        MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue(""), false, client);
 
         GeoObject geoObject = client.newGeoObjectInstance("State");
         geoObject.setCode("Test");
@@ -71,7 +72,7 @@ public class LocalCacheDbHelperTest {
         MockHttpConnector connector = new MockHttpConnector();
         HttpRegistryClient client = new HttpRegistryClient(connector, new MockIdService());
 
-        MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
+        MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue(""), false, client);
 
         GeoObject geoObject = client.newGeoObjectInstance("State");
         geoObject.setCode("Test");

@@ -19,8 +19,10 @@
 package org.commongeoregistry.adapter.metadata;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 
 import com.google.gson.JsonObject;
 
@@ -35,147 +37,199 @@ public abstract class AttributeType implements Serializable
   /**
    * 
    */
-  private static final long serialVersionUID                = -2037233821367602621L;
-  
-  public static final String JSON_CODE                      = "code";
-  
-  public static final String JSON_LOCALIZED_LABEL           = "localizedLabel";
-  
-  public static final String JSON_LOCALIZED_DESCRIPTION     = "localizedDescription";
-  
-  public static final String JSON_TYPE                      = "type";
-  
-  public static final String JSON_IS_DEFAULT				= "isDefault";
+  private static final long  serialVersionUID           = -2037233821367602621L;
 
-  private String name;
+  public static final String JSON_CODE                  = "code";
 
-  private String localizedLabel;
+  public static final String JSON_LOCALIZED_LABEL       = "label";
 
-  private String localizedDescription;
+  public static final String JSON_LOCALIZED_DESCRIPTION = "description";
 
-  private String type;                // Attribute Type Constant
-  
-  private boolean isDefault;
-  
-  //TODO add a boolean for if the attribute is required or not
+  public static final String JSON_TYPE                  = "type";
 
-  public AttributeType(String _name, String _localizedLabel, String _localizedDescription, String _type, boolean _isDefault)
+  public static final String JSON_IS_DEFAULT            = "isDefault";
+
+  public static final String JSON_REQUIRED              = "required";
+
+  public static final String JSON_UNIQUE                = "unique";
+
+  /**
+   * Unique code of the attribute
+   */
+  private String             name;
+
+  /**
+   * Label of the attribute
+   */
+  private LocalizedValue     label;
+
+  /**
+   * Description of the type
+   */
+  private LocalizedValue     description;
+
+  /**
+   * Attribute type constant
+   */
+  private String             type;
+
+  /**
+   * Flag denoting if the attribute represents a default attribute as opposed to
+   * a custom attribute
+   */
+  private boolean            isDefault;
+
+  /**
+   * Flag denoting if the attribute value is required
+   */
+  private boolean            required;
+
+  /**
+   * Flag denoting if the attribute value is unique
+   */
+  private boolean            unique;
+
+  public AttributeType(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _isDefault, boolean _required, boolean _unique)
   {
     this.name = _name;
-    this.localizedLabel = _localizedLabel;
-    this.localizedDescription = _localizedDescription;
+    this.label = _label;
+    this.description = _description;
     this.type = _type;
     this.isDefault = _isDefault;
+    this.required = _required;
+    this.unique = _unique;
   }
 
   public String getName()
   {
     return this.name;
   }
-  
+
   public String getType()
   {
     return this.type;
   }
-  
-  public String getLocalizedLabel()
+
+  public LocalizedValue getLabel()
   {
-    return this.localizedLabel;
+    return this.label;
   }
-  
-  public void setLocalizedLabel(String localizedLabel)
+
+  public void setLabel(LocalizedValue label)
   {
-    this.localizedLabel = localizedLabel;
+    this.label = label;
   }
-  
-  public String getLocalizedDescription()
+
+  public void setLabel(String label)
   {
-    return this.localizedDescription;
+    this.label.setValue(label);
   }
-  
-  public void setLocalizedDescription(String localizedDescription)
+
+  public void setLabel(Locale locale, String label)
   {
-    this.localizedDescription = localizedDescription;
+    this.label.setValue(locale, label);
   }
-  
+
+  public void setLabel(String key, String label)
+  {
+    this.label.setValue(key, label);
+  }
+
+  public LocalizedValue getDescription()
+  {
+    return this.description;
+  }
+
+  public void setDescription(LocalizedValue description)
+  {
+    this.description = description;
+  }
+
+  public void setDescription(String description)
+  {
+    this.description.setValue(description);
+  }
+
+  public void setDescription(Locale locale, String description)
+  {
+    this.description.setValue(locale, description);
+  }
+
+  public void setDescription(String key, String description)
+  {
+    this.description.setValue(key, description);
+  }
+
   public boolean getIsDefault()
   {
-	  return this.isDefault;
+    return this.isDefault;
   }
-  
+
+  public boolean isRequired()
+  {
+    return required;
+  }
+
+  public void setRequired(boolean required)
+  {
+    this.required = required;
+  }
+
+  public boolean isUnique()
+  {
+    return unique;
+  }
+
+  public void setUnique(boolean unique)
+  {
+    this.unique = unique;
+  }
+
   public void validate(Object _value)
   {
-    // Stub method used to validate the value according to the metadata of the AttributeType
+    // Stub method used to validate the value according to the metadata of the
+    // AttributeType
   }
-  
-  public static AttributeType factory(String _name, String _localizedLabel, String _localizedDescription, String _type)
+
+  public static boolean isDefault(String _name)
   {
-    AttributeType attributeType = null;
-    
     boolean _isDefault = false;
-    if(DefaultAttribute.UID.getName().equals(_name))
+    if (DefaultAttribute.UID.getName().equals(_name))
     {
       _isDefault = DefaultAttribute.UID.getIsDefault();
     }
-    else if(DefaultAttribute.CODE.getName().equals(_name))
+    else if (DefaultAttribute.CODE.getName().equals(_name))
     {
       _isDefault = DefaultAttribute.CODE.getIsDefault();
     }
-    else if(DefaultAttribute.LOCALIZED_DISPLAY_LABEL.getName().equals(_name))
+    else if (DefaultAttribute.DISPLAY_LABEL.getName().equals(_name))
     {
-      _isDefault = DefaultAttribute.LOCALIZED_DISPLAY_LABEL.getIsDefault();
+      _isDefault = DefaultAttribute.DISPLAY_LABEL.getIsDefault();
     }
-    else if(DefaultAttribute.TYPE.getName().equals(_name))
+    else if (DefaultAttribute.TYPE.getName().equals(_name))
     {
       _isDefault = DefaultAttribute.TYPE.getIsDefault();
     }
-    else if(DefaultAttribute.STATUS.getName().equals(_name))
+    else if (DefaultAttribute.STATUS.getName().equals(_name))
     {
       _isDefault = DefaultAttribute.STATUS.getIsDefault();
     }
-    else if(DefaultAttribute.SEQUENCE.getName().equals(_name))
+    else if (DefaultAttribute.SEQUENCE.getName().equals(_name))
     {
       _isDefault = DefaultAttribute.SEQUENCE.getIsDefault();
     }
-    else if(DefaultAttribute.CREATE_DATE.getName().equals(_name))
+    else if (DefaultAttribute.CREATE_DATE.getName().equals(_name))
     {
       _isDefault = DefaultAttribute.CREATE_DATE.getIsDefault();
     }
-    else if(DefaultAttribute.LAST_UPDATE_DATE.getName().equals(_name))
+    else if (DefaultAttribute.LAST_UPDATE_DATE.getName().equals(_name))
     {
       _isDefault = DefaultAttribute.LAST_UPDATE_DATE.getIsDefault();
     }
-    
-    
-    if (_type.equals(AttributeCharacterType.TYPE))
-    {
-      attributeType = new AttributeCharacterType(_name, _localizedLabel, _localizedDescription, _isDefault);
-    }
-    else if (_type.equals(AttributeDateType.TYPE))
-    {
-      attributeType = new AttributeDateType(_name, _localizedLabel, _localizedDescription, _isDefault);
-    }
-    else if (_type.equals(AttributeIntegerType.TYPE))
-    {
-      attributeType = new AttributeIntegerType(_name, _localizedLabel, _localizedDescription, _isDefault);
-    }
-    else if (_type.equals(AttributeFloatType.TYPE))
-    {
-      attributeType = new AttributeFloatType(_name, _localizedLabel, _localizedDescription, _isDefault);
-    }
-    else if (_type.equals(AttributeTermType.TYPE))
-    {
-      attributeType = new AttributeTermType(_name, _localizedLabel, _localizedDescription, _isDefault);
-    }
-    else if (_type.equals(AttributeBooleanType.TYPE))
-    {
-      attributeType = new AttributeBooleanType(_name, _localizedLabel, _localizedDescription, _isDefault);
-    }
-    
-    return attributeType;
+    return _isDefault;
   }
-  
-  public JsonObject toJSON()
+
+  public final JsonObject toJSON()
   {
     return this.toJSON(new DefaultSerializer());
   }
@@ -183,28 +237,86 @@ public abstract class AttributeType implements Serializable
   public JsonObject toJSON(CustomSerializer serializer)
   {
     JsonObject json = new JsonObject();
-    
+
     json.addProperty(JSON_CODE, this.getName());
-    
+
     json.addProperty(JSON_TYPE, this.getType());
-    
-    json.addProperty(JSON_LOCALIZED_LABEL, this.getLocalizedLabel());
-    
-    json.addProperty(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription());
-    
+
+    json.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON(serializer));
+
+    json.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON(serializer));
+
     json.addProperty(JSON_IS_DEFAULT, this.getIsDefault());
-    
+    json.addProperty(JSON_REQUIRED, this.isRequired());
+    json.addProperty(JSON_UNIQUE, this.isUnique());
+
     serializer.configure(this, json);
-    
+
     return json;
   }
-  
+
   /**
    * Populates any additional attributes from JSON that were not populated in
-   * {@link GeoObjectType#fromJSON(String, org.commongeoregistry.adapter.RegistryAdapter)} 
+   * {@link GeoObjectType#fromJSON(String, org.commongeoregistry.adapter.RegistryAdapter)}
    * 
    * @param attrObj
    * @return {@link AttributeType}
    */
-  public void fromJSON(JsonObject attrObj) {}
+  public void fromJSON(JsonObject attrObj)
+  {
+  }
+
+  public static AttributeType factory(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _required, boolean _unique)
+  {
+    AttributeType attributeType = null;
+
+    boolean _isDefault = isDefault(_name);
+
+    if (_type.equals(AttributeCharacterType.TYPE))
+    {
+      attributeType = new AttributeCharacterType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeLocalType.TYPE))
+    {
+      attributeType = new AttributeLocalType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeDateType.TYPE))
+    {
+      attributeType = new AttributeDateType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeIntegerType.TYPE))
+    {
+      attributeType = new AttributeIntegerType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeFloatType.TYPE))
+    {
+      attributeType = new AttributeFloatType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeTermType.TYPE))
+    {
+      attributeType = new AttributeTermType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    else if (_type.equals(AttributeBooleanType.TYPE))
+    {
+      attributeType = new AttributeBooleanType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+
+    return attributeType;
+  }
+
+  public static AttributeType parse(JsonObject joAttr)
+  {
+    String name = joAttr.get(AttributeType.JSON_CODE).getAsString();
+    boolean required = joAttr.get(AttributeType.JSON_REQUIRED).getAsBoolean();
+    boolean unique = joAttr.get(AttributeType.JSON_UNIQUE).getAsBoolean();
+
+    LocalizedValue attributeLabel = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_LABEL).getAsJsonObject());
+    LocalizedValue attributeDescription = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
+
+    AttributeType attrType = AttributeType.factory(name, attributeLabel, attributeDescription, joAttr.get(AttributeType.JSON_TYPE).getAsString(), required, unique);
+    attrType.fromJSON(joAttr);
+    
+    return attrType;
+  }
+
 }

@@ -18,82 +18,106 @@
  */
 package org.commongeoregistry.adapter.constants;
 
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
+import org.commongeoregistry.adapter.metadata.AttributeLocalType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 
-public enum DefaultAttribute 
-{
-  UID("uid",       "UID",       "The internal globally unique identifier ID", AttributeCharacterType.TYPE, true),
+public enum DefaultAttribute {
+  UID("uid", "UID", "The internal globally unique identifier ID", AttributeCharacterType.TYPE, true, true, false),
 
-  CODE("code",     "Code",      "Human readable unique identified", AttributeCharacterType.TYPE, true),
-  
-  LOCALIZED_DISPLAY_LABEL("localizedDisplayLabel", "Localized Display Label",   "Localized locaiton ", AttributeCharacterType.TYPE, true),
-  
-  TYPE("type",     "Type",      "The type of the GeoObject", AttributeCharacterType.TYPE, true),
-  
-  STATUS("status", "Status",    "The status of the GeoObject", AttributeTermType.TYPE, true),
-  
-  SEQUENCE("sequence", "Sequence",    "The sequence number of the GeoObject that is incremented when the object is updated", AttributeIntegerType.TYPE, true),
- 
-  CREATE_DATE("createDate", "Date Created",    "The date the object was created", AttributeDateType.TYPE, true),
-  
-  LAST_UPDATE_DATE("lastUpdateDate", "Date Last Updated",    "The date the object was updated", AttributeDateType.TYPE, true);
+  CODE("code", "Code", "Human readable unique identified", AttributeCharacterType.TYPE, true, true, false),
 
-  
-  private String name;
-  
-  private String defaultLocalizedLabel;
-  
-  private String defaultLocalizedDescription;
-  
-  private String type;
-  
+  DISPLAY_LABEL("displayLabel", "Display Label", "Label of the location", AttributeLocalType.TYPE, true, true, false),
+
+  TYPE("type", "Type", "The type of the GeoObject", AttributeCharacterType.TYPE, true, false, false),
+
+  STATUS("status", "Status", "The status of the GeoObject", AttributeTermType.TYPE, true, false, false),
+
+  SEQUENCE("sequence", "Sequence", "The sequence number of the GeoObject that is incremented when the object is updated", AttributeIntegerType.TYPE, true, false, false),
+
+  CREATE_DATE("createDate", "Date Created", "The date the object was created", AttributeDateType.TYPE, true, false, false),
+
+  LAST_UPDATE_DATE("lastUpdateDate", "Date Last Updated", "The date the object was updated", AttributeDateType.TYPE, true, false, false);
+
+  private String  name;
+
+  private String  defaultLabel;
+
+  private String  defaultDescription;
+
+  private String  type;
+
   private boolean isDefault;
 
-  private DefaultAttribute(String _name, String _defaultLocalizedLabel, String _defaultLocalizedDescription, String _type, boolean _isDefault)
+  private boolean required;
+
+  private boolean unique;
+
+  private DefaultAttribute(String _name, String _defaultLabel, String _defaultDescription, String _type, boolean _isDefault, boolean _required, boolean _unique)
   {
-    this.name                        = _name;
-    
-    this.defaultLocalizedLabel       = _defaultLocalizedLabel;
-    
-    this.defaultLocalizedDescription = _defaultLocalizedDescription;
-    
-    this.type                        = _type;
-    
-    this.isDefault					 = _isDefault;
-    
+    this.name = _name;
+    this.defaultLabel = _defaultLabel;
+    this.defaultDescription = _defaultDescription;
+    this.type = _type;
+    this.isDefault = _isDefault;
+    this.required = _required;
+    this.unique = _unique;
   }
-  
+
   public String getName()
   {
     return this.name;
   }
-  
+
   public String getDefaultLocalizedName()
   {
-    return this.defaultLocalizedLabel;
+    return this.defaultLabel;
   }
-  
-  public String getDefaultLocalizedDescription()
+
+  public String getDefaultDescription()
   {
-    return this.defaultLocalizedDescription;
+    return this.defaultDescription;
   }
-  
+
   public String getType()
   {
     return this.type;
   }
-  
+
   public boolean getIsDefault()
   {
-	return this.isDefault;
+    return this.isDefault;
   }
-  
- public AttributeType createAttributeType()
- {
-   return AttributeType.factory(this.getName(), this.getDefaultLocalizedName(), this.getDefaultLocalizedDescription(), this.getType());
- }
+
+  public boolean isRequired()
+  {
+    return required;
+  }
+
+  public void setRequired(boolean required)
+  {
+    this.required = required;
+  }
+
+  public boolean isUnique()
+  {
+    return unique;
+  }
+
+  public void setUnique(boolean unique)
+  {
+    this.unique = unique;
+  }
+
+  public AttributeType createAttributeType()
+  {
+    LocalizedValue label = new LocalizedValue(this.getDefaultLocalizedName());
+    LocalizedValue description = new LocalizedValue(this.getDefaultDescription());
+
+    return AttributeType.factory(this.getName(), label, description, this.getType(), this.isRequired(), this.isUnique());
+  }
 }

@@ -18,56 +18,70 @@
  */
 package org.commongeoregistry.adapter.dataaccess;
 
+import java.util.Locale;
+
 import org.commongeoregistry.adapter.RegistryAdapter;
-import org.commongeoregistry.adapter.metadata.AttributeFloatType;
+import org.commongeoregistry.adapter.metadata.AttributeLocalType;
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public class AttributeFloat extends Attribute
+public class AttributeLocal extends Attribute
 {
 
   /**
    * 
    */
-  private static final long serialVersionUID = 585645995864808480L;
-  
-  private Double floatValue;
-  
-  public AttributeFloat(String name)
+  private static final long serialVersionUID = -506321096607959557L;
+
+  private LocalizedValue    value;
+
+  public AttributeLocal(String name)
   {
-    super(name, AttributeFloatType.TYPE);
-    
-    this.floatValue = null;
+    super(name, AttributeLocalType.TYPE);
+
+    this.value = new LocalizedValue(null);
   }
-  
+
   @Override
-  public void setValue(Object floatValue)
+  public void setValue(Object value)
   {
-    this.setFloat((Double)floatValue);
+    if (value instanceof LocalizedValue)
+    {
+      this.value = (LocalizedValue) value;
+    }
+    else if (value instanceof String)
+    {
+      this.value.setValue((String) value);
+    }
   }
-  
-  public void setFloat(Double floatValue)
+
+  public void setValue(Locale locale, String value)
   {
-    this.floatValue = floatValue;
+    this.value.setValue(locale, value);
   }
-  
+
+  public void setValue(String key, String value)
+  {
+    this.value.setValue(key, value);
+  }
+
   @Override
-  public Double getValue()
+  public Object getValue()
   {
-    return this.floatValue;
+    return this.value;
   }
-  
+
+  @Override
   public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
   {
-    geoObjProps.addProperty(this.getName(), this.floatValue);
+    geoObjProps.add(this.getName(), value.toJSON(serializer));
   }
-  
+
+  @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-    this.setValue(jValue.getAsDouble());
+    this.setValue(LocalizedValue.fromJSON(jValue.getAsJsonObject()));
   }
-
-
 }

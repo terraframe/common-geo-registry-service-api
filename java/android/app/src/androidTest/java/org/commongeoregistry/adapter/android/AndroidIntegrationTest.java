@@ -7,7 +7,9 @@ import junit.framework.Assert;
 
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,9 +18,15 @@ import org.junit.Test;
  */
 public class AndroidIntegrationTest
 {
+    private static final String serverUrl = "https://192.168.0.23:8443/georegistry";
+
+    private static final String user = "admin";
+
+    private static final String pass = "_nm8P4gfdWxGqNRQ#8";
+
     private USATestData data;
 
-    private AndroidRegistryClient client;
+    private AndroidTestRegistryClient client;
 
     private USATestData.TestGeoObjectInfo UTAH;
 
@@ -32,12 +40,14 @@ public class AndroidIntegrationTest
         Context context = InstrumentationRegistry.getTargetContext();
 
         AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();
-        connector.setCredentials("admin", "_nm8P4gfdWxGqNRQ#8");
-        connector.setServerUrl("https://192.168.122.1:8443/georegistry");
+        connector.setCredentials(user, pass);
+        connector.setServerUrl(serverUrl);
         connector.initialize();
 
-        client = new AndroidRegistryClient(connector, context);
+        client = new AndroidTestRegistryClient(connector, context);
         client.getLocalCache().clear();
+        client.testSetUp();
+
         client.refreshMetadataCache();
         client.getIdService().populate(500);
 
@@ -51,13 +61,27 @@ public class AndroidIntegrationTest
         CALIFORNIA = data.newTestGeoObjectInfo("California", data.STATE);
     }
 
+    @After
+    public void cleanUp()
+    {
+        client.testCleanUp();
+    }
+
+//    @Test(expected = InvalidLoginException.class)
+//    public void testInvalidLoginException()
+//    {
+//        AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();
+//        connector.setCredentials("admin", "bad");
+//        connector.setServerUrl("https://192.168.0.23:8443/georegistry");
+//        connector.initialize();
+//
+//        AndroidRegistryClient client = new AndroidRegistryClient(connector, InstrumentationRegistry.getTargetContext());
+//        client.refreshMetadataCache();
+//    }
+
     @Test
     public void testCreateGetUpdateGeoObject()
     {
-        // TODO : The AndroidRegistryCient seems to be logging in every time we make a request.
-        // This may not be sustainable because we may run out of available sessions.
-        // We should be managing the log in / log out state somehow.
-
         // 1. Create a Geo Object locally
         GeoObject goUtah = UTAH.newGeoObject();
 
@@ -67,12 +91,14 @@ public class AndroidIntegrationTest
         UTAH.assertEquals(go2);
 
         // 3. Retrieve the new GeoObject from the server
+        int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
         GeoObject go3 = client.getGeoObject(go2.getUid(), go2.getType().getCode());
         UTAH.assertEquals(go3);
+        Assert.assertEquals(numRegistryIds, client.getLocalCache().countNumberRegistryIds());
 
         // 4. Update the GeoObject
         final String newLabel = "MODIFIED DISPLAY LABEL";
-        go3.setLocalizedDisplayLabel(newLabel);
+        go3.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, newLabel);
         UTAH.setDisplayLabel(newLabel);
         GeoObject go4 = client.updateGeoObject(go3);
         UTAH.assertEquals(go4);
@@ -85,6 +111,8 @@ public class AndroidIntegrationTest
     @Test
     public void testGetParentGeoObjects()
     {
+        int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
+      
         String childId = data.CO_D_TWO.getUid();
         String childTypeCode = data.CO_D_TWO.getUniversal().getCode();
         String[] childrenTypes = new String[]{data.COUNTRY.getCode(), data.STATE.getCode()};
@@ -104,11 +132,15 @@ public class AndroidIntegrationTest
         ParentTreeNode tn3 = client.getParentGeoObjects(childId, childTypeCode, countryArr, true);
         data.CO_D_TWO.assertEquals(tn3, countryArr, true);
         Assert.assertEquals(tn3.toJSON().toString(), ParentTreeNode.fromJSON(tn3.toJSON().toString(), client).toJSON().toString());
+        
+        Assert.assertEquals(numRegistryIds, client.getLocalCache().countNumberRegistryIds());
     }
 
     @Test
     public void testGetChildGeObjects()
     {
+        int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
+      
         String[] childrenTypes = new String[]{data.STATE.getCode(), data.DISTRICT.getCode()};
 
         // Recursive
@@ -126,6 +158,8 @@ public class AndroidIntegrationTest
         ChildTreeNode tn3 = client.getChildGeoObjects(data.USA.getUid(), data.USA.getUniversal().getCode(), distArr, true);
         data.USA.assertEquals(tn3, distArr, true);
         Assert.assertEquals(tn3.toJSON().toString(), ChildTreeNode.fromJSON(tn3.toJSON().toString(), client).toJSON().toString());
+        
+        Assert.assertEquals(numRegistryIds, client.getLocalCache().countNumberRegistryIds());
     }
 
     @Test
@@ -137,7 +171,7 @@ public class AndroidIntegrationTest
 
         // Update that GeoObject
         final String newLabel = "MODIFIED DISPLAY LABEL";
-        goCali.setLocalizedDisplayLabel(newLabel);
+        goCali.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, newLabel);
         client.getLocalCache().updateGeoObject(goCali);
 
         Assert.assertEquals(2, client.getLocalCache().getAllActionHistory().size());

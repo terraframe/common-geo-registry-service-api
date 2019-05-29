@@ -26,10 +26,10 @@ import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.constants.RegistryUrls;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseException;
-import org.commongeoregistry.adapter.id.MemoryOnlyIdService;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 import org.commongeoregistry.adapter.metadata.MetadataCache;
@@ -51,12 +51,12 @@ public class HttpRegistryClientTest
      * Setup mock objects
      */
     RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, registry);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, registry);
 
     JsonArray req1Array = new JsonArray();
     req1Array.add(state.toJSON());
     
-    HierarchyType locatedIn = MetadataFactory.newHierarchyType("LocatedIn", "LOCATED_IN_LABEL", "LOCATED_IN_DESCRIPTION", registry);
+    HierarchyType locatedIn = MetadataFactory.newHierarchyType("LocatedIn", new LocalizedValue("LOCATED_IN_LABEL"), new LocalizedValue("LOCATED_IN_DESCRIPTION"), registry);
 
     JsonArray req2Array = new JsonArray();
     req2Array.add(locatedIn.toJSON());
@@ -93,8 +93,8 @@ public class HttpRegistryClientTest
     GeoObjectType test = optional.get();
 
     Assert.assertEquals(state.getCode(), test.getCode());
-    Assert.assertEquals(state.getLocalizedDescription(), test.getLocalizedDescription());
-    Assert.assertEquals(state.getLocalizedLabel(), test.getLocalizedLabel());
+    Assert.assertEquals(state.getDescription().getValue(), test.getDescription().getValue());
+    Assert.assertEquals(state.getLabel().getValue(), test.getLabel().getValue());
     
     /*
      * Validate the hierarchy type request
@@ -109,8 +109,8 @@ public class HttpRegistryClientTest
     HierarchyType htCache = htOpt.get();
 
     Assert.assertEquals(locatedIn.getCode(), htCache.getCode());
-    Assert.assertEquals(locatedIn.getLocalizedDescription(), htCache.getLocalizedDescription());
-    Assert.assertEquals(locatedIn.getLocalizedLabel(), htCache.getLocalizedLabel());
+    Assert.assertEquals(locatedIn.getDescription().getValue(), htCache.getDescription().getValue());
+    Assert.assertEquals(locatedIn.getLabel().getValue(), htCache.getLabel().getValue());
   }
 
   @Test(expected = ResponseException.class)
@@ -136,7 +136,7 @@ public class HttpRegistryClientTest
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getIdService().populate(500);
     
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, client);
 
     GeoObject geoObject = client.newGeoObjectInstance("State");
     geoObject.setCode("Test");
@@ -207,7 +207,7 @@ public class HttpRegistryClientTest
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getIdService().populate(500);
 
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, client);
 
     GeoObject geoObject = client.newGeoObjectInstance("State");
     geoObject.setCode("Test");
@@ -258,7 +258,7 @@ public class HttpRegistryClientTest
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getIdService().populate(500);
 
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, "State", "", false, client);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, client);
 
     GeoObject geoObject = client.newGeoObjectInstance("State");
     geoObject.setCode("Test");
@@ -378,17 +378,6 @@ public class HttpRegistryClientTest
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getChildGeoObjects(null, "foo", new String[] { "Test" }, true);
   }
-
-  @Test(expected = RequiredParameterException.class)
-  public void testGetChildGeoObjectsMissingChildTypes()
-  {
-    /*
-     * Invoke method
-     */
-    MockHttpConnector connector = new MockHttpConnector();
-    HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getChildGeoObjects("Abc", "foo", null, true);
-  }
   
   @Test(expected = RequiredParameterException.class)
   public void testGetChildGeoObjectsMissingChildCode()
@@ -399,17 +388,6 @@ public class HttpRegistryClientTest
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getChildGeoObjects("Abc", null, new String[] { "Test" }, true);
-  }
-
-  @Test(expected = RequiredParameterException.class)
-  public void testGetChildGeoObjectsEmptyChildTypes()
-  {
-    /*
-     * Invoke method
-     */
-    MockHttpConnector connector = new MockHttpConnector();
-    HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getChildGeoObjects("Abc", "foo", new String[] {}, true);
   }
 
   @Test
@@ -492,28 +470,6 @@ public class HttpRegistryClientTest
     MockHttpConnector connector = new MockHttpConnector();
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getParentGeoObjects(null, "foo", new String[] { "Test" }, true);
-  }
-
-  @Test(expected = RequiredParameterException.class)
-  public void testGetParentGeoObjectsMissingParentTypes()
-  {
-    /*
-     * Invoke method
-     */
-    MockHttpConnector connector = new MockHttpConnector();
-    HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getParentGeoObjects("Abc", "foo", null, true);
-  }
-
-  @Test(expected = RequiredParameterException.class)
-  public void testGetParentGeoObjectsEmptyParentTypes()
-  {
-    /*
-     * Invoke method
-     */
-    MockHttpConnector connector = new MockHttpConnector();
-    HttpRegistryClient client = new HttpRegistryClient(connector);
-    client.getParentGeoObjects("Abc", "foo", new String[] {}, true);
   }
 
   @Test

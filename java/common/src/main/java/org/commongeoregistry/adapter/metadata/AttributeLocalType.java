@@ -20,16 +20,16 @@ package org.commongeoregistry.adapter.metadata;
 
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 
-public class AttributeIntegerType extends AttributeNumericType
+public class AttributeLocalType extends AttributePrimitiveType
 {
   /**
    * 
    */
-  private static final long serialVersionUID = -8395438752409839660L;
+  private static final long serialVersionUID = -4241500416669749156L;
 
-  public static String      TYPE             = "integer";
+  public static String      TYPE             = "local";
 
-  public AttributeIntegerType(String _name, LocalizedValue _label, LocalizedValue _description, boolean _isDefault, boolean _required, boolean _unique)
+  public AttributeLocalType(String _name, LocalizedValue _label, LocalizedValue _description, boolean _isDefault, boolean _required, boolean _unique)
   {
     super(_name, _label, _description, TYPE, _isDefault, _required, _unique);
   }

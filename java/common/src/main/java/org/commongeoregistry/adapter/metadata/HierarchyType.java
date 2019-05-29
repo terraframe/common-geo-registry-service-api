@@ -24,13 +24,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * Metadata that describes a hierarchy type, such as Geopolitical or health administrative.
+ * Metadata that describes a hierarchy type, such as Geopolitical or health
+ * administrative.
  *
  */
 public class HierarchyType implements Serializable
@@ -38,42 +40,42 @@ public class HierarchyType implements Serializable
   /**
    * 
    */
-  private static final long          serialVersionUID               = -1947163248569170534L;
-  
-  public static final String         JSON_CODE                      = "code";
-  
-  public static final String         JSON_LOCALIZED_LABEL           = "localizedLabel";
-  
-  public static final String         JSON_LOCALIZED_DESCRIPTION     = "localizedDescription";
-  
-  public static final String         JSON_ROOT_GEOOBJECTTYPES       = "rootGeoObjectTypes";
-  
-  public static final String         JSON_GEOOBJECTTYPE             = "geoObjectType";
-  
-  public static final String         JSON_CHILDREN                  = "children";
-  
+  private static final long   serialVersionUID           = -1947163248569170534L;
+
+  public static final String  JSON_CODE                  = "code";
+
+  public static final String  JSON_LOCALIZED_LABEL       = "label";
+
+  public static final String  JSON_LOCALIZED_DESCRIPTION = "description";
+
+  public static final String  JSON_ROOT_GEOOBJECTTYPES   = "rootGeoObjectTypes";
+
+  public static final String  JSON_GEOOBJECTTYPE         = "geoObjectType";
+
+  public static final String  JSON_CHILDREN              = "children";
+
   /**
    * Unique identifier but also human readable.
    */
-  private String code;
+  private String              code;
 
   /**
    * The localized label of the hierarchy type for the presentation tier.
    */
-  private String localizedLabel;
+  private LocalizedValue      label;
 
   /**
    * The localized description of the hierarchy type for the presentation tier.
    */
-  private String localizedDescription;
-  
+  private LocalizedValue      description;
+
   private List<HierarchyNode> rootGeoObjectTypes;
 
-  public HierarchyType(String _code, String _localizedLabel, String _localizedDescription)
+  public HierarchyType(String _code, LocalizedValue _label, LocalizedValue _description)
   {
     this.code = _code;
-    this.localizedLabel = _localizedLabel;
-    this.localizedDescription = _localizedDescription;
+    this.label = _label;
+    this.description = _description;
     this.rootGeoObjectTypes = Collections.synchronizedList(new LinkedList<HierarchyNode>());
   }
 
@@ -82,32 +84,32 @@ public class HierarchyType implements Serializable
     return this.code;
   }
 
-  public String getLocalizedLabel()
+  public LocalizedValue getLabel()
   {
-    return this.localizedLabel;
+    return this.label;
   }
 
-  public void setLocalizedLabel(String localizedLabel)
+  public void setLabel(LocalizedValue label)
   {
-    this.localizedLabel = localizedLabel;
+    this.label = label;
   }
-  
-  public String getLocalizedDescription()
+
+  public LocalizedValue getDescription()
   {
-    return this.localizedDescription;
+    return this.description;
   }
-  
-  public void setLocalizedDescription(String localizedDescription)
+
+  public void setDescription(LocalizedValue description)
   {
-    this.localizedDescription = localizedDescription;
+    this.description = description;
   }
-  
+
   public List<HierarchyNode> getRootGeoObjectTypes()
   {
     return this.rootGeoObjectTypes;
   }
 
-  /** 
+  /**
    * Adds root {@link GeoObjectType} objects to the root of the hierarchy type.
    * 
    * @param hierarchyNode
@@ -116,10 +118,11 @@ public class HierarchyType implements Serializable
   {
     this.rootGeoObjectTypes.add(hierarchyNode);
   }
-  
+
   /**
-   * Represents a node in a {@link HierarchyType} where the node value is a {@link GeoObjectType} and
-   * the children are also {@link GeoObjectType}s in the {@link HierarchyType}.
+   * Represents a node in a {@link HierarchyType} where the node value is a
+   * {@link GeoObjectType} and the children are also {@link GeoObjectType}s in
+   * the {@link HierarchyType}.
    * 
    * @author nathan
    *
@@ -138,7 +141,8 @@ public class HierarchyType implements Serializable
 
     /**
      * 
-     * @param _geoObjectType {@link GeoObjectType} in the hierarchies node.
+     * @param _geoObjectType
+     *          {@link GeoObjectType} in the hierarchies node.
      */
     public HierarchyNode(GeoObjectType _geoObjectType)
     {
@@ -159,13 +163,14 @@ public class HierarchyType implements Serializable
     /**
      * Add the given child {@link GeoObjectType} to this node in the hierarchy.
      * 
-     * @param _child Child {@link GeoObjectType} to add to the hierarchy. 
+     * @param _child
+     *          Child {@link GeoObjectType} to add to the hierarchy.
      */
     public void addChild(HierarchyNode _hierarchyNode)
     {
       this.children.add(_hierarchyNode);
     }
-    
+
     /**
      * Returns the child nodes of this current node.
      * 
@@ -175,7 +180,7 @@ public class HierarchyType implements Serializable
     {
       return this.children;
     }
-    
+
     /**
      * Generates JSON for this object.
      * 
@@ -186,20 +191,19 @@ public class HierarchyType implements Serializable
       JsonObject jsonObj = new JsonObject();
 
       jsonObj.addProperty(JSON_GEOOBJECTTYPE, geoObjectType.getCode());
-      
+
       JsonArray jaChildren = new JsonArray();
       for (int i = 0; i < children.size(); ++i)
       {
         HierarchyNode hnode = children.get(i);
-        
+
         jaChildren.add(hnode.toJSON());
       }
       jsonObj.add(JSON_CHILDREN, jaChildren);
-      
+
       return jsonObj;
     }
-    
-    
+
     /**
      * Generates JSON for the Hierarchy Node.
      * 
@@ -210,58 +214,60 @@ public class HierarchyType implements Serializable
     protected static HierarchyNode fromJSON(String sJson, RegistryAdapter registry)
     {
       JsonParser parser = new JsonParser();
-      
+
       JsonObject oJson = parser.parse(sJson).getAsJsonObject();
-      
+
       GeoObjectType got = registry.getMetadataCache().getGeoObjectType(oJson.get(JSON_GEOOBJECTTYPE).getAsString()).get();
-      
+
       HierarchyNode node = new HierarchyNode(got);
-      
+
       JsonArray jaChildren = oJson.getAsJsonArray(JSON_CHILDREN);
       for (int i = 0; i < jaChildren.size(); ++i)
       {
         JsonObject joChild = jaChildren.get(i).getAsJsonObject();
-        
+
         HierarchyNode hnChild = HierarchyNode.fromJSON(joChild.toString(), registry);
-        
+
         node.addChild(hnChild);
       }
-      
+
       return node;
     }
   }
-  
-  /**
-   * Return the JSON representation of this metadata
-   * 
-   * @return
-   */
+
   public JsonObject toJSON()
+  {
+    return toJSON(new DefaultSerializer());
+  }
+
+  public JsonObject toJSON(CustomSerializer serializer)
   {
     JsonObject jsonObj = new JsonObject();
 
     jsonObj.addProperty(JSON_CODE, this.getCode());
 
-    jsonObj.addProperty(JSON_LOCALIZED_LABEL, this.getLocalizedLabel());
-    
-    jsonObj.addProperty(JSON_LOCALIZED_DESCRIPTION, this.getLocalizedDescription());
-    
+    jsonObj.add(JSON_LOCALIZED_LABEL, this.getLabel().toJSON(serializer));
+
+    jsonObj.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON(serializer));
+
     JsonArray jaRoots = new JsonArray();
     for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
     {
       HierarchyNode hnode = rootGeoObjectTypes.get(i);
-      
+
       jaRoots.add(hnode.toJSON());
     }
 
     jsonObj.add(JSON_ROOT_GEOOBJECTTYPES, jaRoots);
-    
+
+    serializer.configure(this, jsonObj);
+
     return jsonObj;
   }
-  
-  
+
   /**
    * Constructs a {@link HierarchyType} from the given JSON.
+   * 
    * @param _sJson
    * @param _registry
    * @return
@@ -269,26 +275,26 @@ public class HierarchyType implements Serializable
   public static HierarchyType fromJSON(String _sJson, RegistryAdapter _registry)
   {
     JsonParser parser = new JsonParser();
-    
+
     JsonObject oJson = parser.parse(_sJson).getAsJsonObject();
-    
+
     String code = oJson.get(JSON_CODE).getAsString();
-    String localizedLabel = oJson.get(JSON_LOCALIZED_LABEL).getAsString();
-    String localizedDescription = oJson.get(JSON_LOCALIZED_DESCRIPTION).getAsString();
-    
-    HierarchyType ht = new HierarchyType(code, localizedLabel, localizedDescription);
-    
+    LocalizedValue label = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_LABEL).getAsJsonObject());
+    LocalizedValue description = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
+
+    HierarchyType ht = new HierarchyType(code, label, description);
+
     JsonArray rootGeoObjectTypes = oJson.getAsJsonArray(JSON_ROOT_GEOOBJECTTYPES);
     if (rootGeoObjectTypes != null)
     {
       for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
       {
         HierarchyNode node = HierarchyNode.fromJSON(rootGeoObjectTypes.get(i).getAsJsonObject().toString(), _registry);
-        
+
         ht.addRootGeoObjects(node);
       }
     }
-    
+
     return ht;
   }
 
@@ -303,7 +309,7 @@ public class HierarchyType implements Serializable
       HierarchyType ht = HierarchyType.fromJSON(jaHts.get(i).toString(), adapter);
       hts[i] = ht;
     }
-    
+
     return hts;
   }
 }

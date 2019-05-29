@@ -20,6 +20,7 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +31,8 @@ import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
+import org.commongeoregistry.adapter.metadata.DefaultSerializer;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
@@ -47,21 +50,21 @@ public class GeoObject implements Serializable
   /**
    * 
    */
-  private static final long      serialVersionUID        = 7686140708200106783L;
+  private static final long      serialVersionUID = 7686140708200106783L;
 
-  public static final String     UID                     = DefaultAttribute.UID.getName();
+  public static final String     UID              = DefaultAttribute.UID.getName();
 
-  public static final String     CODE                    = DefaultAttribute.CODE.getName();
+  public static final String     CODE             = DefaultAttribute.CODE.getName();
 
-  public static final String     LOCALIZED_DISPLAY_LABEL = DefaultAttribute.LOCALIZED_DISPLAY_LABEL.getName();
+  public static final String     DISPLAY_LABEL    = DefaultAttribute.DISPLAY_LABEL.getName();
 
-  public static final String     JSON_PROPERTIES         = "properties";
+  public static final String     JSON_PROPERTIES  = "properties";
 
-  public static final String     JSON_TYPE               = "type";
+  public static final String     JSON_TYPE        = "type";
 
-  public static final String     JSON_GEOMETRY           = "geometry";
+  public static final String     JSON_GEOMETRY    = "geometry";
 
-  public static final String     JSON_FEATURE            = "Feature";
+  public static final String     JSON_FEATURE     = "Feature";
 
   private GeoObjectType          geoObjectType;
 
@@ -278,12 +281,34 @@ public class GeoObject implements Serializable
    */
   public String getLocalizedDisplayLabel()
   {
-    return (String) this.attributeMap.get(LOCALIZED_DISPLAY_LABEL).getValue();
+    LocalizedValue value = this.getDisplayLabel();
+
+    return value.getValue();
   }
 
-  public void setLocalizedDisplayLabel(String _displayLabel)
+  /**
+   * Returns the localized
+   * 
+   * @return
+   */
+  public LocalizedValue getDisplayLabel()
   {
-    this.attributeMap.get(LOCALIZED_DISPLAY_LABEL).setValue(_displayLabel);
+    AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
+    LocalizedValue value = (LocalizedValue) attribute.getValue();
+
+    return value;
+  }
+
+  public void setDisplayLabel(LocalizedValue _displayLabel)
+  {
+    AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
+    attribute.setValue(_displayLabel);
+  }
+
+  public void setDisplayLabel(String _key, String _displayLabel)
+  {
+    AttributeLocal attribute = (AttributeLocal) this.attributeMap.get(DISPLAY_LABEL);
+    attribute.setValue(_key, _displayLabel);
   }
 
   /**
@@ -318,7 +343,7 @@ public class GeoObject implements Serializable
   {
     this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(status.getCode());
   }
-  
+
   public void setStatus(String statusCode)
   {
     this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(statusCode);
@@ -342,7 +367,15 @@ public class GeoObject implements Serializable
     JsonObject oJson = parser.parse(sJson).getAsJsonObject();
     JsonObject oJsonProps = oJson.getAsJsonObject(JSON_PROPERTIES);
 
-    GeoObject geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString());
+    GeoObject geoObj;
+    if (oJsonProps.has("uid"))
+    {
+      geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString(), false);
+    }
+    else
+    {
+      geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString(), true);
+    }
 
     JsonElement oGeom = oJson.get(JSON_GEOMETRY);
     if (oGeom != null)
@@ -357,7 +390,7 @@ public class GeoObject implements Serializable
     {
       Attribute attr = geoObj.attributeMap.get(key);
 
-      if (oJsonProps.has(key))
+      if (oJsonProps.has(key) && !oJsonProps.get(key).isJsonNull())
       {
         attr.fromJSON(oJsonProps.get(key), registry);
       }
@@ -366,12 +399,12 @@ public class GeoObject implements Serializable
     return geoObj;
   }
 
-  /**
-   * Return the JSON representation of this [@link GeoObject}
-   * 
-   * @return JSON representation of this [@link GeoObject}
-   */
   public JsonObject toJSON()
+  {
+    return toJSON(new DefaultSerializer());
+  }
+
+  public JsonObject toJSON(CustomSerializer serializer)
   {
     JsonObject jsonObj = new JsonObject();
 
@@ -396,7 +429,7 @@ public class GeoObject implements Serializable
     {
       Attribute attr = this.attributeMap.get(key);
 
-      attr.toJSON(props);
+      attr.toJSON(props, serializer);
 
       // if(attr instanceof AttributeTerm)
       // {
@@ -440,5 +473,18 @@ public class GeoObject implements Serializable
     }
 
     System.out.println("Geometry: " + this.geometry);
+  }
+  
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (!(obj instanceof GeoObject))
+    {
+      return false;
+    }
+    
+    GeoObject go = (GeoObject) obj;
+    
+    return this.getCode().equals(go.getCode()) && this.getType().getCode().equals(go.getType().getCode());
   }
 }

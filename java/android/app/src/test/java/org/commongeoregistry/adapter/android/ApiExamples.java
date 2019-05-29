@@ -9,9 +9,6 @@ import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 
 public class ApiExamples
 {
@@ -81,18 +78,18 @@ public class ApiExamples
 //      GeoObjectType geoObjectType = optionGeoObjectType.get();
 //
 //      // Get the localized label of the type
-//      String typeLocalizedLabel = geoObjectType.getLocalizedLabel();
+//      String typeLabel = geoObjectType.getLabel();
 //
 //      // Get the localized description of the type.
-//      String typeLocalizedDescription = geoObjectType.getLocalizedDescription();
+//      String typeDescription = geoObjectType.getDescription();
 //
 //      for (AttributeType attributeType : geoObjectType.getAttributeMap().values())
 //      {
 //        // Get the localized Label
-//        String attributeLocalizedLabel = attributeType.getLocalizedLabel();
+//        String attributeLabel = attributeType.getLabel();
 //
 //        // Get the localized attribute description
-//        String attributeLocalizedDescription = attributeType.getLocalizedDescription();
+//        String attributeDescription = attributeType.getDescription();
 //
 //        // For term (select list) attributes
 //
@@ -107,10 +104,10 @@ public class ApiExamples
 //          for (Term term: terms)
 //          {
 //            // Label of the option, such as "Maternity Ward"
-//            String termLabel = term.getLocalizedLabel();
+//            String termLabel = term.getLabel();
 //
 //            // Description of the option, such as "Maternity Wards focus on..."
-//            String termDescription = term.getLocalizedDescription();
+//            String termDescription = term.getDescription();
 //
 //            // This is the computer readable value, such as "MATURNITY_WARD"
 //            String value = term.getCode();

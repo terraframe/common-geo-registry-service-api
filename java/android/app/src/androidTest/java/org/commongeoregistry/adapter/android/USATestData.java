@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.commongeoregistry.adapter.HttpRegistryClient;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
@@ -156,8 +157,8 @@ public class USATestData
     public void assertEquals(GeoObjectType got)
     {
       Assert.assertEquals(code, got.getCode());
-      Assert.assertEquals(displayLabel, got.getLocalizedLabel());
-      Assert.assertEquals(description, got.getLocalizedDescription());
+      Assert.assertEquals(displayLabel, got.getLabel().getValue());
+      Assert.assertEquals(description, got.getDescription().getValue());
       // TOOD : check the uid
     }
     
@@ -292,7 +293,9 @@ public class USATestData
       
       geoObj.setWKTGeometry(this.getWkt());
       geoObj.setCode(this.getCode());
-      geoObj.setLocalizedDisplayLabel(this.getDisplayLabel());
+      geoObj.getDisplayLabel().setValue(this.getDisplayLabel());
+      geoObj.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, this.getDisplayLabel());
+
       
       if (uid != null)
       {
