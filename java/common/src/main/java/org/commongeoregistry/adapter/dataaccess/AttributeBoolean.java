@@ -22,7 +22,6 @@ import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 public class AttributeBoolean extends Attribute
 {

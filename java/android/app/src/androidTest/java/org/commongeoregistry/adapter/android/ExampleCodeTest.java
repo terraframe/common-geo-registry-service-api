@@ -5,12 +5,14 @@ import android.support.test.InstrumentationRegistry;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
+import org.commongeoregistry.adapter.http.AuthenticationException;
+import org.commongeoregistry.adapter.http.ServerResponseException;
 import org.junit.Test;
 
 public class ExampleCodeTest
 {
     @Test
-    public void testExampleCode()
+    public void testExampleCode() throws AuthenticationException, ServerResponseException
     {
         // Configure our connection with the remote registry server
         AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();

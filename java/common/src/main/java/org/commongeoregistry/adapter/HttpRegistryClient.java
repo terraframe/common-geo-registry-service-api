@@ -26,9 +26,11 @@ import org.commongeoregistry.adapter.constants.RegistryUrls;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
+import org.commongeoregistry.adapter.http.AuthenticationException;
 import org.commongeoregistry.adapter.http.Connector;
 import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseProcessor;
+import org.commongeoregistry.adapter.http.ServerResponseException;
 import org.commongeoregistry.adapter.id.AdapterIdServiceIF;
 import org.commongeoregistry.adapter.id.MemoryOnlyIdService;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
@@ -91,9 +93,11 @@ public class HttpRegistryClient extends RegistryAdapter
   /**
    * Clears the metadata cache and populates it with the metadata from the
    * common geo-registry.
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    * 
    */
-  public void refreshMetadataCache()
+  public void refreshMetadataCache() throws AuthenticationException, ServerResponseException
   {
     this.getMetadataCache().rebuild();
     
@@ -119,8 +123,10 @@ public class HttpRegistryClient extends RegistryAdapter
    *          UID of the GeoObject.
    * 
    * @return GeoObject with the given UID.
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    */
-  public GeoObject getGeoObject(String id, String typeCode)
+  public GeoObject getGeoObject(String id, String typeCode) throws AuthenticationException, ServerResponseException
   {
     if (id == null || id.length() == 0)
     {
@@ -150,8 +156,10 @@ public class HttpRegistryClient extends RegistryAdapter
    *          code of the GeoObject.
    * 
    * @return GeoObject with the given code.
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    */
-  public GeoObject getGeoObjectByCode(String code, String typeCode)
+  public GeoObject getGeoObjectByCode(String code, String typeCode) throws AuthenticationException, ServerResponseException
   {
     if (code == null || code.length() == 0)
     {
@@ -180,8 +188,10 @@ public class HttpRegistryClient extends RegistryAdapter
    * @pre the status on the {@link GeoObject} is in the new state.
    * 
    * @param _geoObject
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    */
-  public GeoObject createGeoObject(GeoObject _geoObject)
+  public GeoObject createGeoObject(GeoObject _geoObject) throws AuthenticationException, ServerResponseException
   {
     if (_geoObject == null)
     {
@@ -202,13 +212,15 @@ public class HttpRegistryClient extends RegistryAdapter
   
   /**
    * Creates a relationship between @parentUid and @childUid.
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    *
    * @pre Both the parent and child have already been persisted / applied
    * @post A relationship will exist between @parent and @child
    *
    * @returns ParentTreeNode The new node which was created with the provided parent.
    */
-  public ParentTreeNode addChild(String parentId, String parentTypeCode, String childId, String childTypeCode, String hierarchyCode)
+  public ParentTreeNode addChild(String parentId, String parentTypeCode, String childId, String childTypeCode, String hierarchyCode) throws AuthenticationException, ServerResponseException
   {
     if (childId == null || childId.length() == 0)
     {
@@ -251,8 +263,10 @@ public class HttpRegistryClient extends RegistryAdapter
    * @pre the status on the {@link GeoObject} is NOT in the new state.
    * 
    * @param _geoObject
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    */
-  public GeoObject updateGeoObject(GeoObject _geoObject)
+  public GeoObject updateGeoObject(GeoObject _geoObject) throws AuthenticationException, ServerResponseException
   {
     if (_geoObject == null)
     {
@@ -286,8 +300,10 @@ public class HttpRegistryClient extends RegistryAdapter
    * 
    * @return {@link ChildTreeNode} containing the {@link GeoObject} with the
    *         given UID and its children of the given types.
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    */
-  public ChildTreeNode getChildGeoObjects(String parentId, String parentTypeCode, String[] childrenTypes, Boolean recursive)
+  public ChildTreeNode getChildGeoObjects(String parentId, String parentTypeCode, String[] childrenTypes, Boolean recursive) throws AuthenticationException, ServerResponseException
   {
     if (parentId == null || parentId.length() == 0)
     {
@@ -346,8 +362,10 @@ public class HttpRegistryClient extends RegistryAdapter
    * 
    * @return {@link ParentTreeNode} containing the {@link GeoObject} with the
    *         given UID and its children of the given types.
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    */
-  public ParentTreeNode getParentGeoObjects(String childId, String childTypeCode, String[] parentTypes, Boolean recursive)
+  public ParentTreeNode getParentGeoObjects(String childId, String childTypeCode, String[] parentTypes, Boolean recursive) throws AuthenticationException, ServerResponseException
   {
     if (childId == null || childId.length() == 0)
     {
@@ -396,8 +414,10 @@ public class HttpRegistryClient extends RegistryAdapter
    * @param numberOfUids
    * 
    * @return An array of UIDs.
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    */
-  public Set<String> getGeoObjectUids(Integer numberOfUids)
+  public Set<String> getGeoObjectUids(Integer numberOfUids) throws AuthenticationException, ServerResponseException
   {
     if (numberOfUids == null)
     {
@@ -426,8 +446,10 @@ public class HttpRegistryClient extends RegistryAdapter
    * Sends the given {@link GeoObjectType} to the common geo-registry to be created.
    * 
    * @param geoObjectType
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    */
-  public void createGeoObjectType(GeoObjectType geoObjectType)
+  public void createGeoObjectType(GeoObjectType geoObjectType) throws AuthenticationException, ServerResponseException
   {
     if (geoObjectType == null)
     {
@@ -444,6 +466,8 @@ public class HttpRegistryClient extends RegistryAdapter
   }
   
   /**
+   * @throws ServerResponseException 
+   * @throws AuthenticationException 
    * Returns an array of {@link GeoOjectType} objects that define the given list of types.
    *
     * @pre 
@@ -454,7 +478,7 @@ public class HttpRegistryClient extends RegistryAdapter
     * @returns
    * @throws
    **/
-  public GeoObjectType[] getGeoObjectTypes(String[] codes)
+  public GeoObjectType[] getGeoObjectTypes(String[] codes) throws AuthenticationException, ServerResponseException
   {
     if (codes == null)
     {
@@ -482,8 +506,10 @@ public class HttpRegistryClient extends RegistryAdapter
    * Returns an array of {@link HierarchyType} that define the given list of types. If no types are provided then all will be returned.
    * 
    * @param types An array of HierarchyType codes that will be retrieved.
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
    */
-  private HierarchyType[] getHierarchyTypes(String[] types)
+  private HierarchyType[] getHierarchyTypes(String[] types) throws AuthenticationException, ServerResponseException
   {
     if (types == null)
     {

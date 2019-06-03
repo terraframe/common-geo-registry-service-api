@@ -21,7 +21,6 @@ package org.commongeoregistry.adapter.action;
 import org.commongeoregistry.adapter.constants.RegistryUrls;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class CreateGeoObjectTypeActionDTO extends AbstractActionDTO
 {

@@ -19,7 +19,6 @@
 package org.commongeoregistry.adapter;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.id.AdapterIdServiceIF;

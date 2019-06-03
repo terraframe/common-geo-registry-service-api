@@ -5,9 +5,11 @@ import android.content.Context;
 import com.google.gson.JsonObject;
 
 import org.commongeoregistry.adapter.http.AbstractHttpConnector;
+import org.commongeoregistry.adapter.http.AuthenticationException;
 import org.commongeoregistry.adapter.http.Connector;
 import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseProcessor;
+import org.commongeoregistry.adapter.http.ServerResponseException;
 
 import java.util.HashMap;
 
@@ -18,13 +20,13 @@ public class AndroidTestRegistryClient extends AndroidRegistryClient
         super(connector, context);
     }
 
-    public void testSetUp()
+    public void testSetUp() throws AuthenticationException, ServerResponseException
     {
         HttpResponse resp = ((AbstractHttpConnector)this.getConnector()).httpGetRaw("integrationtest/testSetUp", new HashMap<String, String>());
         ResponseProcessor.validateStatusCode(resp);
     }
 
-    public void testCleanUp()
+    public void testCleanUp() throws AuthenticationException, ServerResponseException
     {
         HttpResponse resp = ((AbstractHttpConnector)this.getConnector()).httpGetRaw("integrationtest/testCleanUp", new HashMap<String, String>());
         ResponseProcessor.validateStatusCode(resp);

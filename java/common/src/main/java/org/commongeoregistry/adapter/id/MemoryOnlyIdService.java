@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.id;
 
@@ -23,38 +24,51 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.commongeoregistry.adapter.HttpRegistryClient;
+import org.commongeoregistry.adapter.http.AuthenticationException;
+import org.commongeoregistry.adapter.http.ServerResponseException;
 
 public class MemoryOnlyIdService implements AdapterIdServiceIF
 {
-  protected Set<String> cache;
+  protected Set<String>        cache;
 
   protected HttpRegistryClient client;
-  
-  protected Object lock;
-  
+
+  protected Object             lock;
+
   public MemoryOnlyIdService()
   {
     this.cache = new HashSet<String>(100);
     this.lock = new Object();
   }
-  
+
   public void setClient(HttpRegistryClient client)
   {
     this.client = client;
   }
-  
+
   @Override
   public void populate(int size)
   {
-    synchronized(lock)
+    synchronized (lock)
     {
       int amount = size - this.cache.size();
-      
+
       if (amount > 0)
       {
-        Set<String> fetchedSet = this.client.getGeoObjectUids(amount);
-        
-        this.cache.addAll(fetchedSet);
+        try
+        {
+          Set<String> fetchedSet = this.client.getGeoObjectUids(amount);
+
+          this.cache.addAll(fetchedSet);
+        }
+        catch (AuthenticationException e)
+        {
+          throw new RuntimeException(e);
+        }
+        catch (ServerResponseException e)
+        {
+          throw new RuntimeException(e);
+        }
       }
     }
   }
@@ -62,15 +76,15 @@ public class MemoryOnlyIdService implements AdapterIdServiceIF
   @Override
   public String next() throws EmptyIdCacheException
   {
-    synchronized(lock)
+    synchronized (lock)
     {
       if (this.cache.size() > 0)
       {
         Iterator<String> it = this.cache.iterator();
-        
+
         String id = it.next();
         it.remove();
-        
+
         return id;
       }
       else

@@ -9,6 +9,8 @@ import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
+import org.commongeoregistry.adapter.http.AuthenticationException;
+import org.commongeoregistry.adapter.http.ServerResponseException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,11 +20,12 @@ import org.junit.Test;
  */
 public class AndroidIntegrationTest
 {
-    private static final String serverUrl = "https://192.168.0.23:8443/georegistry";
+//    private static final String serverUrl = "https://192.168.0.23:8443/georegistry";
+    public static final String serverUrl = "https://10.0.0.2:8443/georegistry";
 
-    private static final String user = "admin";
+    public static final String user = "admin";
 
-    private static final String pass = "_nm8P4gfdWxGqNRQ#8";
+    public static final String pass = "_nm8P4gfdWxGqNRQ#8";
 
     private USATestData data;
 
@@ -35,8 +38,7 @@ public class AndroidIntegrationTest
     private USATestData.TestGeoObjectInfo TEST_ADD_CHILD;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() throws AuthenticationException, ServerResponseException {
         Context context = InstrumentationRegistry.getTargetContext();
 
         AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();
@@ -62,7 +64,7 @@ public class AndroidIntegrationTest
     }
 
     @After
-    public void cleanUp()
+    public void cleanUp() throws AuthenticationException, ServerResponseException
     {
         client.testCleanUp();
     }
@@ -80,7 +82,7 @@ public class AndroidIntegrationTest
 //    }
 
     @Test
-    public void testCreateGetUpdateGeoObject()
+    public void testCreateGetUpdateGeoObject() throws AuthenticationException, ServerResponseException
     {
         // 1. Create a Geo Object locally
         GeoObject goUtah = UTAH.newGeoObject();
@@ -109,7 +111,7 @@ public class AndroidIntegrationTest
     }
 
     @Test
-    public void testGetParentGeoObjects()
+    public void testGetParentGeoObjects() throws AuthenticationException, ServerResponseException
     {
         int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
       
@@ -137,7 +139,7 @@ public class AndroidIntegrationTest
     }
 
     @Test
-    public void testGetChildGeObjects()
+    public void testGetChildGeObjects() throws AuthenticationException, ServerResponseException
     {
         int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
       
@@ -163,7 +165,7 @@ public class AndroidIntegrationTest
     }
 
     @Test
-    public void testExecuteActions()
+    public void testExecuteActions() throws AuthenticationException, ServerResponseException
     {
         // Create a new GeoObject locally
         GeoObject goCali = CALIFORNIA.newGeoObject();
@@ -196,7 +198,7 @@ public class AndroidIntegrationTest
     }
 
     @Test
-    public void testAddChild()
+    public void testAddChild() throws AuthenticationException, ServerResponseException
     {
         ParentTreeNode ptnTestState = client.addChild(data.WASHINGTON.getUid(), data.WASHINGTON.getUniversal().getCode(), TEST_ADD_CHILD.getUid(), TEST_ADD_CHILD.getUniversal().getCode(), data.LOCATED_IN.getCode());
 

@@ -6,9 +6,11 @@ import com.google.gson.JsonObject;
 import org.commongeoregistry.adapter.HttpRegistryClient;
 import org.commongeoregistry.adapter.action.AbstractActionDTO;
 import org.commongeoregistry.adapter.constants.RegistryUrls;
+import org.commongeoregistry.adapter.http.AuthenticationException;
 import org.commongeoregistry.adapter.http.Connector;
 import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseProcessor;
+import org.commongeoregistry.adapter.http.ServerResponseException;
 
 import java.util.Date;
 import java.util.List;
@@ -63,7 +65,7 @@ public class AndroidRegistryClient extends HttpRegistryClient
    * 
    * common geo-registry.
    */
-  public void pushObjectsToRegistry()
+  public void pushObjectsToRegistry() throws AuthenticationException, ServerResponseException
   {
     List<AbstractActionDTO> actions = this.localObjectCache.getUnpushedActionHistory();
 

@@ -19,7 +19,6 @@
 package org.commongeoregistry.adapter;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms.GeoObjectStatusTerm;

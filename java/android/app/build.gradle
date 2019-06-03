@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId 'org.commongeoregistry.adapter.android'
-        minSdkVersion 24
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -30,7 +30,7 @@ android {
 
 dependencies {
     implementation project(':cgradapter_android')
-    implementation 'com.cgr.adapter:cgradapter-common:0.3.2-SNAPSHOT'
+    implementation 'com.cgr.adapter:cgradapter-common:0.3.3-SNAPSHOT'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'

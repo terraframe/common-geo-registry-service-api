@@ -12,6 +12,8 @@ import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
+import org.commongeoregistry.adapter.http.AuthenticationException;
+import org.commongeoregistry.adapter.http.ServerResponseException;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 import org.junit.Assert;
@@ -61,7 +63,7 @@ public class USATestData
     this.client = client;
   }
 
-  public void setUp()
+  public void setUp() throws AuthenticationException, ServerResponseException
   {
     for (TestGeoObjectInfo geo : GEOOBJECTS)
     {
@@ -465,7 +467,7 @@ public class USATestData
       return universal;
     }
 
-    public void fetchUid()
+    public void fetchUid() throws AuthenticationException, ServerResponseException
     {
       this.setUid(client.getGeoObjectByCode(this.getCode(), this.getUniversal().getCode()).getUid());
     }

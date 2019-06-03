@@ -21,6 +21,8 @@ package org.commongeoregistry.adapter.dataaccess;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
 import org.commongeoregistry.adapter.metadata.DefaultSerializer;
@@ -106,14 +108,17 @@ public class LocalizedValue
   public JsonObject toJSON(CustomSerializer serializer)
   {
     JsonArray array = new JsonArray();
-
-    this.localeValues.forEach((key, value) -> {
-      JsonObject locale = new JsonObject();
-      locale.addProperty(LOCALE, key);
-      locale.addProperty(VALUE, value);
-
-      array.add(locale);
-    });
+    
+    Set<Entry<String, String>> entries = this.localeValues.entrySet();
+    
+    for(Entry<String, String> entry : entries)
+    {
+    	JsonObject locale = new JsonObject();
+    	locale.addProperty(LOCALE, entry.getKey());
+    	locale.addProperty(VALUE, entry.getValue());
+    	
+    	array.add(locale);
+    }
 
     JsonObject object = new JsonObject();
 
