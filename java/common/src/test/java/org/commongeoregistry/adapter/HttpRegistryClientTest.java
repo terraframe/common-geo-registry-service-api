@@ -18,6 +18,8 @@
  */
 package org.commongeoregistry.adapter;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,7 +48,7 @@ public class HttpRegistryClientTest
 {
 
   @Test
-  public void testRefreshMetadataCache() throws AuthenticationException, ServerResponseException
+  public void testRefreshMetadataCache() throws AuthenticationException, ServerResponseException, IOException
   {
     /*
      * Setup mock objects
@@ -114,8 +116,8 @@ public class HttpRegistryClientTest
     Assert.assertEquals(locatedIn.getLabel().getValue(), htCache.getLabel().getValue());
   }
 
-  @Test(expected = ResponseException.class)
-  public void testRefreshMetadataCacheBadStatus() throws AuthenticationException, ServerResponseException
+  @Test(expected = ServerResponseException.class)
+  public void testRefreshMetadataCacheBadStatus() throws AuthenticationException, ServerResponseException, IOException
   {
     HttpResponse response = new HttpResponse(new JsonArray().toString(), 400);
     MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{new MockHttpRequest(response)});
@@ -128,7 +130,7 @@ public class HttpRegistryClientTest
   }
 
   @Test
-  public void testGetGeoObject() throws AuthenticationException, ServerResponseException
+  public void testGetGeoObject() throws AuthenticationException, ServerResponseException, IOException, InvocationTargetException
   {
     /*
      * Setup mock objects
@@ -174,7 +176,7 @@ public class HttpRegistryClientTest
   }
 
   @Test(expected = RequiredParameterException.class)
-  public void testGetGeoObjectMissingUID() throws AuthenticationException, ServerResponseException
+  public void testGetGeoObjectMissingUID() throws AuthenticationException, ServerResponseException, IOException
   {
     /*
      * Invoke method
@@ -184,8 +186,8 @@ public class HttpRegistryClientTest
     client.getGeoObject(null, null);
   }
 
-  @Test(expected = ResponseException.class)
-  public void testGetGeoObjectBadStatus() throws AuthenticationException, ServerResponseException
+  @Test(expected = ServerResponseException.class)
+  public void testGetGeoObjectBadStatus() throws AuthenticationException, ServerResponseException, IOException
   {
     /*
      * Invoke method
@@ -196,7 +198,7 @@ public class HttpRegistryClientTest
   }
 
   @Test
-  public void testCreateGeoObject() throws AuthenticationException, ServerResponseException
+  public void testCreateGeoObject() throws AuthenticationException, ServerResponseException, IOException, InvocationTargetException
   {
     /*
      * Setup mock objects
@@ -236,7 +238,7 @@ public class HttpRegistryClientTest
   }
 
   @Test(expected = RequiredParameterException.class)
-  public void testCreateGeoObjectMissingUID() throws AuthenticationException, ServerResponseException
+  public void testCreateGeoObjectMissingUID() throws AuthenticationException, ServerResponseException, IOException
   {
     /*
      * Invoke method
@@ -247,7 +249,7 @@ public class HttpRegistryClientTest
   }
 
   @Test
-  public void testUpdateGeoObject() throws AuthenticationException, ServerResponseException
+  public void testUpdateGeoObject() throws AuthenticationException, ServerResponseException, IOException, InvocationTargetException
   {
     /*
      * Setup mock objects
@@ -288,7 +290,7 @@ public class HttpRegistryClientTest
   }
 
   @Test(expected = RequiredParameterException.class)
-  public void testUpdateGeoObjectMissingUID() throws AuthenticationException, ServerResponseException
+  public void testUpdateGeoObjectMissingUID() throws AuthenticationException, ServerResponseException, IOException
   {
     /*
      * Invoke method
@@ -299,7 +301,7 @@ public class HttpRegistryClientTest
   }
 
   @Test
-  public void testGetChildGeoObjects() throws AuthenticationException, ServerResponseException
+  public void testGetChildGeoObjects() throws AuthenticationException, ServerResponseException, IOException, InvocationTargetException
   {
     MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
@@ -370,7 +372,7 @@ public class HttpRegistryClientTest
   }
 
   @Test(expected = RequiredParameterException.class)
-  public void testGetChildGeoObjectsMissingParentUID() throws AuthenticationException, ServerResponseException
+  public void testGetChildGeoObjectsMissingParentUID() throws AuthenticationException, ServerResponseException, IOException
   {
     /*
      * Invoke method
@@ -381,7 +383,7 @@ public class HttpRegistryClientTest
   }
   
   @Test(expected = RequiredParameterException.class)
-  public void testGetChildGeoObjectsMissingChildCode() throws AuthenticationException, ServerResponseException
+  public void testGetChildGeoObjectsMissingChildCode() throws AuthenticationException, ServerResponseException, IOException
   {
     /*
      * Invoke method
@@ -392,7 +394,7 @@ public class HttpRegistryClientTest
   }
 
   @Test
-  public void testGetParentGeoObjects() throws AuthenticationException, ServerResponseException
+  public void testGetParentGeoObjects() throws AuthenticationException, ServerResponseException, IOException, InvocationTargetException
   {
     MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
@@ -463,7 +465,7 @@ public class HttpRegistryClientTest
   }
 
   @Test(expected = RequiredParameterException.class)
-  public void testGetParentGeoObjectsMissingParentUID() throws AuthenticationException, ServerResponseException
+  public void testGetParentGeoObjectsMissingParentUID() throws AuthenticationException, ServerResponseException, IOException
   {
     /*
      * Invoke method
@@ -474,7 +476,7 @@ public class HttpRegistryClientTest
   }
 
   @Test
-  public void testGetGeoObjectUids() throws AuthenticationException, ServerResponseException
+  public void testGetGeoObjectUids() throws AuthenticationException, ServerResponseException, IOException, InvocationTargetException
   {
     MockHttpConnector connector = new MockHttpConnector(new MockHttpRequest[]{MockIdService.getIdRequest(500)});
     HttpRegistryClient client = new HttpRegistryClient(connector);
@@ -515,7 +517,7 @@ public class HttpRegistryClientTest
   }
 
   @Test(expected = RequiredParameterException.class)
-  public void testGetGeoObjectUidsMissingParentUID() throws AuthenticationException, ServerResponseException
+  public void testGetGeoObjectUidsMissingParentUID() throws AuthenticationException, ServerResponseException, IOException
   {
     /*
      * Invoke method

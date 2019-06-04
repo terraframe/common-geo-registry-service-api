@@ -11,10 +11,12 @@ import org.commongeoregistry.adapter.http.AuthenticationException;
 import org.commongeoregistry.adapter.http.ServerResponseException;
 import org.junit.Test;
 
+import java.io.IOException;
+
 public class ExceptionIntegrationTest {
 
     @Test(expected = AuthenticationException.class)
-    public void testBadCredentials() throws AuthenticationException, ServerResponseException {
+    public void testBadCredentials() throws AuthenticationException, ServerResponseException, IOException {
         Context context = InstrumentationRegistry.getTargetContext();
 
         AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();
@@ -27,8 +29,7 @@ public class ExceptionIntegrationTest {
     }
 
     @Test(expected = ServerResponseException.class)
-    public void testBadGeoObjectType() throws AuthenticationException, ServerResponseException
-    {
+    public void testBadGeoObjectType() throws AuthenticationException, ServerResponseException, IOException {
         Context context = InstrumentationRegistry.getTargetContext();
 
         AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();

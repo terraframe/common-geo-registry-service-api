@@ -12,6 +12,7 @@ import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseProcessor;
 import org.commongeoregistry.adapter.http.ServerResponseException;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -65,8 +66,7 @@ public class AndroidRegistryClient extends HttpRegistryClient
    * 
    * common geo-registry.
    */
-  public void pushObjectsToRegistry() throws AuthenticationException, ServerResponseException
-  {
+  public void pushObjectsToRegistry() throws AuthenticationException, ServerResponseException, IOException {
     List<AbstractActionDTO> actions = this.localObjectCache.getUnpushedActionHistory();
 
     String sActions = AbstractActionDTO.serializeActions(actions).toString();

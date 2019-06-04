@@ -6,12 +6,14 @@ import org.commongeoregistry.adapter.id.AdapterIdServiceIF;
 import org.commongeoregistry.adapter.id.EmptyIdCacheException;
 import org.commongeoregistry.adapter.id.MemoryOnlyIdService;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 public class AndroidSQLiteIdService extends MemoryOnlyIdService implements AdapterIdServiceIF
 {
     @Override
-    public void populate(int size)
+    public void populate(int size) throws AuthenticationException, ServerResponseException, IOException
     {
         synchronized(lock)
         {
@@ -20,19 +22,9 @@ public class AndroidSQLiteIdService extends MemoryOnlyIdService implements Adapt
             int amount = size - androidClient.getLocalCache().countNumberRegistryIds();
 
             if (amount > 0) {
-                try {
                     Set<String> fetchedSet = this.client.getGeoObjectUids(amount);
 
                     androidClient.getLocalCache().addRegistryIds(fetchedSet);
-                }
-                catch(AuthenticationException e)
-                {
-                    throw new RuntimeException(e);
-                }
-                catch(ServerResponseException e)
-                {
-                    throw new RuntimeException(e);
-                }
             }
         }
     }

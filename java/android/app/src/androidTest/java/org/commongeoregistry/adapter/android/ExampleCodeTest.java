@@ -9,11 +9,13 @@ import org.commongeoregistry.adapter.http.AuthenticationException;
 import org.commongeoregistry.adapter.http.ServerResponseException;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+
 public class ExampleCodeTest
 {
     @Test
-    public void testExampleCode() throws AuthenticationException, ServerResponseException
-    {
+    public void testExampleCode() throws AuthenticationException, ServerResponseException, IOException, InvocationTargetException {
         // Configure our connection with the remote registry server
         AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();
         connector.setCredentials("admin", "admin");

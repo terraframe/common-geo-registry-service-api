@@ -15,6 +15,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Contains tests that run in Android and require a common geo registry server running.
  */
@@ -38,7 +41,7 @@ public class AndroidIntegrationTest
     private USATestData.TestGeoObjectInfo TEST_ADD_CHILD;
 
     @Before
-    public void setUp() throws AuthenticationException, ServerResponseException {
+    public void setUp() throws AuthenticationException, ServerResponseException, IOException {
         Context context = InstrumentationRegistry.getTargetContext();
 
         AndroidHttpCredentialConnector connector = new AndroidHttpCredentialConnector();
@@ -64,8 +67,7 @@ public class AndroidIntegrationTest
     }
 
     @After
-    public void cleanUp() throws AuthenticationException, ServerResponseException
-    {
+    public void cleanUp() throws AuthenticationException, ServerResponseException, IOException {
         client.testCleanUp();
     }
 
@@ -82,8 +84,7 @@ public class AndroidIntegrationTest
 //    }
 
     @Test
-    public void testCreateGetUpdateGeoObject() throws AuthenticationException, ServerResponseException
-    {
+    public void testCreateGetUpdateGeoObject() throws AuthenticationException, ServerResponseException, IOException {
         // 1. Create a Geo Object locally
         GeoObject goUtah = UTAH.newGeoObject();
 
@@ -111,8 +112,7 @@ public class AndroidIntegrationTest
     }
 
     @Test
-    public void testGetParentGeoObjects() throws AuthenticationException, ServerResponseException
-    {
+    public void testGetParentGeoObjects() throws AuthenticationException, ServerResponseException, IOException {
         int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
       
         String childId = data.CO_D_TWO.getUid();
@@ -139,8 +139,7 @@ public class AndroidIntegrationTest
     }
 
     @Test
-    public void testGetChildGeObjects() throws AuthenticationException, ServerResponseException
-    {
+    public void testGetChildGeObjects() throws AuthenticationException, ServerResponseException, IOException {
         int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
       
         String[] childrenTypes = new String[]{data.STATE.getCode(), data.DISTRICT.getCode()};
@@ -165,8 +164,7 @@ public class AndroidIntegrationTest
     }
 
     @Test
-    public void testExecuteActions() throws AuthenticationException, ServerResponseException
-    {
+    public void testExecuteActions() throws AuthenticationException, ServerResponseException, IOException {
         // Create a new GeoObject locally
         GeoObject goCali = CALIFORNIA.newGeoObject();
         client.getLocalCache().createGeoObject(goCali);
@@ -198,8 +196,7 @@ public class AndroidIntegrationTest
     }
 
     @Test
-    public void testAddChild() throws AuthenticationException, ServerResponseException
-    {
+    public void testAddChild() throws AuthenticationException, ServerResponseException, IOException {
         ParentTreeNode ptnTestState = client.addChild(data.WASHINGTON.getUid(), data.WASHINGTON.getUniversal().getCode(), TEST_ADD_CHILD.getUid(), TEST_ADD_CHILD.getUniversal().getCode(), data.LOCATED_IN.getCode());
 
         boolean found = false;

@@ -11,6 +11,7 @@ import org.commongeoregistry.adapter.http.HttpResponse;
 import org.commongeoregistry.adapter.http.ResponseProcessor;
 import org.commongeoregistry.adapter.http.ServerResponseException;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 public class AndroidTestRegistryClient extends AndroidRegistryClient
@@ -20,14 +21,12 @@ public class AndroidTestRegistryClient extends AndroidRegistryClient
         super(connector, context);
     }
 
-    public void testSetUp() throws AuthenticationException, ServerResponseException
-    {
+    public void testSetUp() throws AuthenticationException, ServerResponseException, IOException {
         HttpResponse resp = ((AbstractHttpConnector)this.getConnector()).httpGetRaw("integrationtest/testSetUp", new HashMap<String, String>());
         ResponseProcessor.validateStatusCode(resp);
     }
 
-    public void testCleanUp() throws AuthenticationException, ServerResponseException
-    {
+    public void testCleanUp() throws AuthenticationException, ServerResponseException, IOException {
         HttpResponse resp = ((AbstractHttpConnector)this.getConnector()).httpGetRaw("integrationtest/testCleanUp", new HashMap<String, String>());
         ResponseProcessor.validateStatusCode(resp);
     }

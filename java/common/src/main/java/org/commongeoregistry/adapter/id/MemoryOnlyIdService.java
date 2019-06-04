@@ -19,6 +19,8 @@
  */
 package org.commongeoregistry.adapter.id;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -47,7 +49,7 @@ public class MemoryOnlyIdService implements AdapterIdServiceIF
   }
 
   @Override
-  public void populate(int size)
+  public void populate(int size) throws AuthenticationException, ServerResponseException, IOException
   {
     synchronized (lock)
     {
@@ -55,20 +57,9 @@ public class MemoryOnlyIdService implements AdapterIdServiceIF
 
       if (amount > 0)
       {
-        try
-        {
-          Set<String> fetchedSet = this.client.getGeoObjectUids(amount);
+        Set<String> fetchedSet = this.client.getGeoObjectUids(amount);
 
-          this.cache.addAll(fetchedSet);
-        }
-        catch (AuthenticationException e)
-        {
-          throw new RuntimeException(e);
-        }
-        catch (ServerResponseException e)
-        {
-          throw new RuntimeException(e);
-        }
+        this.cache.addAll(fetchedSet);
       }
     }
   }

@@ -53,12 +53,12 @@ public class ResponseProcessor
         }
         catch (Throwable t)
         {
-          throw new ResponseException("Invalid status code [" + statusCode + "] [" + content + "].", statusCode);
+          throw new ServerResponseException(content, statusCode, null, null);
         }
       }
       else
       {
-        throw new ResponseException("Invalid status code [" + statusCode + "] [" + content + "].", statusCode);
+        throw new ServerResponseException(content, statusCode, null, null);
       }
     }
   }

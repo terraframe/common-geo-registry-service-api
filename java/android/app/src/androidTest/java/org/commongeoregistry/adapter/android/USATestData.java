@@ -1,5 +1,6 @@
 package org.commongeoregistry.adapter.android;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -63,8 +64,7 @@ public class USATestData
     this.client = client;
   }
 
-  public void setUp() throws AuthenticationException, ServerResponseException
-  {
+  public void setUp() throws AuthenticationException, ServerResponseException, IOException {
     for (TestGeoObjectInfo geo : GEOOBJECTS)
     {
       geo.fetchUid();
@@ -467,8 +467,7 @@ public class USATestData
       return universal;
     }
 
-    public void fetchUid() throws AuthenticationException, ServerResponseException
-    {
+    public void fetchUid() throws AuthenticationException, ServerResponseException, IOException {
       this.setUid(client.getGeoObjectByCode(this.getCode(), this.getUniversal().getCode()).getUid());
     }
   }

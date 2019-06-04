@@ -59,7 +59,7 @@ public abstract class AbstractHttpConnector implements Connector
   }
 
   @Override
-  public HttpResponse httpGet(String url, Map<String, String> params) throws AuthenticationException
+  public HttpResponse httpGet(String url, Map<String, String> params) throws AuthenticationException, IOException
   {
     StringBuilder builder = new StringBuilder();
     builder.append(RegistryUrls.REGISTRY_CONTROLLER_URL);
@@ -75,74 +75,67 @@ public abstract class AbstractHttpConnector implements Connector
    * @see org.commongeoregistry.adapter.http.Connector#httpGet(java.lang.String,
    * java.util.Map)
    */
-  public HttpResponse httpGetRaw(String url, Map<String, String> params) throws AuthenticationException
+  public HttpResponse httpGetRaw(String url, Map<String, String> params) throws AuthenticationException, IOException
   {
-    try
+    StringBuilder builder = new StringBuilder();
+    builder.append(this.getServerUrl());
+    builder.append(url);
+
+    if (params.size() > 0)
     {
-      StringBuilder builder = new StringBuilder();
-      builder.append(this.getServerUrl());
-      builder.append(url);
+      Set<Entry<String, String>> entries = params.entrySet();
 
-      if (params.size() > 0)
+      int count = 0;
+      for (Entry<String, String> entry : entries)
       {
-        Set<Entry<String, String>> entries = params.entrySet();
+        String value = entry.getValue();
 
-        int count = 0;
-        for (Entry<String, String> entry : entries)
-        {
-          String value = entry.getValue();
+        builder.append( ( count == 0 ? "?" : "&" ));
+        builder.append(URLEncoder.encode(entry.getKey(), "utf-8"));
+        builder.append("=");
+        builder.append(URLEncoder.encode(value, "utf-8"));
 
-          builder.append( ( count == 0 ? "?" : "&" ));
-          builder.append(URLEncoder.encode(entry.getKey(), "utf-8"));
-          builder.append("=");
-          builder.append(URLEncoder.encode(value, "utf-8"));
-
-          count++;
-        }
-      }
-
-      URL obj = new URL(builder.toString());
-      HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-      try
-      {
-        con.setRequestMethod("GET");
-        con.setRequestProperty("Accept", "application/json");
-
-        this.configureHttpUrlConnectionPost(con);
-
-        con.connect();
-
-        int status = this.getResponseCode(con);
-
-        if (status == HttpURLConnection.HTTP_UNAUTHORIZED)
-        {
-          throw new AuthenticationException();
-        }
-
-        InputStream is = ( status != HttpURLConnection.HTTP_OK ) ? con.getErrorStream() : con.getInputStream();
-
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(is)))
-        {
-          String inputLine;
-          StringBuffer response = new StringBuffer();
-
-          while ( ( inputLine = in.readLine() ) != null)
-          {
-            response.append(inputLine);
-          }
-
-          return new HttpResponse(response.toString(), con.getResponseCode());
-        }
-      }
-      finally
-      {
-        con.disconnect();
+        count++;
       }
     }
-    catch (IOException e)
+
+    URL obj = new URL(builder.toString());
+    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+    try
     {
-      throw new RuntimeException(e);
+      con.setRequestMethod("GET");
+      con.setRequestProperty("Accept", "application/json");
+
+      this.configureHttpUrlConnectionPost(con);
+
+      con.connect();
+
+      int status = this.getResponseCode(con);
+
+      if (status == HttpURLConnection.HTTP_UNAUTHORIZED)
+      {
+        throw new AuthenticationException();
+      }
+
+      InputStream is = ( status != HttpURLConnection.HTTP_OK ) ? con.getErrorStream() : con.getInputStream();
+
+      try (BufferedReader in = new BufferedReader(new InputStreamReader(is)))
+      {
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ( ( inputLine = in.readLine() ) != null)
+        {
+          response.append(inputLine);
+        }
+
+        return new HttpResponse(response.toString(), con.getResponseCode());
+      }
+    }
+    finally
+    {
+      con.disconnect();
     }
   }
 
@@ -176,67 +169,60 @@ public abstract class AbstractHttpConnector implements Connector
    * java.lang.String)
    */
   @Override
-  public HttpResponse httpPost(String url, String body) throws AuthenticationException
+  public HttpResponse httpPost(String url, String body) throws AuthenticationException, IOException
   {
+    StringBuilder builder = new StringBuilder();
+    builder.append(this.getServerUrl());
+    builder.append(RegistryUrls.REGISTRY_CONTROLLER_URL);
+    builder.append("/");
+    builder.append(url);
+
+    URL obj = new URL(builder.toString());
+    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
     try
     {
-      StringBuilder builder = new StringBuilder();
-      builder.append(this.getServerUrl());
-      builder.append(RegistryUrls.REGISTRY_CONTROLLER_URL);
-      builder.append("/");
-      builder.append(url);
+      con.setRequestProperty("Content-Type", "application/json");
+      con.setRequestMethod("POST");
+      con.setDoOutput(true);
+      con.setChunkedStreamingMode(0);
 
-      URL obj = new URL(builder.toString());
-      HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+      this.configureHttpUrlConnectionPost(con);
 
-      try
+      con.connect();
+
+      /*
+       * Post the data
+       */
+      OutputStream out = new BufferedOutputStream(con.getOutputStream());
+      out.write(body.getBytes("utf-8"));
+      out.close();
+
+      int status = this.getResponseCode(con);
+
+      if (status == HttpURLConnection.HTTP_UNAUTHORIZED)
       {
-        con.setRequestProperty("Content-Type", "application/json");
-        con.setRequestMethod("POST");
-        con.setDoOutput(true);
-        con.setChunkedStreamingMode(0);
-
-        this.configureHttpUrlConnectionPost(con);
-
-        con.connect();
-
-        /*
-         * Post the data
-         */
-        OutputStream out = new BufferedOutputStream(con.getOutputStream());
-        out.write(body.getBytes("utf-8"));
-        out.close();
-
-        int status = this.getResponseCode(con);
-
-        if (status == HttpURLConnection.HTTP_UNAUTHORIZED)
-        {
-          throw new AuthenticationException();
-        }
-
-        InputStream is = ( status != HttpURLConnection.HTTP_OK ) ? con.getErrorStream() : con.getInputStream();
-
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(is)))
-        {
-          String inputLine;
-          StringBuffer response = new StringBuffer();
-
-          while ( ( inputLine = in.readLine() ) != null)
-          {
-            response.append(inputLine);
-          }
-
-          return new HttpResponse(response.toString(), con.getResponseCode());
-        }
+        throw new AuthenticationException();
       }
-      finally
+
+      InputStream is = ( status != HttpURLConnection.HTTP_OK ) ? con.getErrorStream() : con.getInputStream();
+
+      try (BufferedReader in = new BufferedReader(new InputStreamReader(is)))
       {
-        con.disconnect();
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ( ( inputLine = in.readLine() ) != null)
+        {
+          response.append(inputLine);
+        }
+
+        return new HttpResponse(response.toString(), con.getResponseCode());
       }
     }
-    catch (IOException e)
+    finally
     {
-      throw new RuntimeException(e);
+      con.disconnect();
     }
   }
 }
