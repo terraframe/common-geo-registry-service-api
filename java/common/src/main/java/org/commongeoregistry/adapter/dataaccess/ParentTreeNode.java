@@ -18,6 +18,7 @@
  */
 package org.commongeoregistry.adapter.dataaccess;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,6 +63,36 @@ public class ParentTreeNode extends TreeNode
   public List<ParentTreeNode> getParents() 
   {
     return this.parents;
+  }
+  
+  /**
+   * Locates and returns parents who are of the given GeoObjectType.
+   * 
+   * @param typeCode
+   * @return
+   */
+  public List<ParentTreeNode> findParentOfType(String typeCode)
+  {
+    List<ParentTreeNode> ret = new ArrayList<ParentTreeNode>();
+    
+    if (this.parents != null)
+    {
+      for (ParentTreeNode parent : parents)
+      {
+        if (parent.getGeoObject().getType().getCode().equals(typeCode))
+        {
+          ret.add(parent);
+        }
+        else
+        {
+          List<ParentTreeNode> parentOfParent = parent.findParentOfType(typeCode);
+          
+          ret.addAll(parentOfParent);
+        }
+      }
+    }
+    
+    return ret;
   }
 
   /**

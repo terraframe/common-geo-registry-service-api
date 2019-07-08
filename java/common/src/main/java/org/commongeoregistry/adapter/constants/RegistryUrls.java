@@ -40,6 +40,9 @@ public class RegistryUrls
   public static final String GEO_OBJECT_CREATE        = "geoobject/create";
   public static final String GEO_OBJECT_CREATE_PARAM_GEOOBJECT = "geoObject";
   
+  public static final String GEO_OBJECT_NEW_INSTANCE  = "geoobject/newGeoObjectInstance";
+  public static final String GEO_OBJECT_NEW_INSTANCE_PARAM_TYPE_CODE = "typeCode";
+  
   public static final String GEO_OBJECT_GET_CHILDREN = "geoobject/getchildren";
   public static final String GEO_OBJECT_GET_CHILDREN_PARAM_PARENTID = "parentId";
   public static final String GEO_OBJECT_GET_CHILDREN_PARAM_PARENT_TYPE_CODE = "parentTypeCode";
