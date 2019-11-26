@@ -1,5 +1,5 @@
 package org.commongeoregistry.adapter.metadata;
 
 public enum FrequencyType {
-  ANNUAL, QUARTER, WEEKLY, DAILY
+  ANNUAL, QUARTER, MONTHLY, DAILY
 }
