@@ -19,6 +19,7 @@
 package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
@@ -31,7 +32,8 @@ import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonPrimitive;
 
 public abstract class Attribute implements Serializable
 {
@@ -63,7 +65,7 @@ public abstract class Attribute implements Serializable
   {
     return this.type;
   }
-
+  
   public void validate(AttributeType attributeType, Object _value)
   {
     // Stub method for optional validation
@@ -114,15 +116,16 @@ public abstract class Attribute implements Serializable
     return this.getName() + ": " + this.getValue();
   }
 
-  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
+  public JsonElement toJSON(CustomSerializer serializer)
   {
     Object value = this.getValue();
+    
     if (value == null)
     {
-      value = "";
+      return JsonNull.INSTANCE;
     }
 
-    geoObjProps.addProperty(this.getName(), value.toString());
+    return new JsonPrimitive(value.toString());
   }
 
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)

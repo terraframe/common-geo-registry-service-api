@@ -74,9 +74,9 @@ public class AttributeLocal extends Attribute
   }
 
   @Override
-  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
+  public JsonElement toJSON(CustomSerializer serializer)
   {
-    geoObjProps.add(this.getName(), value.toJSON(serializer));
+    return value.toJSON(serializer);
   }
 
   @Override

@@ -60,11 +60,6 @@ public class AttributeInteger extends Attribute
     return this.integer;
   }
   
-  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
-  {
-    geoObjProps.addProperty(this.getName(), this.integer);
-  }
-  
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
     if (!(jValue instanceof JsonNull))

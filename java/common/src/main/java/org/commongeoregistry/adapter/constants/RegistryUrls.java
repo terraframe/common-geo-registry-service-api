@@ -72,6 +72,13 @@ public class RegistryUrls
   public static final String GEO_OBJECT_GET_UIDS      = "geoobject/get-uids";
   public static final String GEO_OBJECT_GET_UIDS_PARAM_AMOUNT = "amount";
   
+  public static final String GEO_OBJECT_GET_ATTRIBUTE_VERSIONS = "geoobject/getAttributeVersions";
+  public static final String GEO_OBJECT_GET_ATTRIBUTE_VERSIONS_PARAM_ID = "attributeId";
+  
+  public static final String GEO_OBJECT_SET_ATTRIBUTE_VERSIONS = "geoobject/setAttributeVersions";
+  public static final String GEO_OBJECT_SET_ATTRIBUTE_VERSIONS_PARAM_ID = "attributeId";
+  public static final String GEO_OBJECT_SET_ATTRIBUTE_VERSIONS_PARAM_COLLECTION = "collection";
+  
   /**
    * Geo Object Types
    */

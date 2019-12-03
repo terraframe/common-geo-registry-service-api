@@ -428,7 +428,11 @@ public class GeoObject implements Serializable
     {
       Attribute attr = this.attributeMap.get(key);
 
-      attr.toJSON(props, serializer);
+      JsonElement value = attr.toJSON(serializer);
+      if (!value.isJsonNull())
+      {
+        props.add(attr.getName(), value);
+      }
 
       // if(attr instanceof AttributeTerm)
       // {

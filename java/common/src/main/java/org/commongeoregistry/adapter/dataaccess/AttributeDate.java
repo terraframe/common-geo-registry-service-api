@@ -25,7 +25,8 @@ import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonPrimitive;
 
 public class AttributeDate extends Attribute
 {
@@ -62,11 +63,15 @@ public class AttributeDate extends Attribute
   }
 
   @Override
-  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
+  public JsonElement toJSON(CustomSerializer serializer)
   {
     if (this.date != null)
     {
-      geoObjProps.addProperty(this.getName(), this.date.getTime());
+      return new JsonPrimitive(this.date.getTime());
+    }
+    else
+    {
+      return JsonNull.INSTANCE;
     }
   }
 
