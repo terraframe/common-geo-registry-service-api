@@ -10,6 +10,7 @@ import org.commongeoregistry.adapter.Optional;
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
+import org.commongeoregistry.adapter.metadata.AttributeGeometryType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
@@ -49,6 +50,17 @@ public class GeoObjectOverTime implements Serializable
     this.attributeMap = attributeMap;
     
     this.setValue(DefaultAttribute.TYPE.getName(), this.geoObjectType.getCode());
+    addGeometryAttributeType(this.geoObjectType);
+  }
+  
+  private static void addGeometryAttributeType(GeoObjectType geoObjectType)
+  {
+    AttributeGeometryType geometry = (AttributeGeometryType) DefaultAttribute.GEOMETRY.createAttributeType();
+    
+    if (!geoObjectType.getAttribute(geometry.getName()).isPresent())
+    {
+      geoObjectType.addAttribute(geometry);
+    }
   }
   
   public static Map<String, ValueOverTimeCollectionDTO> buildVotAttributeMap(GeoObjectType geoObjectType)
@@ -66,6 +78,10 @@ public class GeoObjectOverTime implements Serializable
         attributeMap.put(attributeType.getName(), votc);
       }
     }
+    
+    AttributeGeometryType geometry = (AttributeGeometryType) DefaultAttribute.GEOMETRY.createAttributeType();
+    ValueOverTimeCollectionDTO votc = new ValueOverTimeCollectionDTO(geometry);
+    attributeMap.put(geometry.getName(), votc);
 
     return attributeMap;
   }

@@ -457,8 +457,8 @@ public class GeoObjectType implements Serializable
     status.setRootTerm(rootStatusTerm);
     defaultAttributeMap.put(DefaultAttribute.STATUS.getName(), status);
     
-    AttributeGeometryType geometry = (AttributeGeometryType) DefaultAttribute.GEOMETRY.createAttributeType();
-    defaultAttributeMap.put(DefaultAttribute.GEOMETRY.getName(), geometry);
+//    AttributeGeometryType geometry = (AttributeGeometryType) DefaultAttribute.GEOMETRY.createAttributeType();
+//    defaultAttributeMap.put(DefaultAttribute.GEOMETRY.getName(), geometry);
 
     return defaultAttributeMap;
   }
