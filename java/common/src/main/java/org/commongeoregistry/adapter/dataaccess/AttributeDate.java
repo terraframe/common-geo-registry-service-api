@@ -18,9 +18,13 @@
  */
 package org.commongeoregistry.adapter.dataaccess;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
+import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
@@ -61,24 +65,59 @@ public class AttributeDate extends Attribute
   {
     return this.date;
   }
+  
+  private boolean isChangeOverTime()
+  {
+    boolean isChangeOverTime = true;
+    DefaultAttribute defaultAttr = DefaultAttribute.getByAttributeName(this.getName());
+    if (defaultAttr != null)
+    {
+      isChangeOverTime = defaultAttr.isChangeOverTime();
+    }
+    
+    return isChangeOverTime;
+  }
 
   @Override
   public JsonElement toJSON(CustomSerializer serializer)
   {
-    if (this.date != null)
+    if (this.date == null)
+    {
+      return JsonNull.INSTANCE;
+    }
+    
+    if (!this.isChangeOverTime())
     {
       return new JsonPrimitive(this.date.getTime());
     }
     else
     {
-      return JsonNull.INSTANCE;
+      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+      format.setTimeZone(TimeZone.getTimeZone("GMT"));
+      return new JsonPrimitive(format.format(this.date));
     }
   }
 
   @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-    long epoch = jValue.getAsLong();
-    this.setValue(new Date(epoch));
+    if (!this.isChangeOverTime())
+    {
+      long epoch = jValue.getAsLong();
+      this.setValue(new Date(epoch));
+    }
+    else
+    {
+      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+      format.setTimeZone(TimeZone.getTimeZone("GMT"));
+      try
+      {
+        this.setValue(format.parse(jValue.getAsString()));
+      }
+      catch (ParseException e)
+      {
+        throw new RuntimeException(e); // TODO : Error handling
+      }
+    }
   }
 }

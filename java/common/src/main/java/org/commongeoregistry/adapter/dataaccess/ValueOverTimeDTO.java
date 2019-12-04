@@ -1,8 +1,10 @@
 package org.commongeoregistry.adapter.dataaccess;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeType;
@@ -40,8 +42,11 @@ public class ValueOverTimeDTO
   {
     JsonObject ret = new JsonObject();
     
-    ret.addProperty("startDate", this.startDate.getTime());
-    ret.addProperty("endDate", this.endDate.getTime());
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    format.setTimeZone(TimeZone.getTimeZone("GMT"));
+    
+    ret.addProperty("startDate", format.format(this.startDate));
+    ret.addProperty("endDate", format.format(this.endDate.getTime()));
     
     JsonElement value = this.attribute.toJSON(serializer);
     ret.add("value", value);
@@ -53,14 +58,23 @@ public class ValueOverTimeDTO
   {
     JsonObject jo = new JsonParser().parse(json).getAsJsonObject();
     
-    Date startDate = new Date(jo.get("startDate").getAsLong());
-    Date endDate = new Date(jo.get("endDate").getAsLong());
-    
-    ValueOverTimeDTO ret = new ValueOverTimeDTO(startDate, endDate, collection);
-    
-    ret.attribute.fromJSON(jo.get("value"), registry);
-    
-    return ret;
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    format.setTimeZone(TimeZone.getTimeZone("GMT"));
+    try
+    {
+      Date startDate = format.parse(jo.get("startDate").getAsString());
+      Date endDate = format.parse(jo.get("endDate").getAsString());
+      
+      ValueOverTimeDTO ret = new ValueOverTimeDTO(startDate, endDate, collection);
+      
+      ret.attribute.fromJSON(jo.get("value"), registry);
+      
+      return ret;
+    }
+    catch (ParseException e)
+    {
+      throw new RuntimeException(e); // TODO : Error handling
+    }
   }
 
   public Date getStartDate()
