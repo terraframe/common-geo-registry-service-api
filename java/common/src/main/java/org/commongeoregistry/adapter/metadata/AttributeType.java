@@ -231,6 +231,10 @@ public abstract class AttributeType implements Serializable
     {
       _isDefault = DefaultAttribute.LAST_UPDATE_DATE.getIsDefault();
     }
+    else if (DefaultAttribute.GEOMETRY.getName().equals(_name))
+    {
+      _isDefault = DefaultAttribute.GEOMETRY.getIsDefault();
+    }
     return _isDefault;
   }
 
