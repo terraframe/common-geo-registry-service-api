@@ -21,27 +21,30 @@ package org.commongeoregistry.adapter.constants;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
+import org.commongeoregistry.adapter.metadata.AttributeGeometryType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeLocalType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 
 public enum DefaultAttribute {
-  UID("uid", "UID", "The internal globally unique identifier ID", AttributeCharacterType.TYPE, true, true, false),
+  UID("uid", "UID", "The internal globally unique identifier ID", AttributeCharacterType.TYPE, true, true, false, false),
 
-  CODE("code", "Code", "Human readable unique identified", AttributeCharacterType.TYPE, true, true, false),
+  CODE("code", "Code", "Human readable unique identified", AttributeCharacterType.TYPE, true, true, false, false),
 
-  DISPLAY_LABEL("displayLabel", "Display Label", "Label of the location", AttributeLocalType.TYPE, true, true, false),
+  DISPLAY_LABEL("displayLabel", "Display Label", "Label of the location", AttributeLocalType.TYPE, true, true, false, true),
 
-  TYPE("type", "Type", "The type of the GeoObject", AttributeCharacterType.TYPE, true, false, false),
+  TYPE("type", "Type", "The type of the GeoObject", AttributeCharacterType.TYPE, true, false, false, false),
 
-  STATUS("status", "Status", "The status of the GeoObject", AttributeTermType.TYPE, true, false, false),
+  STATUS("status", "Status", "The status of the GeoObject", AttributeTermType.TYPE, true, false, false, true),
 
-  SEQUENCE("sequence", "Sequence", "The sequence number of the GeoObject that is incremented when the object is updated", AttributeIntegerType.TYPE, true, false, false),
+  SEQUENCE("sequence", "Sequence", "The sequence number of the GeoObject that is incremented when the object is updated", AttributeIntegerType.TYPE, true, false, false, false),
 
-  CREATE_DATE("createDate", "Date Created", "The date the object was created", AttributeDateType.TYPE, true, false, false),
+  CREATE_DATE("createDate", "Date Created", "The date the object was created", AttributeDateType.TYPE, true, false, false, false),
 
-  LAST_UPDATE_DATE("lastUpdateDate", "Date Last Updated", "The date the object was updated", AttributeDateType.TYPE, true, false, false);
+  LAST_UPDATE_DATE("lastUpdateDate", "Date Last Updated", "The date the object was updated", AttributeDateType.TYPE, true, false, false, false),
+  
+  GEOMETRY("geometry", "Geometry", "The geometries for the GeoObject.", AttributeGeometryType.TYPE, true, false, false, true);
 
   private String  name;
 
@@ -56,8 +59,10 @@ public enum DefaultAttribute {
   private boolean required;
 
   private boolean unique;
+  
+  private boolean isChange;
 
-  private DefaultAttribute(String _name, String _defaultLabel, String _defaultDescription, String _type, boolean _isDefault, boolean _required, boolean _unique)
+  private DefaultAttribute(String _name, String _defaultLabel, String _defaultDescription, String _type, boolean _isDefault, boolean _required, boolean _unique, boolean _isChange)
   {
     this.name = _name;
     this.defaultLabel = _defaultLabel;
@@ -66,6 +71,7 @@ public enum DefaultAttribute {
     this.isDefault = _isDefault;
     this.required = _required;
     this.unique = _unique;
+    this.isChange = _isChange;
   }
 
   public String getName()
@@ -112,12 +118,37 @@ public enum DefaultAttribute {
   {
     this.unique = unique;
   }
+  
+  public boolean isChangeOverTime()
+  {
+    return isChange;
+  }
+
+  public void setChangeOverTime(boolean isChange)
+  {
+    this.isChange = isChange;
+  }
+  
+  public static DefaultAttribute getByAttributeName(String attributeName)
+  {
+    DefaultAttribute[] all = DefaultAttribute.values();
+    
+    for (int i = 0; i < all.length; ++i)
+    {
+      if (all[i].getName().equals(attributeName))
+      {
+        return all[i];
+      }
+    }
+    
+    return null;
+  }
 
   public AttributeType createAttributeType()
   {
     LocalizedValue label = new LocalizedValue(this.getDefaultLocalizedName());
     LocalizedValue description = new LocalizedValue(this.getDefaultDescription());
 
-    return AttributeType.factory(this.getName(), label, description, this.getType(), this.isRequired(), this.isUnique());
+    return AttributeType.factory(this.getName(), label, description, this.getType(), this.isRequired(), this.isUnique(), this.isChangeOverTime());
   }
 }

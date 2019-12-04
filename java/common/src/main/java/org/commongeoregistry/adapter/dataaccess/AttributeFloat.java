@@ -59,11 +59,7 @@ public class AttributeFloat extends Attribute
     return this.floatValue;
   }
   
-  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
-  {
-    geoObjProps.addProperty(this.getName(), this.floatValue);
-  }
-  
+  @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
     this.setValue(jValue.getAsDouble());

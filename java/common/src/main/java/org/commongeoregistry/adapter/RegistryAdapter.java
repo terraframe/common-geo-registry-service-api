@@ -19,12 +19,15 @@
 package org.commongeoregistry.adapter;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.DefaultTerms.GeoObjectStatusTerm;
 import org.commongeoregistry.adapter.dataaccess.Attribute;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.GeoObjectOverTime;
+import org.commongeoregistry.adapter.dataaccess.ValueOverTimeCollectionDTO;
 import org.commongeoregistry.adapter.id.AdapterIdServiceIF;
 import org.commongeoregistry.adapter.id.EmptyIdCacheException;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
@@ -83,6 +86,32 @@ public abstract class RegistryAdapter implements Serializable
 
     Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
     geoObject.getAttribute(DefaultAttribute.STATUS.getName()).setValue(newStatus);
+
+    if (genId)
+    {
+      String uid = this.idService.next();
+      geoObject.setUid(uid);
+    }
+
+    return geoObject;
+  }
+  
+  public GeoObjectOverTime newGeoObjectOverTimeInstance(String geoObjectTypeCode, boolean genId) throws EmptyIdCacheException
+  {
+    final Date createDate = new Date(); // TODO : This probably isn't desirable for whatever your usecase is
+    
+    GeoObjectType geoObjectType = this.getMetadataCache().getGeoObjectType(geoObjectTypeCode).get();
+
+    Map<String, ValueOverTimeCollectionDTO> votAttributeMap = GeoObjectOverTime.buildVotAttributeMap(geoObjectType);
+    Map<String, Attribute> attributeMap = GeoObjectOverTime.buildAttributeMap(geoObjectType);
+
+    GeoObjectOverTime geoObject = new GeoObjectOverTime(geoObjectType, votAttributeMap, attributeMap);
+
+    // Set some default values
+    // geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(geoObjectTypeCode);
+
+    Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
+    geoObject.setValue(DefaultAttribute.STATUS.getName(), newStatus, createDate, createDate);
 
     if (genId)
     {

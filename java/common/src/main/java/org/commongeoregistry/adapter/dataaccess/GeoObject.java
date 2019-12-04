@@ -28,6 +28,7 @@ import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.constants.GeometryType;
+import org.commongeoregistry.adapter.metadata.AttributeGeometryType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
@@ -111,6 +112,11 @@ public class GeoObject implements Serializable
 
     for (AttributeType attributeType : attributeTypeMap.values())
     {
+      if (attributeType instanceof AttributeGeometryType)
+      {
+        continue;
+      }
+      
       Attribute attribute = Attribute.attributeFactory(attributeType);
 
       attributeMap.put(attribute.getName(), attribute);

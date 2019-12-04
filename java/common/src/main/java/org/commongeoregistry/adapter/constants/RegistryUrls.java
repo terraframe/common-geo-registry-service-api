@@ -33,6 +33,8 @@ public class RegistryUrls
   public static final String GEO_OBJECT_GET_CODE      = "geoobject/get-code";
   public static final String GEO_OBJECT_GET_CODE_PARAM_CODE = "code";
   public static final String GEO_OBJECT_GET_CODE_PARAM_TYPE_CODE = "typeCode";
+  
+  public static final String GEO_OBJECT_GET_TIME_CODE  = "geoobject/getOverTimeByCode";
 
   public static final String GEO_OBJECT_UPDATE        = "geoobject/update";
   public static final String GEO_OBJECT_UPDATE_PARAM_GEOOBJECT = "geoObject";

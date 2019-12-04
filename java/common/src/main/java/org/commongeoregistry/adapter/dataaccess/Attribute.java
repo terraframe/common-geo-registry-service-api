@@ -19,12 +19,12 @@
 package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeFloatType;
+import org.commongeoregistry.adapter.metadata.AttributeGeometryType;
 import org.commongeoregistry.adapter.metadata.AttributeIntegerType;
 import org.commongeoregistry.adapter.metadata.AttributeLocalType;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
@@ -102,6 +102,10 @@ public abstract class Attribute implements Serializable
     else if (attributeType instanceof AttributeLocalType)
     {
       attribute = new AttributeLocal(attributeType.getName());
+    }
+    else if (attributeType instanceof AttributeGeometryType)
+    {
+      attribute = new AttributeGeometry(attributeType.getName());
     }
     else
     {
