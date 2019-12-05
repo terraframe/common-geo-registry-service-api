@@ -240,6 +240,26 @@ public class GeoObjectOverTime implements Serializable
   {
     return (String) this.getValue(DefaultAttribute.CODE.getName());
   }
+  
+  /**
+   * Sets the display label of this {@link GeoObject}.
+   * 
+   * @param label
+   */
+  public void setDisplayLabel(LocalizedValue label, Date startDate, Date endDate)
+  {
+    this.setValue(DefaultAttribute.DISPLAY_LABEL.getName(), label, startDate, endDate);
+  }
+
+  /**
+   * Returns the display label of this {@link GeoObject}
+   * 
+   * @return the display label of this {@link GeoObject}
+   */
+  public LocalizedValue getDisplayLabel(Date startDate)
+  {
+    return (LocalizedValue) this.getValue(DefaultAttribute.DISPLAY_LABEL.getName(), startDate);
+  }
 
   /**
    * Sets the UID of this {@link GeoObject}.
@@ -310,35 +330,6 @@ public class GeoObjectOverTime implements Serializable
    * 
    * @return {@link GeoObjectOverTime} from the given JSON.
    */
-  /*
-{
-  attributes: {
-    status: {
-      name: "status",
-      type: "term",
-      values: [
-        {
-          startDate: 283953948534,
-          endDate: 3489534853,
-          value: "myValue"
-        }
-      ]
-    },
-    code: {
-      name: "code",
-      type: "term",
-      values: [
-        {
-          startDate: 283953948534,
-          endDate: 3489534853,
-          value: "myValue"
-        }
-      ]
-    },
-    ... etc ...
-  }
-}
-   */
   public static GeoObjectOverTime fromJSON(RegistryAdapter registry, String sJson)
   {
     JsonParser parser = new JsonParser();
@@ -396,36 +387,6 @@ public class GeoObjectOverTime implements Serializable
     return toJSON(new DefaultSerializer());
   }
 
-  
-  /*
-{
-  attributes: {
-    status: {
-      name: "status",
-      type: "term",
-      values: [
-        {
-          startDate: 283953948534,
-          endDate: 3489534853,
-          value: "myValue"
-        }
-      ]
-    },
-    code: {
-      name: "code",
-      type: "term",
-      values: [
-        {
-          startDate: 283953948534,
-          endDate: 3489534853,
-          value: "myValue"
-        }
-      ]
-    },
-    ... etc ...
-  }
-}
-   */
   public JsonObject toJSON(CustomSerializer serializer)
   {
     JsonObject jsonObj = new JsonObject();

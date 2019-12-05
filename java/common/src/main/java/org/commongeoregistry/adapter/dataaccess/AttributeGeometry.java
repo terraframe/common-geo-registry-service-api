@@ -4,6 +4,7 @@ import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.metadata.AttributeGeometryType;
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
+import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
 import com.google.gson.JsonElement;
@@ -61,6 +62,11 @@ public class AttributeGeometry extends Attribute
     {
       throw new RuntimeException(e); // TODO : Exception handling
     }
+    
+    if (wktObj == null)
+    {
+      throw new RuntimeException("Cannot parse geometry."); // TODO : Exception handling
+    }
 
     this.setValue(wktObj);
   }
@@ -92,7 +98,12 @@ public class AttributeGeometry extends Attribute
   @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-    this.setWKTGeometry(jValue.toString());
+//    this.setWKTGeometry(jValue.toString());
+    
+    GeoJSONReader reader = new GeoJSONReader();
+    Geometry jtsGeom = reader.read(jValue.toString());
+
+    this.setValue(jtsGeom);
   }
 
 }
