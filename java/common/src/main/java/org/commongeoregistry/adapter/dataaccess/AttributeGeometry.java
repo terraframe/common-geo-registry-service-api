@@ -71,7 +71,7 @@ public class AttributeGeometry extends Attribute
     this.setValue(wktObj);
   }
   
-  public String getWKTGeometry()
+  public String getGeometryAsGeoJson()
   {
     GeoJSONWriter gw = new GeoJSONWriter();
     org.wololo.geojson.Geometry gJSON = gw.write(this.getValue());
@@ -79,15 +79,23 @@ public class AttributeGeometry extends Attribute
     return gJSON.toString();
   }
   
+  public void setGeometryAsGeoJson(String geoJson)
+  {
+    GeoJSONReader reader = new GeoJSONReader();
+    Geometry jtsGeom = reader.read(geoJson);
+
+    this.setValue(jtsGeom);
+  }
+  
   @Override
   public JsonObject toJSON(CustomSerializer serializer)
   {
     if (this.getValue() != null)
     {
-      String wkt = this.getWKTGeometry();
+      String geoJson = this.getGeometryAsGeoJson();
       
       JsonParser parser = new JsonParser();
-      JsonObject geomObj = parser.parse(wkt).getAsJsonObject();
+      JsonObject geomObj = parser.parse(geoJson).getAsJsonObject();
 
       return geomObj;
     }
@@ -98,12 +106,7 @@ public class AttributeGeometry extends Attribute
   @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-//    this.setWKTGeometry(jValue.toString());
-    
-    GeoJSONReader reader = new GeoJSONReader();
-    Geometry jtsGeom = reader.read(jValue.toString());
-
-    this.setValue(jtsGeom);
+    this.setGeometryAsGeoJson(jValue.toString());
   }
 
 }

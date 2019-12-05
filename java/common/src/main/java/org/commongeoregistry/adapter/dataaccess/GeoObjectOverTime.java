@@ -43,24 +43,16 @@ public class GeoObjectOverTime implements Serializable
    */
   private Map<String, Attribute> attributeMap;
   
+  private AttributeGeometryType geometryAttributeType;
+  
   public GeoObjectOverTime(GeoObjectType geoObjectType, Map<String, ValueOverTimeCollectionDTO> votAttributeMap, Map<String, Attribute> attributeMap)
   {
     this.geoObjectType = geoObjectType;
     this.votAttributeMap = votAttributeMap;
     this.attributeMap = attributeMap;
+    geometryAttributeType = (AttributeGeometryType) DefaultAttribute.GEOMETRY.createAttributeType();
     
     this.setValue(DefaultAttribute.TYPE.getName(), this.geoObjectType.getCode());
-    addGeometryAttributeType(this.geoObjectType);
-  }
-  
-  private static void addGeometryAttributeType(GeoObjectType geoObjectType)
-  {
-    AttributeGeometryType geometry = (AttributeGeometryType) DefaultAttribute.GEOMETRY.createAttributeType();
-    
-    if (!geoObjectType.getAttribute(geometry.getName()).isPresent())
-    {
-      geoObjectType.addAttribute(geometry);
-    }
   }
   
   public static Map<String, ValueOverTimeCollectionDTO> buildVotAttributeMap(GeoObjectType geoObjectType)
@@ -180,11 +172,18 @@ public class GeoObjectOverTime implements Serializable
   {
     ValueOverTimeCollectionDTO votc = this.votAttributeMap.get(attributeName);
     
-    Optional<AttributeType> optional = this.getType().getAttribute(attributeName);
-    
-    if (optional.isPresent())
+    if (attributeName.equals(DefaultAttribute.GEOMETRY.getName()))
     {
-      optional.get().validate(_value);
+      geometryAttributeType.validate(_value);
+    }
+    else
+    {
+      Optional<AttributeType> optional = this.getType().getAttribute(attributeName);
+      
+      if (optional.isPresent())
+      {
+        optional.get().validate(_value);
+      }
     }
     
     Attribute attribute = votc.getAttribute(startDate);
@@ -378,7 +377,7 @@ public class GeoObjectOverTime implements Serializable
         attr.fromJSON(joAttrs.get(key), registry);
       }
     }
-
+    
     return geoObj;
   }
 
