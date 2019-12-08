@@ -3,6 +3,9 @@ package org.commongeoregistry.adapter.dataaccess;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -17,9 +20,20 @@ import com.google.gson.JsonParser;
 
 public class ValueOverTimeDTO
 {
-  private Date   startDate;
+  public static final Date INFINITY_END_DATE;
 
-  private Date   endDate;
+  static
+  {
+    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    cal.clear();
+    cal.set(5000, Calendar.DECEMBER, 31);
+
+    INFINITY_END_DATE = cal.getTime();
+  }
+  
+  private LocalDate   startDate;
+
+  private LocalDate endDate;
   
   private Attribute attribute;
 
@@ -27,15 +41,23 @@ public class ValueOverTimeDTO
   
   public ValueOverTimeDTO(Date startDate, Date endDate, ValueOverTimeCollectionDTO collection)
   {
-    this.startDate = startDate;
-    this.endDate = endDate;
     this.collection = collection;
     this.attribute = Attribute.attributeFactory(collection.getAttributeType());
+    
+    this.setStartDate(startDate);
+    this.setEndDate(endDate);
   }
   
   public boolean between(Date date)
   {
-    return ( this.startDate.equals(date) || this.startDate.before(date) ) && ( this.endDate.equals(date) || this.endDate.after(date) );
+    if (date == null)
+    {
+      date = INFINITY_END_DATE;
+    }
+    
+    LocalDate localDate = date.toInstant().atZone(ZoneId.of("Z")).toLocalDate();
+    
+    return ( this.startDate.equals(localDate) || this.startDate.isBefore(localDate) ) && ( this.endDate.equals(localDate) || this.endDate.isAfter(localDate) );
   }
   
   public JsonObject toJSON(CustomSerializer serializer)
@@ -45,8 +67,8 @@ public class ValueOverTimeDTO
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     format.setTimeZone(TimeZone.getTimeZone("GMT"));
     
-    ret.addProperty("startDate", format.format(this.startDate));
-    ret.addProperty("endDate", format.format(this.endDate.getTime()));
+    ret.addProperty("startDate", format.format(this.getStartDate()));
+    ret.addProperty("endDate", format.format(this.getEndDate()));
     
     JsonElement value = this.attribute.toJSON(serializer);
     ret.add("value", value);
@@ -79,22 +101,44 @@ public class ValueOverTimeDTO
 
   public Date getStartDate()
   {
-    return startDate;
+    return Date.from(startDate.atStartOfDay().atZone(ZoneId.of("Z")).toInstant());
   }
 
   public void setStartDate(Date startDate)
   {
-    this.startDate = startDate;
+    this.startDate = startDate.toInstant().atZone(ZoneId.of("Z")).toLocalDate();
+  }
+  
+  public LocalDate getLocalStartDate()
+  {
+    return this.startDate;
   }
 
   public Date getEndDate()
   {
-    return endDate;
+    if (endDate == null)
+    {
+      return null;
+    }
+    
+    return Date.from(endDate.atStartOfDay().atZone(ZoneId.of("Z")).toInstant());
+  }
+  
+  public LocalDate getLocalEndDate()
+  {
+    return this.endDate;
   }
 
   public void setEndDate(Date endDate)
   {
-    this.endDate = endDate;
+    if (endDate != null)
+    {
+      this.endDate = endDate.toInstant().atZone(ZoneId.of("Z")).toLocalDate();
+    }
+    else
+    {
+      endDate = null;
+    }
   }
 
   public Object getValue()

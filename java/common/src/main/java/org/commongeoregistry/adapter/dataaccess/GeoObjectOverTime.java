@@ -124,7 +124,18 @@ public class GeoObjectOverTime implements Serializable
    */
   public Object getValue(String attributeName)
   {
-    return this.attributeMap.get(attributeName).getValue();
+    if (this.attributeMap.containsKey(attributeName))
+    {
+      return this.attributeMap.get(attributeName).getValue();
+    }
+    else if (this.votAttributeMap.containsKey(attributeName))
+    {
+      return this.votAttributeMap.get(attributeName).getValue(null);
+    }
+    else
+    {
+      throw new RuntimeException("Attribute not found [" + attributeName + "]."); // TODO : Better error handling
+    }
   }
   
   /**
@@ -150,8 +161,6 @@ public class GeoObjectOverTime implements Serializable
    */
   public void setValue(String attributeName, Object _value)
   {
-    Attribute attribute = this.attributeMap.get(attributeName);
-    
     Optional<AttributeType> optional = this.getType().getAttribute(attributeName);
     
     if (optional.isPresent())
@@ -159,7 +168,18 @@ public class GeoObjectOverTime implements Serializable
       optional.get().validate(_value);
     }
     
-    attribute.setValue(_value);
+    if (this.attributeMap.containsKey(attributeName))
+    {
+      this.attributeMap.get(attributeName).setValue(_value);
+    }
+    else if (this.votAttributeMap.containsKey(attributeName))
+    {
+      this.votAttributeMap.get(attributeName).setValue(_value, null);
+    }
+    else
+    {
+      throw new RuntimeException("Attribute not found [" + attributeName + "]."); // TODO : Better error handling
+    }
   }
   
   /**
