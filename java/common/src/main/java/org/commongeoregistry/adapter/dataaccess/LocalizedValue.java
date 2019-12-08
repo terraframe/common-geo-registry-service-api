@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.dataaccess;
 
@@ -28,19 +29,20 @@ import org.commongeoregistry.adapter.metadata.CustomSerializer;
 import org.commongeoregistry.adapter.metadata.DefaultSerializer;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class LocalizedValue
 {
-  public static final String DEFAULT_LOCALE  = "defaultLocale";
-  
-  public static final String LOCALIZED_VALUE = "localizedValue";
+  public static final String  DEFAULT_LOCALE  = "defaultLocale";
 
-  public static final String LOCALE_VALUES   = "localeValues";
+  public static final String  LOCALIZED_VALUE = "localizedValue";
 
-  public static final String LOCALE          = "locale";
+  public static final String  LOCALE_VALUES   = "localeValues";
 
-  public static final String VALUE           = "value";
+  public static final String  LOCALE          = "locale";
+
+  public static final String  VALUE           = "value";
 
   private String              localizedValue;
 
@@ -108,16 +110,16 @@ public class LocalizedValue
   public JsonObject toJSON(CustomSerializer serializer)
   {
     JsonArray array = new JsonArray();
-    
+
     Set<Entry<String, String>> entries = this.localeValues.entrySet();
-    
-    for(Entry<String, String> entry : entries)
+
+    for (Entry<String, String> entry : entries)
     {
-    	JsonObject locale = new JsonObject();
-    	locale.addProperty(LOCALE, entry.getKey());
-    	locale.addProperty(VALUE, entry.getValue());
-    	
-    	array.add(locale);
+      JsonObject locale = new JsonObject();
+      locale.addProperty(LOCALE, entry.getKey());
+      locale.addProperty(VALUE, entry.getValue());
+
+      array.add(locale);
     }
 
     JsonObject object = new JsonObject();
@@ -144,8 +146,10 @@ public class LocalizedValue
     for (int i = 0; i < locales.size(); i++)
     {
       JsonObject locale = locales.get(i).getAsJsonObject();
+      final JsonElement element = locale.get(VALUE);
+
       String key = locale.get(LOCALE).getAsString();
-      String value = locale.get(VALUE).getAsString();
+      String value = !element.isJsonNull() ? element.getAsString() : null;
 
       map.put(key, value);
     }
