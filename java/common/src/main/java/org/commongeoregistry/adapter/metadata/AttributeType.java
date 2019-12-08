@@ -335,7 +335,7 @@ public abstract class AttributeType implements Serializable
     String name = joAttr.get(AttributeType.JSON_CODE).getAsString();
     boolean required = joAttr.get(AttributeType.JSON_REQUIRED).getAsBoolean();
     boolean unique = joAttr.get(AttributeType.JSON_UNIQUE).getAsBoolean();
-    boolean isChange = joAttr.get(AttributeType.JSON_IS_CHANGE).getAsBoolean();
+    boolean isChange = joAttr.has(AttributeType.JSON_IS_CHANGE) ? joAttr.get(AttributeType.JSON_IS_CHANGE).getAsBoolean() : false;
 
     LocalizedValue attributeLabel = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_LABEL).getAsJsonObject());
     LocalizedValue attributeDescription = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
