@@ -76,7 +76,7 @@ public class ValueOverTimeCollectionDTO implements Collection<ValueOverTimeDTO>
       }
     }
     
-    return null;
+    return Attribute.attributeFactory(this.getAttributeType()).getValue();
   }
   
   public void setValue(Object value, Date date)
