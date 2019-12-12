@@ -3,16 +3,12 @@ package org.commongeoregistry.adapter.dataaccess;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
-import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
-import org.commongeoregistry.adapter.metadata.DefaultSerializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -31,9 +27,9 @@ public class ValueOverTimeDTO
     INFINITY_END_DATE = cal.getTime();
   }
   
-  private LocalDate   startDate;
+  private Date   startDate;
 
-  private LocalDate endDate;
+  private Date endDate;
   
   private Attribute attribute;
 
@@ -55,10 +51,21 @@ public class ValueOverTimeDTO
       date = INFINITY_END_DATE;
     }
     
-    LocalDate localDate = date.toInstant().atZone(ZoneId.of("Z")).toLocalDate();
+    Date localDate = toLocal(date);
     
-    return ( this.startDate.equals(localDate) || this.startDate.isBefore(localDate) ) && ( this.endDate.equals(localDate) || this.endDate.isAfter(localDate) );
+    return ( this.startDate.equals(localDate) || this.startDate.before(localDate) ) && ( this.endDate.equals(localDate) || this.endDate.after(localDate) );
   }
+  
+  public static Date toLocal(Date date) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+    cal.set(Calendar.HOUR_OF_DAY, 0);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    return cal.getTime();
+}
   
   public JsonObject toJSON(CustomSerializer serializer)
   {
@@ -101,18 +108,20 @@ public class ValueOverTimeDTO
 
   public Date getStartDate()
   {
-    return Date.from(startDate.atStartOfDay().atZone(ZoneId.of("Z")).toInstant());
+//    return Date.from(startDate.atStartOfDay().atZone(ZoneId.of("Z")).toInstant());
+    return startDate;
   }
 
   public void setStartDate(Date startDate)
   {
-    this.startDate = startDate.toInstant().atZone(ZoneId.of("Z")).toLocalDate();
+//    this.startDate = startDate.toInstant().atZone(ZoneId.of("Z")).toLocalDate();
+    this.startDate = toLocal(startDate);
   }
   
-  public LocalDate getLocalStartDate()
-  {
-    return this.startDate;
-  }
+//  public LocalDate getLocalStartDate()
+//  {
+//    return this.startDate;
+//  }
 
   public Date getEndDate()
   {
@@ -121,19 +130,21 @@ public class ValueOverTimeDTO
       return null;
     }
     
-    return Date.from(endDate.atStartOfDay().atZone(ZoneId.of("Z")).toInstant());
+//    return Date.from(endDate.atStartOfDay().atZone(ZoneId.of("Z")).toInstant());
+    return toLocal(endDate);
   }
   
-  public LocalDate getLocalEndDate()
-  {
-    return this.endDate;
-  }
+//  public LocalDate getLocalEndDate()
+//  {
+//    return this.endDate;
+//  }
 
   public void setEndDate(Date endDate)
   {
     if (endDate != null)
     {
-      this.endDate = endDate.toInstant().atZone(ZoneId.of("Z")).toLocalDate();
+//      this.endDate = endDate.toInstant().atZone(ZoneId.of("Z")).toLocalDate();
+      this.endDate = toLocal(endDate);
     }
     else
     {
