@@ -6,7 +6,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.Assert;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.commongeoregistry.adapter.HttpRegistryClient;
 import org.commongeoregistry.adapter.MockIdService;
 import org.commongeoregistry.adapter.Term;
@@ -21,21 +20,18 @@ import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
+import org.commongeoregistry.adapter.metadata.FrequencyType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 import org.commongeoregistry.adapter.metadata.MetadataFactory;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class LocalObjectCacheTest {
@@ -78,19 +74,19 @@ public class LocalObjectCacheTest {
         cache.clear();
 
         // Define GeoObject Types
-        GeoObjectType province = MetadataFactory.newGeoObjectType(PROVINCE, GeometryType.POLYGON, new LocalizedValue("Province"), new LocalizedValue(""), false, client);
+        GeoObjectType province = MetadataFactory.newGeoObjectType(PROVINCE, GeometryType.POLYGON, new LocalizedValue("Province"), new LocalizedValue(""), false, false, FrequencyType.DAILY, client);
 
-        GeoObjectType district = MetadataFactory.newGeoObjectType(DISTRICT, GeometryType.POLYGON, new LocalizedValue("District"), new LocalizedValue(""), false, client);
+        GeoObjectType district = MetadataFactory.newGeoObjectType(DISTRICT, GeometryType.POLYGON, new LocalizedValue("District"), new LocalizedValue(""), false, false, FrequencyType.DAILY, client);
 
-        GeoObjectType commune = MetadataFactory.newGeoObjectType(COMMUNE, GeometryType.POLYGON, new LocalizedValue("Commune"), new LocalizedValue(""), false, client);
+        GeoObjectType commune = MetadataFactory.newGeoObjectType(COMMUNE, GeometryType.POLYGON, new LocalizedValue("Commune"), new LocalizedValue(""), false, false, FrequencyType.DAILY, client);
 
-        GeoObjectType village = MetadataFactory.newGeoObjectType(VILLAGE, GeometryType.POLYGON, new LocalizedValue("Village"), new LocalizedValue(""), false, client);
+        GeoObjectType village = MetadataFactory.newGeoObjectType(VILLAGE, GeometryType.POLYGON, new LocalizedValue("Village"), new LocalizedValue(""), false, false, FrequencyType.DAILY, client);
 
-        GeoObjectType household = MetadataFactory.newGeoObjectType(HOUSEHOLD, GeometryType.POLYGON, new LocalizedValue("Household"), new LocalizedValue(""), false, client);
+        GeoObjectType household = MetadataFactory.newGeoObjectType(HOUSEHOLD, GeometryType.POLYGON, new LocalizedValue("Household"), new LocalizedValue(""), false, false, FrequencyType.DAILY, client);
 
-        GeoObjectType focusArea = MetadataFactory.newGeoObjectType(FOCUS_AREA, GeometryType.POLYGON, new LocalizedValue("Focus Area"), new LocalizedValue(""), false, client);
+        GeoObjectType focusArea = MetadataFactory.newGeoObjectType(FOCUS_AREA, GeometryType.POLYGON, new LocalizedValue("Focus Area"), new LocalizedValue(""), false, false, FrequencyType.DAILY, client);
 
-        GeoObjectType healthFacility = MetadataFactory.newGeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, new LocalizedValue("Health Facility"), new LocalizedValue(""), false, client);
+        GeoObjectType healthFacility = MetadataFactory.newGeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, new LocalizedValue("Health Facility"), new LocalizedValue(""), false, false, FrequencyType.DAILY, client);
         healthFacility.addAttribute(createHealthFacilityTypeAttribute(client));
 
         // Define Geopolitical Hierarchy Type
@@ -111,7 +107,7 @@ public class LocalObjectCacheTest {
 
     private AttributeTermType createHealthFacilityTypeAttribute(HttpRegistryClient client) {
         AttributeTermType attrType =
-                (AttributeTermType) AttributeType.factory(HEALTH_FACILITY_ATTRIBUTE, new LocalizedValue("Health Facility Type"), new LocalizedValue("The type of health facility"), AttributeTermType.TYPE, false, false);
+                (AttributeTermType) AttributeType.factory(HEALTH_FACILITY_ATTRIBUTE, new LocalizedValue("Health Facility Type"), new LocalizedValue("The type of health facility"), AttributeTermType.TYPE, false, false, true);
 
         Term rootTerm = createHealthFacilityTerms(client);
 

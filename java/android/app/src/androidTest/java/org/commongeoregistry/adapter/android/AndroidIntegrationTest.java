@@ -5,6 +5,8 @@ import android.support.test.InstrumentationRegistry;
 
 import junit.framework.Assert;
 
+import org.commongeoregistry.adapter.android.framework.TestGeoObjectInfo;
+import org.commongeoregistry.adapter.android.framework.USATestData;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
@@ -16,15 +18,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Contains tests that run in Android and require a common geo registry server running.
  */
 public class AndroidIntegrationTest
 {
-//    private static final String serverUrl = "https://192.168.0.23:8443/georegistry";
-    public static final String serverUrl = "https://10.0.0.2:8443/georegistry";
+    public static final String serverUrl = "https://192.168.0.31:8443/georegistry";
+//    public static final String serverUrl = "https://10.0.0.2:8443/georegistry";
 
     public static final String user = "admin";
 
@@ -34,11 +35,11 @@ public class AndroidIntegrationTest
 
     private AndroidTestRegistryClient client;
 
-    private USATestData.TestGeoObjectInfo UTAH;
+    private TestGeoObjectInfo UTAH;
 
-    private USATestData.TestGeoObjectInfo CALIFORNIA;
+    private TestGeoObjectInfo CALIFORNIA;
 
-    private USATestData.TestGeoObjectInfo TEST_ADD_CHILD;
+    private TestGeoObjectInfo TEST_ADD_CHILD;
 
     @Before
     public void setUp() throws AuthenticationException, ServerResponseException, IOException {
@@ -116,7 +117,7 @@ public class AndroidIntegrationTest
         int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
       
         String childId = data.CO_D_TWO.getUid();
-        String childTypeCode = data.CO_D_TWO.getUniversal().getCode();
+        String childTypeCode = data.CO_D_TWO.getGeoObjectType().getCode();
         String[] childrenTypes = new String[]{data.COUNTRY.getCode(), data.STATE.getCode()};
 
         // Recursive
@@ -145,59 +146,59 @@ public class AndroidIntegrationTest
         String[] childrenTypes = new String[]{data.STATE.getCode(), data.DISTRICT.getCode()};
 
         // Recursive
-        ChildTreeNode tn = client.getChildGeoObjects(data.USA.getUid(), data.USA.getUniversal().getCode(), childrenTypes, true);
+        ChildTreeNode tn = client.getChildGeoObjects(data.USA.getUid(), data.USA.getGeoObjectType().getCode(), childrenTypes, true);
         data.USA.assertEquals(tn, childrenTypes, true);
         Assert.assertEquals(tn.toJSON().toString(), ChildTreeNode.fromJSON(tn.toJSON().toString(), client).toJSON().toString());
 
         // Not recursive
-        ChildTreeNode tn2 = client.getChildGeoObjects(data.USA.getUid(), data.USA.getUniversal().getCode(), childrenTypes, false);
+        ChildTreeNode tn2 = client.getChildGeoObjects(data.USA.getUid(), data.USA.getGeoObjectType().getCode(), childrenTypes, false);
         data.USA.assertEquals(tn2, childrenTypes, false);
         Assert.assertEquals(tn2.toJSON().toString(), ChildTreeNode.fromJSON(tn2.toJSON().toString(), client).toJSON().toString());
 
         // Test only getting districts
         String[] distArr = new String[]{data.DISTRICT.getCode()};
-        ChildTreeNode tn3 = client.getChildGeoObjects(data.USA.getUid(), data.USA.getUniversal().getCode(), distArr, true);
+        ChildTreeNode tn3 = client.getChildGeoObjects(data.USA.getUid(), data.USA.getGeoObjectType().getCode(), distArr, true);
         data.USA.assertEquals(tn3, distArr, true);
         Assert.assertEquals(tn3.toJSON().toString(), ChildTreeNode.fromJSON(tn3.toJSON().toString(), client).toJSON().toString());
         
         Assert.assertEquals(numRegistryIds, client.getLocalCache().countNumberRegistryIds());
     }
 
-    @Test
-    public void testExecuteActions() throws AuthenticationException, ServerResponseException, IOException {
-        // Create a new GeoObject locally
-        GeoObject goCali = CALIFORNIA.newGeoObject();
-        client.getLocalCache().createGeoObject(goCali);
-
-        // Update that GeoObject
-        final String newLabel = "MODIFIED DISPLAY LABEL";
-        goCali.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, newLabel);
-        client.getLocalCache().updateGeoObject(goCali);
-
-        Assert.assertEquals(2, client.getLocalCache().getAllActionHistory().size());
-        client.pushObjectsToRegistry();
-
-        // TODO : This test isn't even possible anymore. Actions are not executed immediately when
-        // they are received.
-//        // Fetch California and make sure it has our new display label
-//        GeoObject goCali2 = client.getGeoObjectByCode(CALIFORNIA.getCode(), CALIFORNIA.getUniversal().getCode());
+//    @Test
+//    public void testExecuteActions() throws AuthenticationException, ServerResponseException, IOException {
+//        // Create a new GeoObject locally
+//        GeoObject goCali = CALIFORNIA.newGeoObject();
+//        client.getLocalCache().createGeoObject(goCali);
 //
-//        CALIFORNIA.setUid(goCali2.getUid());
-//        CALIFORNIA.setDisplayLabel(newLabel);
-//        CALIFORNIA.assertEquals(goCali2);
-//
-//        // Update that GeoObject again
-//        final String newLabel2 = "MODIFIED DISPLAY LABEL2";
-//        goCali.setLocalizedDisplayLabel(newLabel2);
+//        // Update that GeoObject
+//        final String newLabel = "MODIFIED DISPLAY LABEL";
+//        goCali.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, newLabel);
 //        client.getLocalCache().updateGeoObject(goCali);
 //
-//        // Make sure that when we push it only pushes our new update and not the old ones again
-//        Assert.assertEquals(1, client.getLocalCache().getUnpushedActionHistory().size());
-    }
+//        Assert.assertEquals(2, client.getLocalCache().getAllActionHistory().size());
+//        client.pushObjectsToRegistry();
+//
+//        // TODO : This test isn't even possible anymore. Actions are not executed immediately when
+//        // they are received.
+////        // Fetch California and make sure it has our new display label
+////        GeoObject goCali2 = client.getGeoObjectByCode(CALIFORNIA.getCode(), CALIFORNIA.getUniversal().getCode());
+////
+////        CALIFORNIA.setUid(goCali2.getUid());
+////        CALIFORNIA.setDisplayLabel(newLabel);
+////        CALIFORNIA.assertEquals(goCali2);
+////
+////        // Update that GeoObject again
+////        final String newLabel2 = "MODIFIED DISPLAY LABEL2";
+////        goCali.setLocalizedDisplayLabel(newLabel2);
+////        client.getLocalCache().updateGeoObject(goCali);
+////
+////        // Make sure that when we push it only pushes our new update and not the old ones again
+////        Assert.assertEquals(1, client.getLocalCache().getUnpushedActionHistory().size());
+//    }
 
     @Test
     public void testAddChild() throws AuthenticationException, ServerResponseException, IOException {
-        ParentTreeNode ptnTestState = client.addChild(data.WASHINGTON.getUid(), data.WASHINGTON.getUniversal().getCode(), TEST_ADD_CHILD.getUid(), TEST_ADD_CHILD.getUniversal().getCode(), data.LOCATED_IN.getCode());
+        ParentTreeNode ptnTestState = client.addChild(data.WASHINGTON.getUid(), data.WASHINGTON.getGeoObjectType().getCode(), TEST_ADD_CHILD.getUid(), TEST_ADD_CHILD.getGeoObjectType().getCode(), data.LOCATED_IN.getCode());
 
         boolean found = false;
         for (ParentTreeNode ptnUSA : ptnTestState.getParents())
@@ -211,7 +212,7 @@ public class AndroidIntegrationTest
         Assert.assertTrue("Did not find our test object in the list of returned children", found);
         TEST_ADD_CHILD.assertEquals(ptnTestState.getGeoObject());
 
-        ChildTreeNode ctnUSA2 = client.getChildGeoObjects(data.WASHINGTON.getUid(), data.WASHINGTON.getUniversal().getCode(), new String[]{data.DISTRICT.getCode()}, false);
+        ChildTreeNode ctnUSA2 = client.getChildGeoObjects(data.WASHINGTON.getUid(), data.WASHINGTON.getGeoObjectType().getCode(), new String[]{data.DISTRICT.getCode()}, false);
 
         found = false;
         for (ChildTreeNode ctnState : ctnUSA2.getChildren())
