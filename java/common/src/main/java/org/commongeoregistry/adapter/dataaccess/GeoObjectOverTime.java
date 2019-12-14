@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.commongeoregistry.adapter.Optional;
 import org.commongeoregistry.adapter.RegistryAdapter;
+import org.commongeoregistry.adapter.RequiredParameterException;
 import org.commongeoregistry.adapter.Term;
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
 import org.commongeoregistry.adapter.metadata.AttributeGeometryType;
@@ -102,9 +103,33 @@ public class GeoObjectOverTime implements Serializable
     return this.geoObjectType;
   }
   
+  
+  /**
+   * Returns the Attribute associated with the given date. If date is null,
+   * it is assumed to be the latest date at which data is available (infinity).
+   * If no values exist, one will be created. If no values exist and the date is null,
+   * then a value will be created with the current date.
+   * 
+   * @param date
+   * @return
+   */
   public Attribute getAttribute(String key, Date date)
   {
-    return this.votAttributeMap.get(key).getAttribute(date);
+    return this.votAttributeMap.get(key).getOrCreateAttribute(date);
+  }
+  
+  /**
+   * Returns the AttributeGeometry associated with the given date. If date is null,
+   * it is assumed to be the latest date at which data is available (infinity).
+   * If no values exist, one will be created. If no values exist and the date is null,
+   * then a value will be created with the current date.
+   * 
+   * @param date
+   * @return
+   */
+  public AttributeGeometry getGeometryAttribute(Date date)
+  {
+    return (AttributeGeometry) this.votAttributeMap.get(DefaultAttribute.GEOMETRY.getName()).getOrCreateAttribute(date);
   }
   
   public ValueOverTimeCollectionDTO getAllValues(String attributeName)
@@ -139,7 +164,8 @@ public class GeoObjectOverTime implements Serializable
   }
   
   /**
-   * Returns the value of the change-over-time attribute with the given name.
+   * Returns the value of the change-over-time attribute with the given name. If date is null
+   * it is assumed to be the latest date at which data is available (infinity).
    * 
    * @pre attribute with the given name is defined on the {@link GeoObjectType}
    *      that defines this {@link GeoObject}.
@@ -183,8 +209,11 @@ public class GeoObjectOverTime implements Serializable
   }
   
   /**
-   * Sets the value of the change-over-time attribute.
+   * Sets the value of the change-over-time attribute. If endDate is null then it is assumed to
+   * expand as far as possible into the future. If startDate is null then it will grab the latest
+   * available value and set it. If one does not exist one will be created with today's date.
    * 
+   * @throws {@link RequiredParamterException} if startDate is missing
    * @param attributeName
    * @param _value
    */
@@ -206,18 +235,8 @@ public class GeoObjectOverTime implements Serializable
       }
     }
     
-    Attribute attribute = votc.getAttribute(startDate);
-    
-    if (attribute == null)
-    {
-      ValueOverTimeDTO vot = new ValueOverTimeDTO(startDate, endDate, votc);
-      vot.setValue(_value);
-      votc.add(vot);
-    }
-    else
-    {
-      attribute.setValue(_value);
-    }
+    Attribute attribute = votc.getOrCreateAttribute(startDate);
+    attribute.setValue(_value);
   }
 
   /**
@@ -261,9 +280,13 @@ public class GeoObjectOverTime implements Serializable
   }
   
   /**
-   * Sets the display label of this {@link GeoObject}.
+   * Sets the display label of this {@link GeoObject}. If endDate is null then it is assumed to
+   * expand as far as possible into the future. If startDate is null then it will grab the latest
+   * available value and set it. If one does not exist one will be created.
    * 
    * @param label
+   * @param startDate
+   * @param endDate
    */
   public void setDisplayLabel(LocalizedValue label, Date startDate, Date endDate)
   {
@@ -271,9 +294,10 @@ public class GeoObjectOverTime implements Serializable
   }
 
   /**
-   * Returns the display label of this {@link GeoObject}
+   * Returns the display label of this {@link GeoObjectOverTime}. If date is null
+   * it is assumed to be the latest date at which data is available (infinity).
    * 
-   * @return the display label of this {@link GeoObject}
+   * @return the display label of this {@link GeoObjectOverTime}
    */
   public LocalizedValue getDisplayLabel(Date startDate)
   {
@@ -316,12 +340,17 @@ public class GeoObjectOverTime implements Serializable
       AttributeTermType attributeTermType = (AttributeTermType) optionalAttributeType.get();
 
       @SuppressWarnings("unchecked")
-      String termCode = ( (Iterator<String>) this.getValue(DefaultAttribute.STATUS.getName(), date) ).next();
-      Optional<Term> optionalTerm = attributeTermType.getTermByCode(termCode);
-
-      if (optionalTerm.isPresent())
+      Iterator<String> statusIt = ( (Iterator<String>) this.getValue(DefaultAttribute.STATUS.getName(), date) );
+      
+      if (statusIt.hasNext())
       {
-        term = optionalTerm.get();
+        String termCode = statusIt.next();
+        Optional<Term> optionalTerm = attributeTermType.getTermByCode(termCode);
+  
+        if (optionalTerm.isPresent())
+        {
+          term = optionalTerm.get();
+        }
       }
     }
 

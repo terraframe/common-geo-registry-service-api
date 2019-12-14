@@ -73,6 +73,14 @@ public abstract class RegistryAdapter implements Serializable
     return newGeoObjectInstance(geoObjectTypeCode, true);
   }
 
+  /**
+   * Creates a new local {@link GeoObject} instance of the given type. If genId is true and the
+   * local id cache is empty, an EmptyIdCacheException is thrown.
+   * 
+   * @param geoObjectTypeCode
+   * @param genId Whether or not this GeoObject should be given a new id from the id cache.
+   * @return a new local {@link GeoObject} instance of the given type.
+   */
   public GeoObject newGeoObjectInstance(String geoObjectTypeCode, boolean genId) throws EmptyIdCacheException
   {
     GeoObjectType geoObjectType = this.getMetadataCache().getGeoObjectType(geoObjectTypeCode).get();
@@ -96,6 +104,26 @@ public abstract class RegistryAdapter implements Serializable
     return geoObject;
   }
   
+  /**
+   * Creates a new local {@link GeoObjectOverTime} instance of the given type. If the
+   * local id cache is empty, an EmptyIdCacheException is thrown.
+   * 
+   * @param geoObjectTypeCode
+   * @return a new local {@link GeoObjectOverTime} instance of the given type.
+   */
+  public GeoObjectOverTime newGeoObjectOverTimeInstance(String geoObjectTypeCode) throws EmptyIdCacheException
+  {
+    return newGeoObjectOverTimeInstance(geoObjectTypeCode, true);
+  }
+  
+  /**
+   * Creates a new local {@link GeoObjectOverTime} instance of the given type. If genId is true and the
+   * local id cache is empty, an EmptyIdCacheException is thrown.
+   * 
+   * @param geoObjectTypeCode
+   * @param genId Whether or not this {@link GeoObjectOverTime} should be given a new id from the id cache.
+   * @return a new local {@link GeoObjectOverTime} instance of the given type.
+   */
   public GeoObjectOverTime newGeoObjectOverTimeInstance(String geoObjectTypeCode, boolean genId) throws EmptyIdCacheException
   {
     final Date createDate = new Date(); // TODO : This probably isn't desirable for whatever your usecase is

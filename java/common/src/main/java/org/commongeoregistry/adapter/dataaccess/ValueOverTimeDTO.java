@@ -46,25 +46,41 @@ public class ValueOverTimeDTO
   
   public boolean between(Date date)
   {
+    Date localDate = toLocal(date);
+    Date endDate = this.getEndDate();
+    Date startDate = this.getStartDate();
+    
+    return ( startDate.equals(localDate) || startDate.before(localDate) ) && ( endDate.equals(localDate) || endDate.after(localDate) );
+  }
+  
+  public static Date toLocal(Date date) {
     if (date == null)
     {
       date = INFINITY_END_DATE;
     }
     
-    Date localDate = toLocal(date);
-    
-    return ( this.startDate.equals(localDate) || this.startDate.before(localDate) ) && ( this.endDate.equals(localDate) || this.endDate.after(localDate) );
-  }
-  
-  public static Date toLocal(Date date) {
-    Calendar cal = Calendar.getInstance();
+    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    cal.clear();
     cal.setTime(date);
-    cal.setTimeZone(TimeZone.getTimeZone("GMT"));
     cal.set(Calendar.HOUR_OF_DAY, 0);
     cal.set(Calendar.MINUTE, 0);
     cal.set(Calendar.SECOND, 0);
     cal.set(Calendar.MILLISECOND, 0);
     return cal.getTime();
+    
+//    DateUtils.truncate(date, Calendar.DATE);
+//    DateUtils.
+    
+//    DateUtils
+    
+//    Calendar cal = Calendar.getInstance();
+//    cal.setTime(date);
+//    cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+//    cal.set(Calendar.HOUR_OF_DAY, 0);
+//    cal.set(Calendar.MINUTE, 0);
+//    cal.set(Calendar.SECOND, 0);
+//    cal.set(Calendar.MILLISECOND, 0);
+//    return cal.getTime();
 }
   
   public JsonObject toJSON(CustomSerializer serializer)
@@ -127,11 +143,11 @@ public class ValueOverTimeDTO
   {
     if (endDate == null)
     {
-      return null;
+      return INFINITY_END_DATE;
     }
     
 //    return Date.from(endDate.atStartOfDay().atZone(ZoneId.of("Z")).toInstant());
-    return toLocal(endDate);
+    return endDate;
   }
   
 //  public LocalDate getLocalEndDate()

@@ -34,9 +34,11 @@ import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.GeoObjectOverTime;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.dataaccess.UnknownTermException;
+import org.commongeoregistry.adapter.dataaccess.ValueOverTimeDTO;
 import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
@@ -55,7 +57,35 @@ import com.google.gson.JsonObject;
 
 public class SerializationTest
 {
+  @Test
+  public void testGeoObjectOverTime()
+  {
+    RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
 
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, registry);
+
+    String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
+
+    GeoObjectOverTime geoObject = registry.newGeoObjectOverTimeInstance("State");
+
+    geoObject.getGeometryAttribute(null).setWKTGeometry(geom);
+    geoObject.setCode("Colorado");
+    geoObject.setUid("CO");
+    geoObject.setDisplayLabel(new LocalizedValue("Colorado Display Label"), null, null);
+    geoObject.setStatus(DefaultTerms.GeoObjectStatusTerm.ACTIVE.code, null, null);
+
+    String sJson = geoObject.toJSON().toString();
+    GeoObjectOverTime geoObject2 = GeoObjectOverTime.fromJSON(registry, sJson);
+    String sJson2 = geoObject2.toJSON().toString();
+
+    Assert.assertEquals(sJson, sJson2);
+    Assert.assertEquals("Colorado", geoObject2.getCode());
+    Assert.assertEquals("CO", geoObject2.getUid());
+    Assert.assertEquals("Colorado Display Label", geoObject2.getDisplayLabel(null).getValue());
+    Assert.assertEquals("Colorado Display Label", geoObject2.getDisplayLabel(null).getValue(LocalizedValue.DEFAULT_LOCALE));
+    Assert.assertEquals(geoObject.getStatus(null).getCode(), geoObject2.getStatus(null).getCode());
+  }
+  
   @Test
   public void testTerm()
   {

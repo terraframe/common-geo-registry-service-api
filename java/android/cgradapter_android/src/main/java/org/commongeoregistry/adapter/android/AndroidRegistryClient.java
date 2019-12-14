@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import org.commongeoregistry.adapter.HttpRegistryClient;
 import org.commongeoregistry.adapter.action.AbstractActionDTO;
 import org.commongeoregistry.adapter.constants.RegistryUrls;
+import org.commongeoregistry.adapter.dataaccess.GeoObjectOverTime;
 import org.commongeoregistry.adapter.http.AuthenticationException;
 import org.commongeoregistry.adapter.http.Connector;
 import org.commongeoregistry.adapter.http.HttpResponse;

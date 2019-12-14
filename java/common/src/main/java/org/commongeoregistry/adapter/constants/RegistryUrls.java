@@ -83,6 +83,10 @@ public class RegistryUrls
    * GeoObjectOverTime
    */
   
+  public static final String GEO_OBJECT_TIME_GET  = "geoobject-time/get";
+  public static final String GEO_OBJECT_TIME_GET_PARAM_ID = "id";
+  public static final String GEO_OBJECT_TIME_GET_PARAM_TYPE_CODE = "typeCode";
+  
   public static final String GEO_OBJECT_TIME_GET_CODE  = "geoobject-time/get-code";
   public static final String GEO_OBJECT_TIME_GET_CODE_PARAM_CODE = "code";
   public static final String GEO_OBJECT_TIME_GET_CODE_PARAM_TYPE_CODE = "typeCode";

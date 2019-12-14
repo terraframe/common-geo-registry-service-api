@@ -9,6 +9,7 @@ import org.commongeoregistry.adapter.android.framework.TestGeoObjectInfo;
 import org.commongeoregistry.adapter.android.framework.USATestData;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.GeoObjectOverTime;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.http.AuthenticationException;
@@ -18,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * Contains tests that run in Android and require a common geo registry server running.
@@ -62,7 +64,7 @@ public class AndroidIntegrationTest
         TEST_ADD_CHILD = data.newTestGeoObjectInfo("TEST_ADD_CHILD", data.DISTRICT);
         data.setUp();
 
-        // These objects do not exist in the database yet:
+        // These objects do not exist in the database (but tests will at some point create them):
         UTAH = data.newTestGeoObjectInfo("Utah", data.STATE);
         CALIFORNIA = data.newTestGeoObjectInfo("California", data.STATE);
     }
@@ -108,7 +110,35 @@ public class AndroidIntegrationTest
         UTAH.assertEquals(go4);
 
         // 5. Fetch it one last time to make sure our update worked
-        GeoObject go5 = client.getGeoObject(go4.getUid(), go4.getType().getCode());
+        GeoObject go5 = client.getGeoObjectByCode(go4.getCode(), go4.getType().getCode());
+        UTAH.assertEquals(go5);
+    }
+
+    @Test
+    public void testCreateGetUpdateGeoObjectOverTime() throws AuthenticationException, ServerResponseException, IOException {
+        // 1. Create a Geo Object locally
+        GeoObjectOverTime goUtah = UTAH.newGeoObjectOverTime();
+
+        // 2. Send the new GeoObject to the server to be applied to the database
+        GeoObjectOverTime go2 = client.createGeoObjectOverTime(goUtah);
+        UTAH.setUid(go2.getUid());
+        UTAH.assertEquals(go2);
+
+        // 3. Retrieve the new GeoObject from the server
+        int numRegistryIds = client.getLocalCache().countNumberRegistryIds();
+        GeoObjectOverTime go3 = client.getGeoObjectOverTime(go2.getUid(), go2.getType().getCode());
+        UTAH.assertEquals(go3);
+        Assert.assertEquals(numRegistryIds, client.getLocalCache().countNumberRegistryIds());
+
+        // 4. Update the GeoObject
+        final String newLabel = "MODIFIED DISPLAY LABEL";
+        go3.setDisplayLabel(new LocalizedValue(newLabel), new Date(), null);
+        UTAH.setDisplayLabel(newLabel);
+        GeoObjectOverTime go4 = client.updateGeoObjectOverTime(go3);
+        UTAH.assertEquals(go4);
+
+        // 5. Fetch it one last time to make sure our update worked
+        GeoObjectOverTime go5 = client.getGeoObjectOverTimeByCode(go4.getCode(), go4.getType().getCode());
         UTAH.assertEquals(go5);
     }
 
@@ -164,37 +194,37 @@ public class AndroidIntegrationTest
         Assert.assertEquals(numRegistryIds, client.getLocalCache().countNumberRegistryIds());
     }
 
-//    @Test
-//    public void testExecuteActions() throws AuthenticationException, ServerResponseException, IOException {
-//        // Create a new GeoObject locally
-//        GeoObject goCali = CALIFORNIA.newGeoObject();
-//        client.getLocalCache().createGeoObject(goCali);
+    @Test
+    public void testExecuteActions() throws AuthenticationException, ServerResponseException, IOException {
+        // Create a new GeoObject locally
+        GeoObjectOverTime goCali = CALIFORNIA.newGeoObjectOverTime();
+        client.getLocalCache().createGeoObjectOverTime(goCali);
+
+        // Update that GeoObject
+        final String newLabel = "MODIFIED DISPLAY LABEL";
+        goCali.setDisplayLabel(new LocalizedValue(newLabel), null, null);
+        client.getLocalCache().updateGeoObjectOverTime(goCali);
+
+        Assert.assertEquals(2, client.getLocalCache().getAllActionHistory().size());
+        client.pushObjectsToRegistry();
+
+        // TODO : This test isn't even possible anymore. Actions are not executed immediately when
+        // they are received.
+//        // Fetch California and make sure it has our new display label
+//        GeoObject goCali2 = client.getGeoObjectByCode(CALIFORNIA.getCode(), CALIFORNIA.getUniversal().getCode());
 //
-//        // Update that GeoObject
-//        final String newLabel = "MODIFIED DISPLAY LABEL";
-//        goCali.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, newLabel);
+//        CALIFORNIA.setUid(goCali2.getUid());
+//        CALIFORNIA.setDisplayLabel(newLabel);
+//        CALIFORNIA.assertEquals(goCali2);
+//
+//        // Update that GeoObject again
+//        final String newLabel2 = "MODIFIED DISPLAY LABEL2";
+//        goCali.setLocalizedDisplayLabel(newLabel2);
 //        client.getLocalCache().updateGeoObject(goCali);
 //
-//        Assert.assertEquals(2, client.getLocalCache().getAllActionHistory().size());
-//        client.pushObjectsToRegistry();
-//
-//        // TODO : This test isn't even possible anymore. Actions are not executed immediately when
-//        // they are received.
-////        // Fetch California and make sure it has our new display label
-////        GeoObject goCali2 = client.getGeoObjectByCode(CALIFORNIA.getCode(), CALIFORNIA.getUniversal().getCode());
-////
-////        CALIFORNIA.setUid(goCali2.getUid());
-////        CALIFORNIA.setDisplayLabel(newLabel);
-////        CALIFORNIA.assertEquals(goCali2);
-////
-////        // Update that GeoObject again
-////        final String newLabel2 = "MODIFIED DISPLAY LABEL2";
-////        goCali.setLocalizedDisplayLabel(newLabel2);
-////        client.getLocalCache().updateGeoObject(goCali);
-////
-////        // Make sure that when we push it only pushes our new update and not the old ones again
-////        Assert.assertEquals(1, client.getLocalCache().getUnpushedActionHistory().size());
-//    }
+//        // Make sure that when we push it only pushes our new update and not the old ones again
+//        Assert.assertEquals(1, client.getLocalCache().getUnpushedActionHistory().size());
+    }
 
     @Test
     public void testAddChild() throws AuthenticationException, ServerResponseException, IOException {

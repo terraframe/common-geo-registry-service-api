@@ -26,6 +26,7 @@ import java.util.Set;
 import org.commongeoregistry.adapter.constants.RegistryUrls;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.GeoObjectOverTime;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.http.AuthenticationException;
 import org.commongeoregistry.adapter.http.Connector;
@@ -119,10 +120,10 @@ public class HttpRegistryClient extends RegistryAdapter
   }
 
   /**
-   * Returns the GeoObject with the given UID.
+   * Returns the {@link GeoObject} with the given UID.
    * 
    * @param _uid
-   *          UID of the GeoObject.
+   *          UID of the {@link GeoObject}.
    * 
    * @return GeoObject with the given UID.
    * @throws AuthenticationException 
@@ -153,10 +154,10 @@ public class HttpRegistryClient extends RegistryAdapter
   }
   
   /**
-   * Returns the GeoObject with the given code.
+   * Returns the {@link GeoObject} with the given code.
    * 
    * @param code
-   *          code of the GeoObject.
+   *          code of the {@link GeoObject}.
    * 
    * @return GeoObject with the given code.
    * @throws AuthenticationException 
@@ -182,6 +183,74 @@ public class HttpRegistryClient extends RegistryAdapter
     ResponseProcessor.validateStatusCode(resp);
 
     GeoObject geoObject = GeoObject.fromJSON(this, resp.getAsString());
+
+    return geoObject;
+  }
+  
+  /**
+   * Returns the {@link GeoObjectOverTime} with the given UID.
+   * 
+   * @param _uid
+   *          UID of the GeoObject.
+   * 
+   * @return GeoObject with the given UID.
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
+   * @throws IOException 
+   */
+  public GeoObjectOverTime getGeoObjectOverTime(String id, String typeCode) throws AuthenticationException, ServerResponseException, IOException
+  {
+    if (id == null || id.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_TIME_GET, RegistryUrls.GEO_OBJECT_TIME_GET_PARAM_ID);
+    }
+    if (typeCode == null || typeCode.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_TIME_GET, RegistryUrls.GEO_OBJECT_TIME_GET_PARAM_TYPE_CODE);
+    }
+
+    HashMap<String, String> params = new HashMap<String, String>();
+    params.put(RegistryUrls.GEO_OBJECT_TIME_GET_PARAM_ID, id);
+    params.put(RegistryUrls.GEO_OBJECT_TIME_GET_PARAM_TYPE_CODE, typeCode);
+
+    HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_TIME_GET, params);
+    ResponseProcessor.validateStatusCode(resp);
+
+    GeoObjectOverTime geoObject = GeoObjectOverTime.fromJSON(this, resp.getAsString());
+
+    return geoObject;
+  }
+  
+  /**
+   * Returns the {@link GeoObjectOverTime} with the given code.
+   * 
+   * @param code
+   *          code of the GeoObject.
+   * 
+   * @return GeoObject with the given code.
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
+   * @throws IOException 
+   */
+  public GeoObjectOverTime getGeoObjectOverTimeByCode(String code, String typeCode) throws AuthenticationException, ServerResponseException, IOException
+  {
+    if (code == null || code.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_TIME_GET_CODE, RegistryUrls.GEO_OBJECT_TIME_GET_CODE_PARAM_CODE);
+    }
+    if (typeCode == null || typeCode.length() == 0)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_TIME_GET_CODE, RegistryUrls.GEO_OBJECT_TIME_GET_CODE_PARAM_TYPE_CODE);
+    }
+
+    HashMap<String, String> params = new HashMap<String, String>();
+    params.put(RegistryUrls.GEO_OBJECT_TIME_GET_CODE_PARAM_CODE, code);
+    params.put(RegistryUrls.GEO_OBJECT_TIME_GET_CODE_PARAM_TYPE_CODE, typeCode);
+
+    HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_TIME_GET_CODE, params);
+    ResponseProcessor.validateStatusCode(resp);
+
+    GeoObjectOverTime geoObject = GeoObjectOverTime.fromJSON(this, resp.getAsString());
 
     return geoObject;
   }
@@ -212,6 +281,35 @@ public class HttpRegistryClient extends RegistryAdapter
     ResponseProcessor.validateStatusCode(resp);
     
     GeoObject retGeo = GeoObject.fromJSON(this, resp.getAsString());
+    return retGeo;
+  }
+  
+  /**
+   * Sends the given {@link GeoObjectOverTime} to the common geo-registry to be created.
+   * 
+   * @pre the status on the {@link GeoObjectOverTime} is in the new state.
+   * 
+   * @param _geoObject
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
+   * @throws IOException 
+   */
+  public GeoObjectOverTime createGeoObjectOverTime(GeoObjectOverTime _geoObject) throws AuthenticationException, ServerResponseException, IOException
+  {
+    if (_geoObject == null)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_TIME_CREATE, RegistryUrls.GEO_OBJECT_TIME_CREATE_PARAM_GEOOBJECT);
+    }
+
+    JsonObject jsonObject = _geoObject.toJSON();
+
+    JsonObject params = new JsonObject();
+    params.add(RegistryUrls.GEO_OBJECT_TIME_CREATE_PARAM_GEOOBJECT, jsonObject);
+
+    HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_TIME_CREATE, params.toString());
+    ResponseProcessor.validateStatusCode(resp);
+    
+    GeoObjectOverTime retGeo = GeoObjectOverTime.fromJSON(this, resp.getAsString());
     return retGeo;
   }
   
@@ -289,6 +387,35 @@ public class HttpRegistryClient extends RegistryAdapter
     ResponseProcessor.validateStatusCode(resp);
     
     GeoObject retGeo = GeoObject.fromJSON(this, resp.getAsString());
+    return retGeo;
+  }
+  
+  /**
+   * Sends the given {@link GeoObjectOverTime} to the common geo-registry to be updated.
+   * 
+   * @pre the status on the {@link GeoObjectOverTime} is NOT in the new state.
+   * 
+   * @param _geoObject
+   * @throws AuthenticationException 
+   * @throws ServerResponseException 
+   * @throws IOException 
+   */
+  public GeoObjectOverTime updateGeoObjectOverTime(GeoObjectOverTime _geoObject) throws AuthenticationException, ServerResponseException, IOException
+  {
+    if (_geoObject == null)
+    {
+      throw new RequiredParameterException(RegistryUrls.GEO_OBJECT_TIME_UPDATE, RegistryUrls.GEO_OBJECT_TIME_UPDATE_PARAM_GEOOBJECT);
+    }
+
+    JsonObject jsonObject = _geoObject.toJSON();
+
+    JsonObject params = new JsonObject();
+    params.add(RegistryUrls.GEO_OBJECT_TIME_UPDATE_PARAM_GEOOBJECT, jsonObject);
+
+    HttpResponse resp = this.connector.httpPost(RegistryUrls.GEO_OBJECT_TIME_UPDATE, params.toString());
+    ResponseProcessor.validateStatusCode(resp);
+    
+    GeoObjectOverTime retGeo = GeoObjectOverTime.fromJSON(this, resp.getAsString());
     return retGeo;
   }
 

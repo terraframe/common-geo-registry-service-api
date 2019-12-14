@@ -2,9 +2,11 @@ package org.commongeoregistry.adapter.android.framework;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.commongeoregistry.adapter.constants.DefaultTerms;
 import org.commongeoregistry.adapter.constants.GeometryType;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.GeoObjectOverTime;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.http.AuthenticationException;
@@ -112,6 +114,24 @@ public class TestGeoObjectInfo
     geoObj.getDisplayLabel().setValue(this.getDisplayLabel());
     geoObj.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, this.getDisplayLabel());
 
+
+    if (uid != null)
+    {
+      geoObj.setUid(uid);
+    }
+
+    return geoObj;
+  }
+
+  public GeoObjectOverTime newGeoObjectOverTime()
+  {
+    GeoObjectOverTime geoObj = testData.client.newGeoObjectOverTimeInstance(this.typeInfo.getCode());
+
+    geoObj.getGeometryAttribute(null).setWKTGeometry(this.getWkt());
+    geoObj.setCode(this.getCode());
+    geoObj.getDisplayLabel(null).setValue(this.getDisplayLabel());
+    geoObj.setDisplayLabel(new LocalizedValue(this.getDisplayLabel()), null, null);
+    geoObj.setStatus(DefaultTerms.GeoObjectStatusTerm.ACTIVE.code, null, null);
 
     if (uid != null)
     {
@@ -283,5 +303,14 @@ public class TestGeoObjectInfo
 
   public void fetchUid() throws AuthenticationException, ServerResponseException, IOException {
     this.setUid(testData.client.getGeoObjectByCode(this.getCode(), this.getGeoObjectType().getCode()).getUid());
+  }
+
+  public void assertEquals(GeoObjectOverTime geoObj) {
+    Assert.assertEquals(this.getUid(), geoObj.getUid());
+    Assert.assertEquals(this.getCode(), geoObj.getCode());
+//      Assert.assertEquals(StringUtils.deleteWhitespace(this.getWkt()), StringUtils.deleteWhitespace(geoObj.getGeometry().toText()));
+    Assert.assertEquals(this.getDisplayLabel(), geoObj.getDisplayLabel(null).getValue());
+    this.getGeoObjectType().assertEquals(geoObj.getType());
+    // TODO : state?
   }
 }

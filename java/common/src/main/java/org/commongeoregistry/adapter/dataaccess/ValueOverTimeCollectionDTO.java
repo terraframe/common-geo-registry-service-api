@@ -66,6 +66,22 @@ public class ValueOverTimeCollectionDTO implements Collection<ValueOverTimeDTO>
     return null;
   }
   
+  public Attribute getOrCreateAttribute(Date date)
+  {
+    Attribute attr = getAttribute(date);
+    
+    if (attr != null) { return attr; }
+    
+    if (date == null)
+    {
+      date = new Date();
+    }
+    
+    ValueOverTimeDTO vot = new ValueOverTimeDTO(date, null, this);
+    this.add(vot);
+    return vot.getAttribute();
+  }
+  
   public Object getValue(Date date)
   {
     for (ValueOverTimeDTO vot : this.valuesOverTime)
