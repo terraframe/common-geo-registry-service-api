@@ -53,11 +53,20 @@ public class ValueOverTimeCollectionDTO implements Collection<ValueOverTimeDTO>
     this.attributeType = type;
   }
   
-  public Attribute getAttribute(Date date)
+  /**
+   * Returns the Attribute which exists exactly at the given startDate. Does not include between values.
+   * 
+   * @param date
+   * @return
+   */
+  public Attribute getAttributeAtStartDate(Date date)
   {
+    Date localDate = ValueOverTimeDTO.toLocal(date);
+    
     for (ValueOverTimeDTO vot : this.valuesOverTime)
     {
-      if (vot.between(date))
+//      if (vot.between(date))
+      if (vot.getStartDate().equals(localDate))
       {
         return vot.getAttribute();
       }
@@ -68,21 +77,36 @@ public class ValueOverTimeCollectionDTO implements Collection<ValueOverTimeDTO>
   
   public Attribute getOrCreateAttribute(Date date)
   {
-    Attribute attr = getAttribute(date);
-    
-    if (attr != null) { return attr; }
-    
     if (date == null)
     {
       date = new Date();
     }
+    
+    Attribute attr = getAttributeAtStartDate(date);
+    
+    if (attr != null) { return attr; }
     
     ValueOverTimeDTO vot = new ValueOverTimeDTO(date, null, this);
     this.add(vot);
     return vot.getAttribute();
   }
   
-  public Object getValue(Date date)
+  public Attribute getAttributeOnDate(Date date)
+  {
+    Date localDate = ValueOverTimeDTO.toLocal(date);
+    
+    for (ValueOverTimeDTO vot : this.valuesOverTime)
+    {
+      if (vot.between(localDate))
+      {
+        return vot.getAttribute();
+      }
+    }
+    
+    return null;
+  }
+  
+  public Object getValueOnDate(Date date)
   {
     for (ValueOverTimeDTO vot : this.valuesOverTime)
     {

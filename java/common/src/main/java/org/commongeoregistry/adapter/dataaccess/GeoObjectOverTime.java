@@ -105,7 +105,7 @@ public class GeoObjectOverTime implements Serializable
   
   
   /**
-   * Returns the Attribute associated with the given date. If date is null,
+   * Returns the Attribute at the exact start date. If date is null,
    * it is assumed to be the latest date at which data is available (infinity).
    * If no values exist, one will be created. If no values exist and the date is null,
    * then a value will be created with the current date.
@@ -113,23 +113,38 @@ public class GeoObjectOverTime implements Serializable
    * @param date
    * @return
    */
-  public Attribute getAttribute(String key, Date date)
+  public Attribute getOrCreateAttribute(String key, Date startDate)
   {
-    return this.votAttributeMap.get(key).getOrCreateAttribute(date);
+    return this.votAttributeMap.get(key).getOrCreateAttribute(startDate);
   }
   
   /**
-   * Returns the AttributeGeometry associated with the given date. If date is null,
-   * it is assumed to be the latest date at which data is available (infinity).
-   * If no values exist, one will be created. If no values exist and the date is null,
-   * then a value will be created with the current date.
+   * Returns the attribute which represents the given day. If no start or end date exactly
+   * matches this day, then the attribute which spans the date range which this date falls
+   * within will be returned. If the provided date is null, the date is assumed to be infinity,
+   * in which case the latest value will be returned. This method may return null if the provided
+   * date occurs before all recorded data.
+   * 
+   * @param key
+   * @param date
+   * @return
+   */
+  public Attribute getAttributeOnDate(String key, Date date)
+  {
+    return this.votAttributeMap.get(key).getAttributeOnDate(date);
+  }
+  
+  /**
+   * Sets the WKT geometry at the exact start date. If date is null, it will be set to today's date.
+   * If no value exists at the exact start date, one will be created. The end date will automatically
+   * span the range to the next available value in the system, or infinity if one does not exist.
    * 
    * @param date
    * @return
    */
-  public AttributeGeometry getGeometryAttribute(Date date)
+  public void setWKTGeometry(String wkt, Date startDate)
   {
-    return (AttributeGeometry) this.votAttributeMap.get(DefaultAttribute.GEOMETRY.getName()).getOrCreateAttribute(date);
+    ((AttributeGeometry) this.votAttributeMap.get(DefaultAttribute.GEOMETRY.getName()).getOrCreateAttribute(startDate)).setWKTGeometry(wkt);
   }
   
   public ValueOverTimeCollectionDTO getAllValues(String attributeName)
@@ -155,7 +170,7 @@ public class GeoObjectOverTime implements Serializable
     }
     else if (this.votAttributeMap.containsKey(attributeName))
     {
-      return this.votAttributeMap.get(attributeName).getValue(null);
+      return this.votAttributeMap.get(attributeName).getValueOnDate(null);
     }
     else
     {
@@ -164,8 +179,11 @@ public class GeoObjectOverTime implements Serializable
   }
   
   /**
-   * Returns the value of the change-over-time attribute with the given name. If date is null
-   * it is assumed to be the latest date at which data is available (infinity).
+   * Returns the value which represents the given day. If no start or end date exactly
+   * matches this day, then the value which spans the date range which this date falls
+   * within will be returned. If the provided date is null, the date is assumed to be infinity,
+   * in which case the latest value will be returned. This method may return null if the provided
+   * date occurs before all recorded data.
    * 
    * @pre attribute with the given name is defined on the {@link GeoObjectType}
    *      that defines this {@link GeoObject}.
@@ -176,7 +194,7 @@ public class GeoObjectOverTime implements Serializable
    */
   public Object getValue(String attributeName, Date date)
   {
-    return this.votAttributeMap.get(attributeName).getValue(date);
+    return this.votAttributeMap.get(attributeName).getValueOnDate(date);
   }
   
   /**

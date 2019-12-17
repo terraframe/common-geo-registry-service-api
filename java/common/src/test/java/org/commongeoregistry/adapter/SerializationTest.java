@@ -68,7 +68,7 @@ public class SerializationTest
 
     GeoObjectOverTime geoObject = registry.newGeoObjectOverTimeInstance("State");
 
-    geoObject.getGeometryAttribute(null).setWKTGeometry(geom);
+    geoObject.setWKTGeometry(geom, null);
     geoObject.setCode("Colorado");
     geoObject.setUid("CO");
     geoObject.setDisplayLabel(new LocalizedValue("Colorado Display Label"), null, null);
