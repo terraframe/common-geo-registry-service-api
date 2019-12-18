@@ -36,7 +36,7 @@ public class ExampleCodeTest
         GeoObjectOverTime newGo = client.newGeoObjectOverTimeInstance("Cambodia_Commune");
         newGo.setCode("855 30");
         newGo.setDisplayLabel(new LocalizedValue("New Cambodia Commune (Android)"), null, null);
-        newGo.getGeometryAttribute(null).setWKTGeometry("MULTIPOLYGON (((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000)))");
+        newGo.setWKTGeometry("MULTIPOLYGON (((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000)))", null);
 
         client.getLocalCache().createGeoObjectOverTime(newGo); // Save the 'create action' of our GeoObject to the offline database so that we can send it to the server later
 

@@ -140,7 +140,7 @@ public class LocalObjectCacheTest {
 
         String geom = "MULTIPOLYGON (((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000)))";
 
-        geoObject.getGeometryAttribute(null).setWKTGeometry(geom);
+        geoObject.setWKTGeometry(geom, null);
         geoObject.setCode(genKey + "_CODE");
         geoObject.setUid(genKey + "_UID");
         geoObject.setDisplayLabel(new LocalizedValue(genKey + " Display Label"), null, null);

@@ -127,7 +127,7 @@ public class TestGeoObjectInfo
   {
     GeoObjectOverTime geoObj = testData.client.newGeoObjectOverTimeInstance(this.typeInfo.getCode());
 
-    geoObj.getGeometryAttribute(null).setWKTGeometry(this.getWkt());
+    geoObj.setWKTGeometry(this.getWkt(), null);
     geoObj.setCode(this.getCode());
     geoObj.getDisplayLabel(null).setValue(this.getDisplayLabel());
     geoObj.setDisplayLabel(new LocalizedValue(this.getDisplayLabel()), null, null);
