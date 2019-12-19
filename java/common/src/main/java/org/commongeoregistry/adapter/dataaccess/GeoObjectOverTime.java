@@ -253,8 +253,9 @@ public class GeoObjectOverTime implements Serializable
       }
     }
     
-    Attribute attribute = votc.getOrCreateAttribute(startDate);
-    attribute.setValue(_value);
+    ValueOverTimeDTO vot = votc.getOrCreate(startDate);
+    vot.setEndDate(endDate);
+    vot.setValue(_value);
   }
 
   /**

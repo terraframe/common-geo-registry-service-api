@@ -65,10 +65,40 @@ public class ValueOverTimeCollectionDTO implements Collection<ValueOverTimeDTO>
     
     for (ValueOverTimeDTO vot : this.valuesOverTime)
     {
-//      if (vot.between(date))
       if (vot.getStartDate().equals(localDate))
       {
         return vot.getAttribute();
+      }
+    }
+    
+    return null;
+  }
+  
+  public ValueOverTimeDTO getOrCreate(Date date)
+  {
+    if (date == null)
+    {
+      date = new Date();
+    }
+    
+    ValueOverTimeDTO vot = getAtStartDate(date);
+    
+    if (vot != null) { return vot; }
+    
+    vot = new ValueOverTimeDTO(date, null, this);
+    this.add(vot);
+    return vot;
+  }
+  
+  public ValueOverTimeDTO getAtStartDate(Date date)
+  {
+    Date localDate = ValueOverTimeDTO.toLocal(date);
+    
+    for (ValueOverTimeDTO vot : this.valuesOverTime)
+    {
+      if (vot.getStartDate().equals(localDate))
+      {
+        return vot;
       }
     }
     

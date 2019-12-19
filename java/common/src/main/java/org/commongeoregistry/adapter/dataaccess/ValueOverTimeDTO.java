@@ -164,7 +164,7 @@ public class ValueOverTimeDTO
     }
     else
     {
-      endDate = null;
+      this.endDate = INFINITY_END_DATE;
     }
   }
 

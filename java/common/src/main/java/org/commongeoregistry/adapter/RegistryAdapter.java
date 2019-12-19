@@ -139,7 +139,7 @@ public abstract class RegistryAdapter implements Serializable
     // geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(geoObjectTypeCode);
 
     Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
-    geoObject.setValue(DefaultAttribute.STATUS.getName(), newStatus, createDate, createDate);
+    geoObject.setValue(DefaultAttribute.STATUS.getName(), newStatus, createDate, null);
 
     if (genId)
     {
