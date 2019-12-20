@@ -52,7 +52,7 @@
     <connection>scm:git:ssh://git@github.com/terraframe/common-geo-registry-adapter</connection>
     <developerConnection>scm:git:ssh://git@github.com/terraframe/common-geo-registry-adapter</developerConnection>
     <url>scm:git:ssh://git@github.com/terraframe/common-geo-registry-adapter</url>
-    <tag>HEAD</tag>
+    <tag>0.6.0</tag>
   </scm>
   
   <licenses>
