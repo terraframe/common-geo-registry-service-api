@@ -84,6 +84,8 @@ public class RegistryServerInterfaceTest
     
     for (DefaultAttribute defaultAttribute : DefaultAttribute.values())
     {
+      if (defaultAttribute.equals(DefaultAttribute.GEOMETRY)) { continue; }
+      
       AttributeType attributeType = province.getAttribute(defaultAttribute.getName()).get();
       
       Assert.assertNotNull(defaultAttribute.getName()+"  was not defined as a default attribute", attributeType);

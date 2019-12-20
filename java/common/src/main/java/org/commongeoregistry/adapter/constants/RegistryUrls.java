@@ -33,7 +33,7 @@ public class RegistryUrls
   public static final String GEO_OBJECT_GET_CODE      = "geoobject/get-code";
   public static final String GEO_OBJECT_GET_CODE_PARAM_CODE = "code";
   public static final String GEO_OBJECT_GET_CODE_PARAM_TYPE_CODE = "typeCode";
-
+  
   public static final String GEO_OBJECT_UPDATE        = "geoobject/update";
   public static final String GEO_OBJECT_UPDATE_PARAM_GEOOBJECT = "geoObject";
   
@@ -71,6 +71,31 @@ public class RegistryUrls
 
   public static final String GEO_OBJECT_GET_UIDS      = "geoobject/get-uids";
   public static final String GEO_OBJECT_GET_UIDS_PARAM_AMOUNT = "amount";
+  
+  public static final String GEO_OBJECT_GET_ATTRIBUTE_VERSIONS = "geoobject/getAttributeVersions";
+  public static final String GEO_OBJECT_GET_ATTRIBUTE_VERSIONS_PARAM_ID = "attributeId";
+  
+  public static final String GEO_OBJECT_SET_ATTRIBUTE_VERSIONS = "geoobject/setAttributeVersions";
+  public static final String GEO_OBJECT_SET_ATTRIBUTE_VERSIONS_PARAM_ID = "attributeId";
+  public static final String GEO_OBJECT_SET_ATTRIBUTE_VERSIONS_PARAM_COLLECTION = "collection";
+  
+  /**
+   * GeoObjectOverTime
+   */
+  
+  public static final String GEO_OBJECT_TIME_GET  = "geoobject-time/get";
+  public static final String GEO_OBJECT_TIME_GET_PARAM_ID = "id";
+  public static final String GEO_OBJECT_TIME_GET_PARAM_TYPE_CODE = "typeCode";
+  
+  public static final String GEO_OBJECT_TIME_GET_CODE  = "geoobject-time/get-code";
+  public static final String GEO_OBJECT_TIME_GET_CODE_PARAM_CODE = "code";
+  public static final String GEO_OBJECT_TIME_GET_CODE_PARAM_TYPE_CODE = "typeCode";
+  
+  public static final String GEO_OBJECT_TIME_UPDATE  = "geoobject-time/update";
+  public static final String GEO_OBJECT_TIME_UPDATE_PARAM_GEOOBJECT = "geoObject";
+  
+  public static final String GEO_OBJECT_TIME_CREATE  = "geoobject-time/create";
+  public static final String GEO_OBJECT_TIME_CREATE_PARAM_GEOOBJECT  = "geoObject";
   
   /**
    * Geo Object Types

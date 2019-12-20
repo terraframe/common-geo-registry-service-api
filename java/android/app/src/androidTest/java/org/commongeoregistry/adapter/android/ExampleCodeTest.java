@@ -4,6 +4,7 @@ import android.support.test.InstrumentationRegistry;
 
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.GeoObjectOverTime;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.http.AuthenticationException;
 import org.commongeoregistry.adapter.http.ServerResponseException;
@@ -11,9 +12,13 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 
 public class ExampleCodeTest
 {
+    /**
+     * This code exists to be placed on the Android documentation.
+     */
     @Test
     public void testExampleCode() throws AuthenticationException, ServerResponseException, IOException, InvocationTargetException {
         // Configure our connection with the remote registry server
@@ -28,16 +33,16 @@ public class ExampleCodeTest
         client.getIdService().populate(500); // Fetch 500 ids from the GeoRegistry which we'll use later to create GeoObjects. These ids are persisted in an offline database on the android phone.
 
         // Create a new GeoObject locally
-        GeoObject newGo = client.newGeoObjectInstance("Cambodia_Commune");
+        GeoObjectOverTime newGo = client.newGeoObjectOverTimeInstance("Cambodia_Commune");
         newGo.setCode("855 30");
-        newGo.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, "New Cambodia Commune (Android)");
-        newGo.setWKTGeometry("MULTIPOLYGON (((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000)))");
+        newGo.setDisplayLabel(new LocalizedValue("New Cambodia Commune (Android)"), null, null);
+        newGo.setWKTGeometry("MULTIPOLYGON (((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000)))", null);
 
-        client.getLocalCache().createGeoObject(newGo); // Save the 'create action' of our GeoObject to the offline database so that we can send it to the server later
+        client.getLocalCache().createGeoObjectOverTime(newGo); // Save the 'create action' of our GeoObject to the offline database so that we can send it to the server later
 
         // Update that GeoObject
-        newGo.setDisplayLabel(LocalizedValue.DEFAULT_LOCALE, "New Cambodia Commune (Modified)");
-        client.getLocalCache().updateGeoObject(newGo); // Save the 'update action' of our GeoObject to the offline database so that we can send it to the server later
+        newGo.setDisplayLabel(new LocalizedValue("New Cambodia Commune (Modified)"), null, null);
+        client.getLocalCache().updateGeoObjectOverTime(newGo); // Save the 'update action' of our GeoObject to the offline database so that we can send it to the server later
 
         // Push all our updates to the GeoRegistry (requires an internet connection)
         client.pushObjectsToRegistry();

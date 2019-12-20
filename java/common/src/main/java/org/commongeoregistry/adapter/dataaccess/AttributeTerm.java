@@ -111,7 +111,7 @@ public class AttributeTerm extends Attribute
   }
 
   @Override
-  public void toJSON(JsonObject geoObjProps, CustomSerializer serializer)
+  public JsonElement toJSON(CustomSerializer serializer)
   {    
     JsonArray termCodesJson = new JsonArray();
 
@@ -123,7 +123,7 @@ public class AttributeTerm extends Attribute
       }
     }
     
-    geoObjProps.add(this.getName(), termCodesJson);
+    return termCodesJson;
   }
   
   

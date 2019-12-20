@@ -52,6 +52,8 @@ public abstract class AttributeType implements Serializable
   public static final String JSON_REQUIRED              = "required";
 
   public static final String JSON_UNIQUE                = "unique";
+  
+  public static final String JSON_IS_CHANGE             = "isChangeOverTime";
 
   /**
    * Unique code of the attribute
@@ -88,6 +90,8 @@ public abstract class AttributeType implements Serializable
    * Flag denoting if the attribute value is unique
    */
   private boolean            unique;
+  
+  private boolean            isChangeOverTime;
 
   public AttributeType(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _isDefault, boolean _required, boolean _unique)
   {
@@ -98,6 +102,7 @@ public abstract class AttributeType implements Serializable
     this.isDefault = _isDefault;
     this.required = _required;
     this.unique = _unique;
+    this.isChangeOverTime = true;
   }
 
   public String getName()
@@ -226,12 +231,26 @@ public abstract class AttributeType implements Serializable
     {
       _isDefault = DefaultAttribute.LAST_UPDATE_DATE.getIsDefault();
     }
+    else if (DefaultAttribute.GEOMETRY.getName().equals(_name))
+    {
+      _isDefault = DefaultAttribute.GEOMETRY.getIsDefault();
+    }
     return _isDefault;
   }
 
   public final JsonObject toJSON()
   {
     return this.toJSON(new DefaultSerializer());
+  }
+  
+  public boolean isChangeOverTime()
+  {
+    return isChangeOverTime;
+  }
+
+  public void setIsChangeOverTime(boolean isChangeOverTime)
+  {
+    this.isChangeOverTime = isChangeOverTime;
   }
 
   public JsonObject toJSON(CustomSerializer serializer)
@@ -249,6 +268,7 @@ public abstract class AttributeType implements Serializable
     json.addProperty(JSON_IS_DEFAULT, this.getIsDefault());
     json.addProperty(JSON_REQUIRED, this.isRequired());
     json.addProperty(JSON_UNIQUE, this.isUnique());
+    json.addProperty(JSON_IS_CHANGE, this.isChangeOverTime());
 
     serializer.configure(this, json);
 
@@ -266,7 +286,7 @@ public abstract class AttributeType implements Serializable
   {
   }
 
-  public static AttributeType factory(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _required, boolean _unique)
+  public static AttributeType factory(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _required, boolean _unique, boolean _isChange)
   {
     AttributeType attributeType = null;
 
@@ -300,6 +320,12 @@ public abstract class AttributeType implements Serializable
     {
       attributeType = new AttributeBooleanType(_name, _label, _description, _isDefault, _required, _unique);
     }
+    else if (_type.equals(AttributeGeometryType.TYPE))
+    {
+      attributeType = new AttributeGeometryType(_name, _label, _description, _isDefault, _required, _unique);
+    }
+    
+    attributeType.setIsChangeOverTime(_isChange);
 
     return attributeType;
   }
@@ -309,11 +335,12 @@ public abstract class AttributeType implements Serializable
     String name = joAttr.get(AttributeType.JSON_CODE).getAsString();
     boolean required = joAttr.get(AttributeType.JSON_REQUIRED).getAsBoolean();
     boolean unique = joAttr.get(AttributeType.JSON_UNIQUE).getAsBoolean();
+    boolean isChange = joAttr.has(AttributeType.JSON_IS_CHANGE) ? joAttr.get(AttributeType.JSON_IS_CHANGE).getAsBoolean() : true;
 
     LocalizedValue attributeLabel = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_LABEL).getAsJsonObject());
     LocalizedValue attributeDescription = LocalizedValue.fromJSON(joAttr.get(AttributeType.JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
 
-    AttributeType attrType = AttributeType.factory(name, attributeLabel, attributeDescription, joAttr.get(AttributeType.JSON_TYPE).getAsString(), required, unique);
+    AttributeType attrType = AttributeType.factory(name, attributeLabel, attributeDescription, joAttr.get(AttributeType.JSON_TYPE).getAsString(), required, unique, isChange);
     attrType.fromJSON(joAttr);
     
     return attrType;

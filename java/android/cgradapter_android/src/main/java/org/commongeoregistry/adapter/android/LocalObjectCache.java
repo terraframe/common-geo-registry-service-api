@@ -21,6 +21,7 @@ import org.commongeoregistry.adapter.android.sql.LocalCacheContract.TreeNodeEntr
 import org.commongeoregistry.adapter.android.sql.LocalCacheDbHelper;
 import org.commongeoregistry.adapter.dataaccess.ChildTreeNode;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
+import org.commongeoregistry.adapter.dataaccess.GeoObjectOverTime;
 import org.commongeoregistry.adapter.dataaccess.ParentTreeNode;
 import org.commongeoregistry.adapter.dataaccess.TreeNode;
 import org.commongeoregistry.adapter.id.EmptyIdCacheException;
@@ -397,31 +398,31 @@ public class LocalObjectCache implements Serializable {
      * @param parentGeoObject
      * @param hierarchyType
      */
-    public void addChild(GeoObject childGeoObject, GeoObject parentGeoObject, HierarchyType hierarchyType) {
-        ChildTreeNode treeNode = new ChildTreeNode(parentGeoObject, hierarchyType);
-        treeNode.addChild(new ChildTreeNode(childGeoObject, hierarchyType));
-
-        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
-        try {
-            db.beginTransaction();
-
-            this.cache(treeNode, db);
-
-            AddChildActionDTO action = new AddChildActionDTO();
-            action.setChildId(childGeoObject.getUid());
-            action.setChildTypeCode(childGeoObject.getType().getCode());
-            action.setParentId(parentGeoObject.getUid());
-            action.setParentTypeCode(parentGeoObject.getType().getCode());
-            action.setHierarchyCode(hierarchyType.getCode());
-            this.insertAction(action, db);
-
-            db.setTransactionSuccessful();
-        } catch (SQLException e) {
-            throw new RuntimeException("Unable to add child. A database error has occurred.", e);
-        } finally {
-            db.endTransaction();
-        }
-    }
+//    public void addChild(GeoObject childGeoObject, GeoObject parentGeoObject, HierarchyType hierarchyType) {
+//        ChildTreeNode treeNode = new ChildTreeNode(parentGeoObject, hierarchyType);
+//        treeNode.addChild(new ChildTreeNode(childGeoObject, hierarchyType));
+//
+//        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
+//        try {
+//            db.beginTransaction();
+//
+//            this.cache(treeNode, db);
+//
+//            AddChildActionDTO action = new AddChildActionDTO();
+//            action.setChildId(childGeoObject.getUid());
+//            action.setChildTypeCode(childGeoObject.getType().getCode());
+//            action.setParentId(parentGeoObject.getUid());
+//            action.setParentTypeCode(parentGeoObject.getType().getCode());
+//            action.setHierarchyCode(hierarchyType.getCode());
+//            this.insertAction(action, db);
+//
+//            db.setTransactionSuccessful();
+//        } catch (SQLException e) {
+//            throw new RuntimeException("Unable to add child. A database error has occurred.", e);
+//        } finally {
+//            db.endTransaction();
+//        }
+//    }
 
     /**
      * Add the given {@link GeoObject} to the local cache.
@@ -444,18 +445,64 @@ public class LocalObjectCache implements Serializable {
     }
 
     /**
+     * Add the given {@link GeoObjectOverTime} to the local cache.
+     *
+     * @param geoObject
+     */
+    public void cache(GeoObjectOverTime geoObject) {
+        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
+        try {
+            db.beginTransaction();
+
+            this.insertGeoObjectOverTime(geoObject, db);
+
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to cache geo object. A database error has occurred.", e);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
      * Records the update to the action cache and saves the updated {@link GeoObject} to the
      * object cache. When online synchronization happens at a later point this update will be
      * processed.
      *
      * @param geoObject
      */
-    public void updateGeoObject(GeoObject geoObject) {
+//    public void updateGeoObject(GeoObject geoObject) {
+//        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
+//        try {
+//            db.beginTransaction();
+//
+//            this.insertGeoObject(geoObject, db);
+//
+//            UpdateGeoObjectActionDTO action = new UpdateGeoObjectActionDTO();
+//            action.setGeoObject(geoObject.toJSON());
+//            this.insertAction(action, db);
+//
+//            db.setTransactionSuccessful();
+//        } catch (SQLException e) {
+//            throw new RuntimeException("Unable to update geo object. A database error has occurred.", e);
+//        } finally {
+//            db.endTransaction();
+//        }
+//    }
+
+    /**
+     * Records the update to the action cache and saves the updated {@link GeoObjectOverTime} to the
+     * object cache. When online synchronization happens at a later point this update will be
+     * processed.
+     *
+     * @param geoObject
+     */
+    public void updateGeoObjectOverTime(GeoObjectOverTime geoObject) {
         SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
         try {
             db.beginTransaction();
 
-            this.insertGeoObject(geoObject, db);
+            this.insertGeoObjectOverTime(geoObject, db);
 
             UpdateGeoObjectActionDTO action = new UpdateGeoObjectActionDTO();
             action.setGeoObject(geoObject.toJSON());
@@ -476,12 +523,38 @@ public class LocalObjectCache implements Serializable {
      *
      * @param geoObject
      */
-    public void createGeoObject(GeoObject geoObject) {
+//    public void createGeoObject(GeoObject geoObject) {
+//        SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
+//        try {
+//            db.beginTransaction();
+//
+//            this.insertGeoObject(geoObject, db);
+//
+//            CreateGeoObjectActionDTO action = new CreateGeoObjectActionDTO();
+//            action.setGeoObject(geoObject.toJSON());
+//            this.insertAction(action, db);
+//
+//            db.setTransactionSuccessful();
+//        } catch (SQLException e) {
+//            throw new RuntimeException("Unable to create geo object. A database error has occurred.", e);
+//        } finally {
+//            db.endTransaction();
+//        }
+//    }
+
+    /**
+     * Records the create to the action cache and saves the new {@link GeoObject} to the
+     * object cache. When online synchronization happens at a later point this create will be
+     * processed.
+     *
+     * @param geoObject
+     */
+    public void createGeoObjectOverTime(GeoObjectOverTime geoObject) {
         SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
         try {
             db.beginTransaction();
 
-            this.insertGeoObject(geoObject, db);
+            this.insertGeoObjectOverTime(geoObject, db);
 
             CreateGeoObjectActionDTO action = new CreateGeoObjectActionDTO();
             action.setGeoObject(geoObject.toJSON());
@@ -512,6 +585,14 @@ public class LocalObjectCache implements Serializable {
         db.insertWithOnConflict(GeoObjectEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
+    private void insertGeoObjectOverTime(GeoObjectOverTime geoObject, SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(GeoObjectEntry.COLUMN_NAME_UID, geoObject.getUid());
+        values.put(GeoObjectEntry.COLUMN_NAME_OBJECT, geoObject.toJSON().toString());
+
+        db.insertWithOnConflict(GeoObjectEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
     private void insertTreeNode(TreeNode parent, TreeNode child, HierarchyType hierachyType, SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(TreeNodeEntry.COLUMN_NAME_PARENT, parent.getGeoObject().getUid());
@@ -522,7 +603,8 @@ public class LocalObjectCache implements Serializable {
     }
 
     /**
-     * Returns the GeoObject with the given UID.
+     * Returns the GeoObject with the given UID. The object must have been previously cached before you may
+     * call this method.
      *
      * @param _uid UID of the GeoObject.
      * @return GeoObject with the given UID.
@@ -562,6 +644,56 @@ public class LocalObjectCache implements Serializable {
             }
 
             return GeoObject.fromJSON(this.adapter, cursor.getString(2));
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    /**
+     * Returns the GeoObjectOverTime with the given UID. The object must have been previously cached before you may
+     * call this method.
+     *
+     * @param _uid UID of the GeoObjectOverTime.
+     * @return GeoObjectOverTime with the given UID.
+     */
+    public GeoObjectOverTime getGeoObjectOverTime(String _uid) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                BaseColumns._ID,
+                GeoObjectEntry.COLUMN_NAME_UID,
+                GeoObjectEntry.COLUMN_NAME_OBJECT
+        };
+
+        // Filter results WHERE "title" = 'My Title'
+        String selection = LocalCacheContract.GeoObjectEntry.COLUMN_NAME_UID + " = ?";
+        String[] selectionArgs = {_uid};
+
+        // How you want the results sorted in the resulting Cursor
+        String sortOrder = LocalCacheContract.GeoObjectEntry.COLUMN_NAME_UID + " DESC";
+
+        Cursor cursor = null;
+        try {
+
+
+            cursor = db.query(
+                    LocalCacheContract.GeoObjectEntry.TABLE_NAME,   // The table to query
+                    projection,             // The array of columns to return (pass null to get all)
+                    selection,              // The columns for the WHERE clause
+                    selectionArgs,          // The values for the WHERE clause
+                    null,                   // don't group the rows
+                    null,                   // don't filter by row groups
+                    sortOrder               // The sort order
+            );
+
+            if (!cursor.moveToNext()) {
+                throw new RuntimeException("GeoObject with uid [" + _uid + "] does not exist in the local cache");
+            }
+
+            return GeoObjectOverTime.fromJSON(this.adapter, cursor.getString(2));
 
         } finally {
             if (cursor != null) {

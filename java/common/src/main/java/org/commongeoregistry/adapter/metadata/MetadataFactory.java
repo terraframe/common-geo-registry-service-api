@@ -43,9 +43,9 @@ public class MetadataFactory
     return ht;
   }
 
-  public static GeoObjectType newGeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, RegistryAdapter registry)
+  public static GeoObjectType newGeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, FrequencyType frequency, RegistryAdapter registry)
   {
-    GeoObjectType got = new GeoObjectType(code, geometryType, label, description, isLeaf, isGeometryEditable, registry);
+    GeoObjectType got = new GeoObjectType(code, geometryType, label, description, isLeaf, isGeometryEditable, frequency, registry);
 
     registry.getMetadataCache().addGeoObjectType(got);
 

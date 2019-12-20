@@ -28,19 +28,20 @@ import org.commongeoregistry.adapter.metadata.CustomSerializer;
 import org.commongeoregistry.adapter.metadata.DefaultSerializer;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class LocalizedValue
 {
-  public static final String DEFAULT_LOCALE  = "defaultLocale";
-  
-  public static final String LOCALIZED_VALUE = "localizedValue";
+  public static final String  DEFAULT_LOCALE  = "defaultLocale";
 
-  public static final String LOCALE_VALUES   = "localeValues";
+  public static final String  LOCALIZED_VALUE = "localizedValue";
 
-  public static final String LOCALE          = "locale";
+  public static final String  LOCALE_VALUES   = "localeValues";
 
-  public static final String VALUE           = "value";
+  public static final String  LOCALE          = "locale";
+
+  public static final String  VALUE           = "value";
 
   private String              localizedValue;
 
@@ -108,16 +109,16 @@ public class LocalizedValue
   public JsonObject toJSON(CustomSerializer serializer)
   {
     JsonArray array = new JsonArray();
-    
+
     Set<Entry<String, String>> entries = this.localeValues.entrySet();
-    
-    for(Entry<String, String> entry : entries)
+
+    for (Entry<String, String> entry : entries)
     {
-    	JsonObject locale = new JsonObject();
-    	locale.addProperty(LOCALE, entry.getKey());
-    	locale.addProperty(VALUE, entry.getValue());
-    	
-    	array.add(locale);
+      JsonObject locale = new JsonObject();
+      locale.addProperty(LOCALE, entry.getKey());
+      locale.addProperty(VALUE, entry.getValue());
+
+      array.add(locale);
     }
 
     JsonObject object = new JsonObject();
@@ -144,8 +145,10 @@ public class LocalizedValue
     for (int i = 0; i < locales.size(); i++)
     {
       JsonObject locale = locales.get(i).getAsJsonObject();
+      final JsonElement element = locale.get(VALUE);
+
       String key = locale.get(LOCALE).getAsString();
-      String value = locale.get(VALUE).getAsString();
+      String value = !element.isJsonNull() ? element.getAsString() : null;
 
       map.put(key, value);
     }
