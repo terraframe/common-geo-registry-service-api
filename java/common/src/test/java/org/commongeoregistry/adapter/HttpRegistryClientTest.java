@@ -54,7 +54,7 @@ public class HttpRegistryClientTest
      * Setup mock objects
      */
     RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, registry);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
 
     JsonArray req1Array = new JsonArray();
     req1Array.add(state.toJSON());
@@ -136,7 +136,7 @@ public class HttpRegistryClientTest
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getIdService().populate(500);
 
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, client);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, client);
 
     GeoObject geoObject = client.newGeoObjectInstance("State");
     geoObject.setCode("Test");
@@ -204,7 +204,7 @@ public class HttpRegistryClientTest
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getIdService().populate(500);
 
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, client);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, client);
 
     GeoObject geoObject = client.newGeoObjectInstance("State");
     geoObject.setCode("Test");
@@ -252,7 +252,7 @@ public class HttpRegistryClientTest
     HttpRegistryClient client = new HttpRegistryClient(connector);
     client.getIdService().populate(500);
 
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, client);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, client);
 
     GeoObject geoObject = client.newGeoObjectInstance("State");
     geoObject.setCode("Test");

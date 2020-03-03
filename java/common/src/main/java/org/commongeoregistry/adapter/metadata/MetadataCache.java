@@ -41,6 +41,8 @@ public class MetadataCache implements Serializable
    * 
    */
   private static final long serialVersionUID = -8829469298178067536L;
+  
+  private Map<String, OrganizationDTO> organizationMap;
   private Map<String, GeoObjectType> geoGeoObjectTypeMap;
   private Map<String, HierarchyType> hierarchyTypeMap;
   private Map<String, Term> termMap;
@@ -56,6 +58,7 @@ public class MetadataCache implements Serializable
    */
   public void rebuild()
   {
+    this.organizationMap = new ConcurrentHashMap<String, OrganizationDTO>();
     this.geoGeoObjectTypeMap = new ConcurrentHashMap<String, GeoObjectType>();
     this.hierarchyTypeMap = new ConcurrentHashMap<String, HierarchyType>();
     this.termMap = new ConcurrentHashMap<String, Term>();
@@ -71,6 +74,26 @@ public class MetadataCache implements Serializable
   public Optional<Term> getTerm(String code) 
   {
     return Optional.of(this.termMap.get(code));
+  }
+
+  public void addOrganization(OrganizationDTO organization) 
+  {
+    this.organizationMap.put(organization.getCode(), organization);
+  }
+    
+  public Optional<OrganizationDTO> getOrganization(String code) 
+  {
+    return Optional.of(this.organizationMap.get(code));
+  }
+  
+  public OrganizationDTO[] getAllOrganizations()
+  {
+    return this.organizationMap.values().toArray(new OrganizationDTO[this.organizationMap.values().size()]);
+  }
+  
+  public void removeOrganization(String code)
+  {
+    this.organizationMap.remove(code);
   }
   
   public void addGeoObjectType(GeoObjectType geoObjectType) 
@@ -103,6 +126,24 @@ public class MetadataCache implements Serializable
     this.hierarchyTypeMap.remove(code);
   }
 
+  public OrganizationDTO[] getAllOrganizationsTypes()
+  {
+    return this.organizationMap.values().toArray(new OrganizationDTO[this.organizationMap.values().size()]);
+  }
+  
+  public String[] getAllOrganizationCodes()
+  {
+    OrganizationDTO[] organizations = this.getAllOrganizationsTypes();
+    String[] codes = new String[organizations.length];
+    
+    for (int i = 0; i < organizations.length; ++i)
+    {
+      codes[i] = organizations[i].getCode();
+    }
+ 
+    return codes;
+  }
+  
   public GeoObjectType[] getAllGeoObjectTypes()
   {
     return this.geoGeoObjectTypeMap.values().toArray(new GeoObjectType[this.geoGeoObjectTypeMap.values().size()]);

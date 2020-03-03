@@ -33,6 +33,15 @@ public class MetadataFactory
 
     return t;
   }
+  
+  public static OrganizationDTO newOrganization(String code, LocalizedValue label, LocalizedValue contactInfo, RegistryAdapter registry)
+  {
+    OrganizationDTO organization = new OrganizationDTO(code, label, contactInfo);
+
+    registry.getMetadataCache().addOrganization(organization);
+
+    return organization;
+  }
 
   public static HierarchyType newHierarchyType(String code, LocalizedValue label, LocalizedValue description, RegistryAdapter registry)
   {
@@ -43,9 +52,9 @@ public class MetadataFactory
     return ht;
   }
 
-  public static GeoObjectType newGeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, FrequencyType frequency, RegistryAdapter registry)
+  public static GeoObjectType newGeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, FrequencyType frequency, String organizationCode, RegistryAdapter registry)
   {
-    GeoObjectType got = new GeoObjectType(code, geometryType, label, description, isLeaf, isGeometryEditable, frequency, registry);
+    GeoObjectType got = new GeoObjectType(code, geometryType, label, description, isLeaf, isGeometryEditable, frequency, organizationCode, registry);
 
     registry.getMetadataCache().addGeoObjectType(got);
 
