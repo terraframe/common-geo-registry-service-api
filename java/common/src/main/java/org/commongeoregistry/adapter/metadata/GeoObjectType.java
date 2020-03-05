@@ -69,8 +69,6 @@ public class GeoObjectType implements Serializable
 
   public static final String         JSON_IS_GEOMETRY_EDITABLE  = "isGeometryEditable";
 
-  public static final String         JSON_FREQUENCY             = "frequency";
-
   public static final String         JSON_IS_DEFAULT            = "isDefault";
 
   /**
@@ -110,11 +108,6 @@ public class GeoObjectType implements Serializable
   private Boolean                    isGeometryEditable;
 
   /**
-   * Frequency of time range for change over time values
-   */
-  private FrequencyType              frequency;
-
-  /**
    * Collection of {@link AttributeType} metadata attributes.
    * 
    * key: {@code AttributeType#getName()}
@@ -139,15 +132,13 @@ public class GeoObjectType implements Serializable
    *          localized description of the {@link GeoObjectType}.
    * @param isLeaf
    *          True if the type is a leaf, false otherwise.
-   * @param frequency
-   *          TODO
    * @param registry
    *          {@link RegistryAdapter} from which this {@link GeoObjectType} is
    *          defined.
    */
-  public GeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, FrequencyType frequency, RegistryAdapter registry)
+  public GeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, RegistryAdapter registry)
   {
-    this.init(code, geometryType, label, description, isLeaf, isGeometryEditable, frequency);
+    this.init(code, geometryType, label, description, isLeaf, isGeometryEditable);
 
     this.attributeMap = buildDefaultAttributes(registry);
   }
@@ -169,14 +160,12 @@ public class GeoObjectType implements Serializable
    *          True if the type is a leaf, false otherwise.
    * @param isGeometryEditable
    *          True if geometries can be modified through the web interface
-   * @param frequency
-   *          TODO
    * @param attributeMap
    *          attribute map.
    */
-  private GeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, FrequencyType frequency, Map<String, AttributeType> attributeMap)
+  private GeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, Map<String, AttributeType> attributeMap)
   {
-    this.init(code, geometryType, label, description, isLeaf, isGeometryEditable, frequency);
+    this.init(code, geometryType, label, description, isLeaf, isGeometryEditable);
 
     this.attributeMap = attributeMap;
   }
@@ -190,11 +179,9 @@ public class GeoObjectType implements Serializable
    * @param description
    * @param isLeaf
    * @param isGeometryEditable
-   * @param frequency
-   *          TODO
    * 
    */
-  private void init(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, FrequencyType frequency)
+  private void init(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable)
   {
     this.code = code;
     this.label = label;
@@ -204,7 +191,6 @@ public class GeoObjectType implements Serializable
 
     this.isLeaf = isLeaf;
     this.isGeometryEditable = isGeometryEditable;
-    this.frequency = frequency;
   }
 
   /**
@@ -219,7 +205,7 @@ public class GeoObjectType implements Serializable
   public GeoObjectType copy(GeoObjectType gotSource)
   {
 
-    GeoObjectType newGeoObjt = new GeoObjectType(this.code, this.geometryType, this.label, this.description, this.isLeaf, this.isGeometryEditable, frequency, this.attributeMap);
+    GeoObjectType newGeoObjt = new GeoObjectType(this.code, this.geometryType, this.label, this.description, this.isLeaf, this.isGeometryEditable, this.attributeMap);
 
     newGeoObjt.code = gotSource.getCode();
     newGeoObjt.label = gotSource.getLabel();
@@ -252,14 +238,6 @@ public class GeoObjectType implements Serializable
   public GeometryType getGeometryType()
   {
     return this.geometryType;
-  }
-
-  /**
-   * @return Change over time frequency
-   */
-  public FrequencyType getFrequency()
-  {
-    return frequency;
   }
 
   /**
@@ -500,7 +478,6 @@ public class GeoObjectType implements Serializable
     GeometryType geometryType = GeometryType.valueOf(oJson.get(JSON_GEOMETRY_TYPE).getAsString());
     Boolean isLeaf = Boolean.valueOf(oJson.get(JSON_IS_LEAF).getAsString());
     Boolean isGeometryEditable = new Boolean(oJson.get(JSON_IS_GEOMETRY_EDITABLE).getAsBoolean());
-    FrequencyType frequency = FrequencyType.valueOf(oJson.get(JSON_FREQUENCY).getAsString());
 
     Map<String, AttributeType> attributeMap = buildDefaultAttributes(registry);
 
@@ -513,7 +490,7 @@ public class GeoObjectType implements Serializable
     }
 
     // TODO Need to validate that the default attributes are still defined.
-    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, label, description, isLeaf, isGeometryEditable, frequency, attributeMap);
+    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, label, description, isLeaf, isGeometryEditable, attributeMap);
 
     return geoObjType;
   }
@@ -553,7 +530,6 @@ public class GeoObjectType implements Serializable
 
     json.addProperty(JSON_IS_LEAF, this.isLeaf().toString());
     json.addProperty(JSON_IS_GEOMETRY_EDITABLE, this.isGeometryEditable());
-    json.addProperty(JSON_FREQUENCY, this.frequency.name());
 
     Collection<AttributeType> attributes = serializer.attributes(this);
 
