@@ -61,8 +61,9 @@ public class SerializationTest
   public void testGeoObjectOverTime()
   {
     RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
-
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
+// Heads up: Clean up
+//    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, null, registry);
 
     String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
 
@@ -110,8 +111,9 @@ public class SerializationTest
   public void testGeoObject()
   {
     RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
-
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
+// Heads up: clean up
+//    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, null, registry);
 
     String geom = "POLYGON ((10000 10000, 12300 40000, 16800 50000, 12354 60000, 13354 60000, 17800 50000, 13300 40000, 11000 10000, 10000 10000))";
 
@@ -158,7 +160,9 @@ public class SerializationTest
   {
     RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
 
-    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
+// Heads up: clean up
+//    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
+    MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, null, registry);
 
     GeoObject geoObject = registry.newGeoObjectInstance("State");
 
@@ -202,8 +206,9 @@ public class SerializationTest
   public void testGeoObjectType()
   {
     RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
-
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
+// Heads up: clean up
+//    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, null, registry);
 
     String sJson = state.toJSON().toString();
 
@@ -211,7 +216,6 @@ public class SerializationTest
     String sJson2 = state2.toJSON().toString();
 
     Assert.assertEquals(sJson, sJson2);
-    Assert.assertEquals(FrequencyType.ANNUAL, state2.getFrequency());
   }
 
   @Test
@@ -222,8 +226,10 @@ public class SerializationTest
     String code = "MOH";
 
     OrganizationDTO orgOriginal = MetadataFactory.newOrganization(code, new LocalizedValue("Ministry of Health"), new LocalizedValue("Contact Joe at 555-555-5555"), registryServerInterface);
-    
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, orgOriginal.getCode(), registryServerInterface);
+
+// Heads up: clean up
+//    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, orgOriginal.getCode(), registryServerInterface);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, orgOriginal.getCode(), registryServerInterface);
 
     String sJson = state.toJSON().toString();
 
@@ -248,7 +254,9 @@ public class SerializationTest
   {
     RegistryAdapterServer registryServerInterface = new RegistryAdapterServer(new MockIdService());
 
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registryServerInterface);
+// Heads up: clean up
+//    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registryServerInterface);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, null, registryServerInterface);
 
     AttributeType testChar = AttributeType.factory("testChar", new LocalizedValue("testCharLocalName"), new LocalizedValue("testCharLocalDescrip"), AttributeCharacterType.TYPE, false, false, false);
     AttributeType testDate = AttributeType.factory("testDate", new LocalizedValue("testDateLocalName"), new LocalizedValue("testDateLocalDescrip"), AttributeDateType.TYPE, false, false, false);
@@ -295,7 +303,9 @@ public class SerializationTest
   {
     RegistryAdapterServer registryServerInterface = new RegistryAdapterServer(new MockIdService());
 
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registryServerInterface);
+// Heads up: Clean up
+//    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registryServerInterface);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, null, registryServerInterface);
 
     AttributeTermType testTerm = (AttributeTermType) AttributeType.factory("testTerm", new LocalizedValue("testTermLocalName"), new LocalizedValue("testTermLocalDescrip"), AttributeTermType.TYPE, false, false, false);
     testTerm.setRootTerm(registryServerInterface.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get());
@@ -320,8 +330,9 @@ public class SerializationTest
   public void testGeoObjectTypeCustomAttributes()
   {
     RegistryAdapterServer registry = new RegistryAdapterServer(new MockIdService());
-
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
+// Heads up: clean up
+//    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), false, true, FrequencyType.ANNUAL, null, registry);
+    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, null, registry);
 
     AttributeType testChar = AttributeType.factory("testChar", new LocalizedValue("testCharLocalName"), new LocalizedValue("testCharLocalDescrip"), AttributeCharacterType.TYPE, true, true, false);
     AttributeType testDate = AttributeType.factory("testDate", new LocalizedValue("testDateLocalName"), new LocalizedValue("testDateLocalDescrip"), AttributeDateType.TYPE, false, false, false);

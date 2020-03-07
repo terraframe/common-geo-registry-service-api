@@ -54,20 +54,27 @@ public class TestFixture
   public static void defineExampleHierarchies(RegistryAdapter registry)
   {
     // Define GeoObject Types
-    GeoObjectType province = MetadataFactory.newGeoObjectType(PROVINCE, GeometryType.POLYGON, new LocalizedValue("Province"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);
+// Heads up: Clean up
+//    GeoObjectType province = MetadataFactory.newGeoObjectType(PROVINCE, GeometryType.POLYGON, new LocalizedValue("Province"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);
+    GeoObjectType province = MetadataFactory.newGeoObjectType(PROVINCE, GeometryType.POLYGON, new LocalizedValue("Province"), new LocalizedValue(""), true, null, registry);
 
-    GeoObjectType district = MetadataFactory.newGeoObjectType(DISTRICT, GeometryType.POLYGON, new LocalizedValue("District"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);
+//    GeoObjectType district = MetadataFactory.newGeoObjectType(DISTRICT, GeometryType.POLYGON, new LocalizedValue("District"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);    
+    GeoObjectType district = MetadataFactory.newGeoObjectType(DISTRICT, GeometryType.POLYGON, new LocalizedValue("District"), new LocalizedValue(""), true, null, registry);
 
-    GeoObjectType commune = MetadataFactory.newGeoObjectType(COMMUNE, GeometryType.POLYGON, new LocalizedValue("Commune"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);
+//    GeoObjectType commune = MetadataFactory.newGeoObjectType(COMMUNE, GeometryType.POLYGON, new LocalizedValue("Commune"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);
+    GeoObjectType commune = MetadataFactory.newGeoObjectType(COMMUNE, GeometryType.POLYGON, new LocalizedValue("Commune"), new LocalizedValue(""), true, null, registry);
 
-    GeoObjectType village = MetadataFactory.newGeoObjectType(VILLAGE, GeometryType.POLYGON, new LocalizedValue("Village"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);
+//    GeoObjectType village = MetadataFactory.newGeoObjectType(VILLAGE, GeometryType.POLYGON, new LocalizedValue("Village"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);
+    GeoObjectType village = MetadataFactory.newGeoObjectType(VILLAGE, GeometryType.POLYGON, new LocalizedValue("Village"), new LocalizedValue(""), true, null, registry);
 
-    GeoObjectType household = MetadataFactory.newGeoObjectType(HOUSEHOLD, GeometryType.POLYGON, new LocalizedValue("Household"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);
+//    GeoObjectType household = MetadataFactory.newGeoObjectType(HOUSEHOLD, GeometryType.POLYGON, new LocalizedValue("Household"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);
+    GeoObjectType household = MetadataFactory.newGeoObjectType(HOUSEHOLD, GeometryType.POLYGON, new LocalizedValue("Household"), new LocalizedValue(""), true, null, registry);
 
     // GeoObjectType focusArea = MetadataFactory.newGeoObjectType(FOCUS_AREA,
     // GeometryType.POLYGON, "Focus Area", "", false, registry);
 
-    GeoObjectType healthFacility = MetadataFactory.newGeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, new LocalizedValue("Health Facility"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry);
+//    GeoObjectType healthFacility = MetadataFactory.newGeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, new LocalizedValue("Health Facility"), new LocalizedValue(""), false, true, FrequencyType.ANNUAL, null, registry)
+    GeoObjectType healthFacility = MetadataFactory.newGeoObjectType(HEALTH_FACILITY, GeometryType.POLYGON, new LocalizedValue("Health Facility"), new LocalizedValue(""), true, null, registry);
     healthFacility.addAttribute(createHealthFacilityTypeAttribute(registry));
 
     // Define Geopolitical Hierarchy Type
