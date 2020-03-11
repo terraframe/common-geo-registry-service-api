@@ -68,14 +68,21 @@ public class HierarchyType implements Serializable
    * The localized description of the hierarchy type for the presentation tier.
    */
   private LocalizedValue      description;
+  
+  /**
+   * The organization responsible for this {@link HierarchyType}. This can be null.
+   */
+  private String                     organizationCode;
 
   private List<HierarchyNode> rootGeoObjectTypes;
 
-  public HierarchyType(String _code, LocalizedValue _label, LocalizedValue _description)
+  public HierarchyType(String code, LocalizedValue label, LocalizedValue description)
+//  public HierarchyType(String code, LocalizedValue label, LocalizedValue description, String organizationCode)
   {
-    this.code = _code;
-    this.label = _label;
-    this.description = _description;
+    this.code = code;
+    this.label = label;
+    this.description = description;
+//    this.organizationCode = organizationCode;
     this.rootGeoObjectTypes = Collections.synchronizedList(new LinkedList<HierarchyNode>());
   }
 

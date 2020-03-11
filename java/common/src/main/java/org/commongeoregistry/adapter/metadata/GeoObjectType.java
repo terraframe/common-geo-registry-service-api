@@ -33,6 +33,7 @@ import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -65,11 +66,11 @@ public class GeoObjectType implements Serializable
 
   public static final String         JSON_GEOMETRY_TYPE         = "geometryType";
 
-  public static final String         JSON_IS_LEAF               = "isLeaf";
-
   public static final String         JSON_IS_GEOMETRY_EDITABLE  = "isGeometryEditable";
 
   public static final String         JSON_IS_DEFAULT            = "isDefault";
+  
+  public static final String         JSON_ORGANIZARION_CODE     = "organizationCode";
 
   /**
    * Unique but human readable identifier. It could be VILLAGE or HOUSEHOLD.
@@ -95,17 +96,14 @@ public class GeoObjectType implements Serializable
   private LocalizedValue             description;
 
   /**
-   * Indicates whether the type that can only be added as a leaf to a hierarchy.
-   * Certain types, like households and structures, if added to a tree would
-   * cause the tree to grow to a very large size. Rather, instances of these
-   * types in the back-end will reference parent nodes in the tre.
-   */
-  private Boolean                    isLeaf;
-
-  /**
    * Indicates if geometries can be modified through the web interface.
    */
   private Boolean                    isGeometryEditable;
+  
+  /**
+   * The organization responsible for this {@link GeoObjectType}. This can be null.
+   */
+  private String                     organizationCode;
 
   /**
    * Collection of {@link AttributeType} metadata attributes.
@@ -119,7 +117,7 @@ public class GeoObjectType implements Serializable
 
   /**
    * 
-   * 
+   * Precondition: The organization code is valid.
    * 
    * @param code
    *          unique identifier that his human readable.
@@ -130,22 +128,20 @@ public class GeoObjectType implements Serializable
    *          localized label of the {@link GeoObjectType}.
    * @param description
    *          localized description of the {@link GeoObjectType}.
-   * @param isLeaf
-   *          True if the type is a leaf, false otherwise.
    * @param registry
    *          {@link RegistryAdapter} from which this {@link GeoObjectType} is
    *          defined.
    */
-  public GeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, RegistryAdapter registry)
+  public GeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isGeometryEditable, String organizationCode, RegistryAdapter registry)
   {
-    this.init(code, geometryType, label, description, isLeaf, isGeometryEditable);
+    this.init(code, geometryType, label, description, isGeometryEditable, organizationCode);
 
     this.attributeMap = buildDefaultAttributes(registry);
   }
 
   /**
    * 
-   * 
+   * Precondition: The organization code is valid.
    * 
    * @param code
    *          unique identifier that his human readable.
@@ -156,16 +152,14 @@ public class GeoObjectType implements Serializable
    *          localized label of the {@link GeoObjectType}.
    * @param description
    *          localized description of the {@link GeoObjectType}.
-   * @param isLeaf
-   *          True if the type is a leaf, false otherwise.
    * @param isGeometryEditable
    *          True if geometries can be modified through the web interface
    * @param attributeMap
    *          attribute map.
    */
-  private GeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable, Map<String, AttributeType> attributeMap)
+  private GeoObjectType(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isGeometryEditable, String organizationCode, Map<String, AttributeType> attributeMap)
   {
-    this.init(code, geometryType, label, description, isLeaf, isGeometryEditable);
+    this.init(code, geometryType, label, description, isGeometryEditable, organizationCode);
 
     this.attributeMap = attributeMap;
   }
@@ -173,15 +167,16 @@ public class GeoObjectType implements Serializable
   /**
    * Initializes member variables.
    * 
+   * Precondition: The organization code is valid.
+   * 
    * @param code
    * @param geometryType
    * @param label
    * @param description
-   * @param isLeaf
    * @param isGeometryEditable
    * 
    */
-  private void init(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isLeaf, Boolean isGeometryEditable)
+  private void init(String code, GeometryType geometryType, LocalizedValue label, LocalizedValue description, Boolean isGeometryEditable, String organizationCode)
   {
     this.code = code;
     this.label = label;
@@ -189,12 +184,13 @@ public class GeoObjectType implements Serializable
 
     this.geometryType = geometryType;
 
-    this.isLeaf = isLeaf;
     this.isGeometryEditable = isGeometryEditable;
+    
+    this.organizationCode = organizationCode;
   }
 
   /**
-   * Createss a new instance of the current object and copies the attributes
+   * Creates a new instance of the current object and copies the attributes
    * from the given {@link GeoObject} into this object.
    * 
    * @param gotSource
@@ -204,8 +200,7 @@ public class GeoObjectType implements Serializable
    */
   public GeoObjectType copy(GeoObjectType gotSource)
   {
-
-    GeoObjectType newGeoObjt = new GeoObjectType(this.code, this.geometryType, this.label, this.description, this.isLeaf, this.isGeometryEditable, this.attributeMap);
+    GeoObjectType newGeoObjt = new GeoObjectType(this.code, this.geometryType, this.label, this.description, this.isGeometryEditable, this.organizationCode, this.attributeMap);
 
     newGeoObjt.code = gotSource.getCode();
     newGeoObjt.label = gotSource.getLabel();
@@ -213,8 +208,9 @@ public class GeoObjectType implements Serializable
 
     newGeoObjt.geometryType = gotSource.getGeometryType();
 
-    newGeoObjt.isLeaf = gotSource.isLeaf();
     newGeoObjt.isGeometryEditable = gotSource.isGeometryEditable();
+    
+    newGeoObjt.organizationCode = gotSource.getOrganizationCode();
 
     return newGeoObjt;
   }
@@ -264,32 +260,15 @@ public class GeoObjectType implements Serializable
   /**
    * Sets the localized display label of this {@link GeoObjectType}.
    * 
-   * @param label
+   * Precondition: key may not be null
+   * Precondition: key must represent a valid locale that has been defined on the back-end
+   * 
+   * @param key string of the locale name.
+   * @param value value for the given locale.
    */
   public void setLabel(String key, String value)
   {
     this.label.setValue(key, value);
-  }
-
-  /**
-   * Returns true if the type is a leaf node, false otherwise.
-   * 
-   * @return true if the type is a leaf node, false otherwise.
-   */
-  public Boolean isLeaf()
-  {
-    return this.isLeaf;
-  }
-
-  /**
-   * True if the type is a leaf node, false otherwise.
-   * 
-   * @param isLeaf
-   *          True if the type is a leaf node, false otherwise.
-   */
-  public void isLeaf(Boolean isLeaf)
-  {
-    this.isLeaf = isLeaf;
   }
 
   /**
@@ -345,13 +324,36 @@ public class GeoObjectType implements Serializable
   }
 
   /**
+   * 
+   * @return the code of the {@link OrganizationDTO} (Optional) that manages this {@link GeoObjectType}, 
+   * or NULL if not managed by an {@link OrganizationDTO}.
+   */
+  public String getOrganizationCode()
+  {
+    return this.organizationCode;
+  } 
+  
+  /**
+   * Sets the {@link OrganizationDTO} (Optional) that manages this {@link GeoObjectType.
+   * 
+   * Precondition: The organization code is valid
+   * 
+   * @param organizationCode code of the {@link OrganizationDTO} that manages this {@link GeoObjectType, 
+   * or NULL if none.
+   */
+  public void setOrganizationCode(String organizationCode)
+  {
+    this.organizationCode = organizationCode;
+  }
+  
+  /**
    * Returns the {@link AttributeType} defined on this {@link GeoObjectType}
    * with the given name.
    * 
    * @param name
    *          Name of the attribute {@code AttributeType#getName()}.
    * 
-   * @pre Attribute with the given name is defined on this
+   * Precondition: Attribute with the given name is defined on this
    *      {@link GeoObjectType}.
    * 
    * @return Name of the attributes.
@@ -476,8 +478,15 @@ public class GeoObjectType implements Serializable
     LocalizedValue label = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_LABEL).getAsJsonObject());
     LocalizedValue description = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
     GeometryType geometryType = GeometryType.valueOf(oJson.get(JSON_GEOMETRY_TYPE).getAsString());
-    Boolean isLeaf = Boolean.valueOf(oJson.get(JSON_IS_LEAF).getAsString());
     Boolean isGeometryEditable = new Boolean(oJson.get(JSON_IS_GEOMETRY_EDITABLE).getAsBoolean());
+    String organizationCode = null;
+
+    JsonElement jsonOrganization = oJson.get(JSON_ORGANIZARION_CODE);
+
+    if (jsonOrganization != null)
+    {
+      organizationCode = jsonOrganization.getAsString();
+    }
 
     Map<String, AttributeType> attributeMap = buildDefaultAttributes(registry);
 
@@ -490,7 +499,7 @@ public class GeoObjectType implements Serializable
     }
 
     // TODO Need to validate that the default attributes are still defined.
-    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, label, description, isLeaf, isGeometryEditable, attributeMap);
+    GeoObjectType geoObjType = new GeoObjectType(code, geometryType, label, description, isGeometryEditable, organizationCode, attributeMap);
 
     return geoObjType;
   }
@@ -528,8 +537,18 @@ public class GeoObjectType implements Serializable
     // reconstruction.
     json.addProperty(JSON_GEOMETRY_TYPE, this.geometryType.name());
 
-    json.addProperty(JSON_IS_LEAF, this.isLeaf().toString());
     json.addProperty(JSON_IS_GEOMETRY_EDITABLE, this.isGeometryEditable());
+    
+    String organizationString;
+    if (this.organizationCode == null)
+    {
+      organizationString = "";
+    }
+    else
+    {
+      organizationString = this.organizationCode;
+    }
+    json.addProperty(JSON_ORGANIZARION_CODE, organizationString);
 
     Collection<AttributeType> attributes = serializer.attributes(this);
 

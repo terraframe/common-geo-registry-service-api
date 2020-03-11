@@ -44,7 +44,9 @@ public enum DefaultAttribute {
 
   LAST_UPDATE_DATE("lastUpdateDate", "Date Last Updated", "The date the object was updated", AttributeDateType.TYPE, true, false, false, false),
   
-  GEOMETRY("geometry", "Geometry", "The geometries for the GeoObject.", AttributeGeometryType.TYPE, true, false, false, true);
+  GEOMETRY("geometry", "Geometry", "The geometries for the GeoObject.", AttributeGeometryType.TYPE, true, false, false, true),
+  
+  ORGANIZATION("organization", "Organization", "The responsible organization", AttributeLocalType.TYPE, true, false, false, false);
 
   private String  name;
 
@@ -62,16 +64,16 @@ public enum DefaultAttribute {
   
   private boolean isChange;
 
-  private DefaultAttribute(String _name, String _defaultLabel, String _defaultDescription, String _type, boolean _isDefault, boolean _required, boolean _unique, boolean _isChange)
+  private DefaultAttribute(String name, String defaultLabel, String defaultDescription, String type, boolean isDefault, boolean required, boolean unique, boolean isChange)
   {
-    this.name = _name;
-    this.defaultLabel = _defaultLabel;
-    this.defaultDescription = _defaultDescription;
-    this.type = _type;
-    this.isDefault = _isDefault;
-    this.required = _required;
-    this.unique = _unique;
-    this.isChange = _isChange;
+    this.name =               name;
+    this.defaultLabel =       defaultLabel;
+    this.defaultDescription = defaultDescription;
+    this.type =               type;
+    this.isDefault =          isDefault;
+    this.required =           required;
+    this.unique =             unique;
+    this.isChange =           isChange;
   }
 
   public String getName()
