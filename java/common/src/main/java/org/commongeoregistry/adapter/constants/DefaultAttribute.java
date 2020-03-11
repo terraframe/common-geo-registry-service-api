@@ -46,7 +46,7 @@ public enum DefaultAttribute {
   
   GEOMETRY("geometry", "Geometry", "The geometries for the GeoObject.", AttributeGeometryType.TYPE, true, false, false, true),
   
-  ORGANIZATION("organization", "Organization", "The responsible organization", AttributeLocalType.TYPE, true, false, false, false);
+  ORGANIZATION("organization", "Organization", "The responsible organization", AttributeCharacterType.TYPE, true, false, false, false);
 
   private String  name;
 
