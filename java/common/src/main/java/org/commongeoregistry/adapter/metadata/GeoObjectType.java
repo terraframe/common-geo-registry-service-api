@@ -334,11 +334,11 @@ public class GeoObjectType implements Serializable
   } 
   
   /**
-   * Sets the {@link OrganizationDTO} (Optional) that manages this {@link GeoObjectType.
+   * Sets the {@link OrganizationDTO} (Optional) that manages this {@link GeoObjectType}.
    * 
    * Precondition: The organization code is valid
    * 
-   * @param organizationCode code of the {@link OrganizationDTO} that manages this {@link GeoObjectType, 
+   * @param organizationCode code of the {@link OrganizationDTO} that manages this {@link GeoObjectType}, 
    * or NULL if none.
    */
   public void setOrganizationCode(String organizationCode)

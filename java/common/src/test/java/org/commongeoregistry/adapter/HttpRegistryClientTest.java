@@ -59,7 +59,9 @@ public class HttpRegistryClientTest
     JsonArray req1Array = new JsonArray();
     req1Array.add(state.toJSON());
 
-    HierarchyType locatedIn = MetadataFactory.newHierarchyType("LocatedIn", new LocalizedValue("LOCATED_IN_LABEL"), new LocalizedValue("LOCATED_IN_DESCRIPTION"), registry);
+    String organizationCode = "";
+    
+    HierarchyType locatedIn = MetadataFactory.newHierarchyType("LocatedIn", new LocalizedValue("LOCATED_IN_LABEL"), new LocalizedValue("LOCATED_IN_DESCRIPTION"), organizationCode, registry);
 
     JsonArray req2Array = new JsonArray();
     req2Array.add(locatedIn.toJSON());

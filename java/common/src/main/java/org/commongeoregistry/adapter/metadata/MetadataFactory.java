@@ -43,9 +43,9 @@ public class MetadataFactory
     return organization;
   }
 
-  public static HierarchyType newHierarchyType(String code, LocalizedValue label, LocalizedValue description, RegistryAdapter registry)
+  public static HierarchyType newHierarchyType(String code, LocalizedValue label, LocalizedValue description, String organizationCode, RegistryAdapter registry)
   {
-    HierarchyType ht = new HierarchyType(code, label, description);
+    HierarchyType ht = new HierarchyType(code, label, description, organizationCode);
 
     registry.getMetadataCache().addHierarchyType(ht);
 

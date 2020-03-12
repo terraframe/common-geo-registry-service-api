@@ -213,32 +213,42 @@ public class SerializationTest
   }
 
   @Test
-  public void testGeoObjectOrganization()
+  public void testGeoObjectTypeOrganization()
   {
-    RegistryAdapterServer registryServerInterface = new RegistryAdapterServer(new MockIdService());
-
+    OrganizationDTO orgOriginal = null;
+    GeoObjectType state = null;
+    
     String code = "MOH";
-
-    OrganizationDTO orgOriginal = MetadataFactory.newOrganization(code, new LocalizedValue("Ministry of Health"), new LocalizedValue("Contact Joe at 555-555-5555"), registryServerInterface);
-
-    GeoObjectType state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, orgOriginal.getCode(), registryServerInterface);
-
-    String sJson = state.toJSON().toString();
-
-    GeoObjectType state2 = GeoObjectType.fromJSON(sJson, registryServerInterface);
-    String sJson2 = state2.toJSON().toString();
+    
+    RegistryAdapterServer registryServerInterface = new RegistryAdapterServer(new MockIdService());
 
     try
     {
+      orgOriginal = MetadataFactory.newOrganization(code, new LocalizedValue("Ministry of Health"), new LocalizedValue("Contact Joe at 555-555-5555"), registryServerInterface);
+
+      state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, orgOriginal.getCode(), registryServerInterface);
+
+      String sJson = state.toJSON().toString();
+
+      GeoObjectType state2 = GeoObjectType.fromJSON(sJson, registryServerInterface);
+      String sJson2 = state2.toJSON().toString();
+
       Assert.assertEquals(sJson, sJson2);
       Assert.assertEquals(code, state2.getOrganizationCode());
     }
     finally
     {
-      registryServerInterface.getMetadataCache().removeOrganization(orgOriginal.getCode());
+      if (state != null)
+      {
+        registryServerInterface.getMetadataCache().removeGeoObjectType(state.getCode());
+      }
+      
+      if (orgOriginal != null)
+      {
+        registryServerInterface.getMetadataCache().removeOrganization(orgOriginal.getCode());
+      }
     }
   }
-
     
   @SuppressWarnings("unchecked")
   @Test
@@ -380,6 +390,45 @@ public class SerializationTest
     Assert.assertEquals(geoPolitical.getRootGeoObjectTypes().get(0).getChildren().size(), geoPolitical2.getRootGeoObjectTypes().get(0).getChildren().size());
   }
 
+  @Test
+  public void testHierarchyTypeOrganization()
+  {
+    OrganizationDTO orgOriginal = null;
+    HierarchyType hierarchyType = null;
+  
+    String code = "MOH";
+  
+    RegistryAdapterServer registryServerInterface = new RegistryAdapterServer(new MockIdService());
+
+    try
+    {
+      orgOriginal = MetadataFactory.newOrganization(code, new LocalizedValue("Ministry of Health"), new LocalizedValue("Contact Joe at 555-555-5555"), registryServerInterface);
+
+      hierarchyType = MetadataFactory.newHierarchyType("Admin", new LocalizedValue("Administration"), new LocalizedValue("Administration"), orgOriginal.getCode(), registryServerInterface);
+
+      String sJson = hierarchyType.toJSON().toString();
+
+      HierarchyType hierarchyType2 = HierarchyType.fromJSON(sJson, registryServerInterface);
+      String sJson2 = hierarchyType2.toJSON().toString();
+
+      Assert.assertEquals(sJson, sJson2);
+      Assert.assertEquals(code, hierarchyType2.getOrganizationCode());
+    }
+    finally
+    {
+      if (hierarchyType != null)
+      {
+        registryServerInterface.getMetadataCache().removeHierarchyType(hierarchyType.getCode());
+      }
+    
+      if (orgOriginal != null)
+      {
+        registryServerInterface.getMetadataCache().removeOrganization(orgOriginal.getCode());
+      }
+    }
+  }
+  
+  
   @Test
   public void testChildTreeNode()
   {

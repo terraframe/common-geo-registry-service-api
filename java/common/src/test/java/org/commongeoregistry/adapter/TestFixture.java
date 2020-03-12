@@ -70,8 +70,10 @@ public class TestFixture
 
     healthFacility.addAttribute(createHealthFacilityTypeAttribute(registry));
 
+    String organizationCode = "";
+    
     // Define Geopolitical Hierarchy Type
-    HierarchyType geoPolitical = MetadataFactory.newHierarchyType(GEOPOLITICAL, new LocalizedValue("Geopolitical"), new LocalizedValue("Geopolitical Hierarchy"), registry);
+    HierarchyType geoPolitical = MetadataFactory.newHierarchyType(GEOPOLITICAL, new LocalizedValue("Geopolitical"), new LocalizedValue("Geopolitical Hierarchy"), organizationCode, registry);
     HierarchyNode geoProvinceNode = new HierarchyType.HierarchyNode(province);
     HierarchyNode geoDistrictNode = new HierarchyType.HierarchyNode(district);
     HierarchyNode geoCommuneNode = new HierarchyType.HierarchyNode(commune);
@@ -86,7 +88,7 @@ public class TestFixture
     geoPolitical.addRootGeoObjects(geoProvinceNode);
 
     // Define Health Administrative
-    HierarchyType healthAdministrative = MetadataFactory.newHierarchyType(TestFixture.HEALTH_ADMINISTRATIVE, new LocalizedValue("Health Administrative"), new LocalizedValue("Health Administrative Hierarchy"), registry);
+    HierarchyType healthAdministrative = MetadataFactory.newHierarchyType(TestFixture.HEALTH_ADMINISTRATIVE, new LocalizedValue("Health Administrative"), new LocalizedValue("Health Administrative Hierarchy"), organizationCode, registry);
     HierarchyNode healthProvinceNode = new HierarchyType.HierarchyNode(province);
     HierarchyNode healthDistrictNode = new HierarchyType.HierarchyNode(district);
     HierarchyNode healthCommuneNode = new HierarchyType.HierarchyNode(commune);
