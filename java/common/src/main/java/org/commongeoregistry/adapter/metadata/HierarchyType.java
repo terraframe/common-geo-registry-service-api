@@ -77,7 +77,7 @@ public class HierarchyType implements Serializable
   /**
    * The organization responsible for this {@link HierarchyType}. This can be null.
    */
-  private String                     organizationCode;
+  private String              organizationCode;
 
   private List<HierarchyNode> rootGeoObjectTypes;
 
