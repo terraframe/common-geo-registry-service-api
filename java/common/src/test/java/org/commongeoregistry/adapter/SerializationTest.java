@@ -48,6 +48,7 @@ import org.commongeoregistry.adapter.metadata.GeoObjectType;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
 import org.commongeoregistry.adapter.metadata.MetadataFactory;
 import org.commongeoregistry.adapter.metadata.OrganizationDTO;
+import org.commongeoregistry.adapter.metadata.RegistryRole;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -194,6 +195,47 @@ public class SerializationTest
     {
       registryServerInterface.getMetadataCache().removeOrganization(orgOriginal.getCode());
     }
+  }
+  
+  @Test
+  public void testRoleSerialization()
+  {
+    // SRA
+    RegistryRole sra1 = RegistryRole.createSRA(new LocalizedValue("Super Registry Administrator"));
+    String sraJSON1 = sra1.toJSON().toString();
+    
+    RegistryRole sra2 = RegistryRole.fromJSON(sraJSON1);
+    String sraJSON2 = sra2.toJSON().toString();
+    
+    Assert.assertEquals(sraJSON1, sraJSON2);
+ 
+    // RA
+    RegistryRole ra1 = RegistryRole.createRA(new LocalizedValue("Super Registry Administrator"), "MOH");
+    String raJSON1 = ra1.toJSON().toString();
+    
+    RegistryRole ra2 = RegistryRole.fromJSON(raJSON1);
+    String raJSON2 = ra2.toJSON().toString();
+    
+    Assert.assertEquals(raJSON1, raJSON2);
+    
+    // RM
+    RegistryRole rm1 = RegistryRole.createRM(new LocalizedValue("Super Registry Administrator"), "MOH", "Village");
+    String rmJSON1 = rm1.toJSON().toString();
+    
+    RegistryRole rm2 = RegistryRole.fromJSON(rmJSON1);
+    String rmJSON2 = rm2.toJSON().toString();
+    
+    Assert.assertEquals(rmJSON1, rmJSON2);
+    
+    // RC
+    RegistryRole rc1 = RegistryRole.createRC(new LocalizedValue("Super Registry Administrator"), "MOH", "Village");
+    String rcJSON1 = rc1.toJSON().toString();
+    
+    RegistryRole rc2 = RegistryRole.fromJSON(rcJSON1);
+    String rcJSON2 = rc2.toJSON().toString();
+    
+    Assert.assertEquals(rcJSON1, rcJSON2);
+    
   }
   
   @Test
