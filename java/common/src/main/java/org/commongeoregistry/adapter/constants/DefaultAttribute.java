@@ -44,9 +44,9 @@ public enum DefaultAttribute {
 
   LAST_UPDATE_DATE("lastUpdateDate", "Date Last Updated", "The date the object was updated", AttributeDateType.TYPE, true, false, false, false),
   
-  GEOMETRY("geometry", "Geometry", "The geometries for the GeoObject.", AttributeGeometryType.TYPE, true, false, false, true),
+  GEOMETRY("geometry", "Geometry", "The geometries for the GeoObject.", AttributeGeometryType.TYPE, true, false, false, true);
   
-  ORGANIZATION("organization", "Organization", "The responsible organization", AttributeCharacterType.TYPE, true, false, false, false);
+//  ORGANIZATION("organization", "Organization", "The responsible organization", AttributeCharacterType.TYPE, true, false, false, false);
 
   private String  name;
 
