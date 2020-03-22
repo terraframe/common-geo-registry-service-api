@@ -22,10 +22,79 @@ public class RegistryRole implements Serializable
     
     AC();
    
-    public static final String REGISTRY_ROLE_PREFIX             = "commongeoregistry";
+    public static final String REGISTRY_ROLE_PREFIX             = "cgr";
     
     public static final String REGISTRY_ROOT_ORG_ROLE           = REGISTRY_ROLE_PREFIX + ".Org";
 
+    /**
+     * Constructs a role name for the {@link OrganizationDTO} with the given code.
+     * 
+     * @param organizationCode
+     *          {@link OrganizationDTO} code.
+     * 
+     * @return role name for the {@link OrganizationDTO} with the given code.
+     */
+    public static String getRootOrgRoleName(String organizationCode)
+    {
+      return REGISTRY_ROOT_ORG_ROLE + "." + organizationCode;
+    }
+    
+    /**
+     * Returns true if the given role name is an {@link RegistryRole.Type#REGISTRY_ROOT_ORG_ROLE} role, false otherwise.
+     * 
+     * @param roleName
+     * 
+     * @return true if the given role name is an {@link RegistryRole.Type#REGISTRY_ROOT_ORG_ROLE} role, false otherwise.
+     */
+    public static boolean isRootOrgRole(String roleName)
+    {
+      if (roleName.equals(RegistryRole.Type.REGISTRY_ROOT_ORG_ROLE))
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+    
+    /**
+     * Returns true if the given role name is related to a {@link OrganizationDTO}, false otherwise.
+     * 
+     * @param roleName
+     * 
+     * @return true if the given role name is related to a {@link OrganizationDTO}, false otherwise.
+     */
+    public static boolean isOrgRole(String roleName)
+    {      
+      if (roleName.contains(Type.REGISTRY_ROOT_ORG_ROLE))
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+    
+    /**
+     * Returns the code for the {@link OrganizationDTO} that is in the role name.
+     * 
+     * Precondition: the given role name represents a role that has an organization code in it.
+     * 
+     * @param roleName
+     * 
+     * @return the code for the {@link OrganizationDTO} that is in the role name.
+     */
+    public static String parseOrgCode(String roleName)
+    {
+      String[] strArray = roleName.split("\\.");
+      
+      String organizationCode = strArray[2];
+      
+      return organizationCode;
+    }
+    
     /**
      * Returns the {@link RegistryRole} name for the Super Registry Administrator.
      * 
@@ -36,18 +105,37 @@ public class RegistryRole implements Serializable
     {
       return REGISTRY_ROLE_PREFIX + "." + Type.SRA.name();
     }
-
+    
     /**
-     * Constructs a role name for the {@link OrganizationDTO} with the given code.
+     * Returns true if the given role name is an {@link RegistryRole.Type#SRA} role, false otherwise.
      * 
-     * @param organizationCode
-     *          {@link OrganizationDTO} code.
+     * @param roleName
      * 
-     * @return role name for the {@link OrganizationDTO} with the given code.
+     * @return true if the given role name is an {@link RegistryRole.Type#SRA} role, false otherwise.
      */
-    public static String getRoleName(String organizationCode)
+    public static boolean isSRA_Role(String roleName)
     {
-      return REGISTRY_ROOT_ORG_ROLE + "." + organizationCode;
+      boolean isValidRole = false;
+      
+      String[] strArray = roleName.split("\\.");
+      
+      try
+      {
+        String cgrRoleNamespace = strArray[0];
+        
+        if (strArray.length == 2 && cgrRoleNamespace.equals(RegistryRole.Type.REGISTRY_ROLE_PREFIX))
+        {
+          String roleSuffix = strArray[1];
+          
+          if (roleSuffix.equals(RegistryRole.Type.SRA.name()))
+          {
+            isValidRole = true;
+          }
+        }
+      }
+      catch (StringIndexOutOfBoundsException e) {}
+
+      return isValidRole;
     }
     
     /**
@@ -62,9 +150,48 @@ public class RegistryRole implements Serializable
      */
     public static String getRA_RoleName(String organizationCode)
     {
-      String organizationRoleName = RegistryRole.Type.getRoleName(organizationCode);
+      String organizationRoleName = RegistryRole.Type.getRootOrgRoleName(organizationCode);
 
       return organizationRoleName + "." + Type.RA.name();
+    }
+    
+    /**
+     * Returns true if the given role name is an {@link RegistryRole.Type#RA} role, false otherwise.
+     * 
+     * Precondition: assumes the organization code in the role name is valid.
+     * 
+     * @param roleName
+     * 
+     * @return true if the given role name is an {@link RegistryRole.Type#RA} role, false otherwise.
+     */
+    public static boolean isRA_Role(String roleName)
+    {
+      boolean isValidRole = false;
+      
+      String[] strArray = roleName.split("\\.");
+      
+      try
+      {      
+        if (strArray.length == 4)
+        {        
+          String cgrRoleNamespace = strArray[0];
+          cgrRoleNamespace += "."+strArray[1];
+          
+          if (cgrRoleNamespace.equals(RegistryRole.Type.REGISTRY_ROOT_ORG_ROLE))
+          {
+            // Assume the org code is valid
+            String roleSuffix = strArray[3];
+          
+            if (roleSuffix.equals(RegistryRole.Type.RA.name()))
+            {
+              isValidRole = true;
+            }
+          }
+        }
+      }
+      catch (StringIndexOutOfBoundsException e) {}
+      
+      return isValidRole;
     }
     
     /**
@@ -82,9 +209,51 @@ public class RegistryRole implements Serializable
      */
     public static String getRM_RoleName(String organizationCode, String geoObjectTypeCode)
     {
-      String organizationRoleName = RegistryRole.Type.getRoleName(organizationCode);
+      String organizationRoleName = RegistryRole.Type.getRootOrgRoleName(organizationCode);
 
       return organizationRoleName + "." + geoObjectTypeCode+"."+Type.RM.name();
+    }
+    
+    
+    /**
+     * Returns true if the given role name is an {@link RegistryRole.Type#RM}  role, false otherwise.
+     * 
+     * Precondition: assumes the {@link OrganizationDTO} code in the role name is valid.
+     * Precondition: assumes the {@link GeoObjectType} code in the role name is valid.
+     * 
+     * @param roleName
+     * 
+     * @return true if the given role name is an {@link RegistryRole.Type#RM} role, false otherwise.
+     */
+    public static boolean isRM_Role(String roleName)
+    {
+      boolean isValidRole = false;
+      
+      String[] strArray = roleName.split("\\.");
+      
+      try
+      {      
+        if (strArray.length == 5)
+        {        
+          String cgrRoleNamespace = strArray[0];
+          cgrRoleNamespace += "."+strArray[1];
+          
+          if (cgrRoleNamespace.equals(RegistryRole.Type.REGISTRY_ROOT_ORG_ROLE))
+          {
+            // Assume the org code is valid
+            // Assume the geo object type code is valid
+            String roleSuffix = strArray[4];
+          
+            if (roleSuffix.equals(RegistryRole.Type.RM.name()))
+            {
+              isValidRole = true;
+            }
+          }
+        }
+      }
+      catch (StringIndexOutOfBoundsException e) {}
+      
+      return isValidRole;
     }
     
     /**
@@ -102,9 +271,92 @@ public class RegistryRole implements Serializable
      */
     public static String getRC_RoleName(String organizationCode, String geoObjectTypeCode)
     {
-      String organizationRoleName = RegistryRole.Type.getRoleName(organizationCode);
+      String organizationRoleName = RegistryRole.Type.getRootOrgRoleName(organizationCode);
 
       return organizationRoleName + "." + geoObjectTypeCode+"."+Type.RC.name();
+    }
+    
+    
+    /**
+     * Returns true if the given role name is an {@link RegistryRole.Type#RC} role, false otherwise.
+     * 
+     * Precondition: assumes the {@link OrganizationDTO} code in the role name is valid.
+     * Precondition: assumes the {@link GeoObjectType} code in the role name is valid.
+     * 
+     * @param roleName
+     * 
+     * @return true if the given role name is an {@link RegistryRole.Type#RC} role, false otherwise.
+     */
+    public static boolean isRC_Role(String roleName)
+    {
+      boolean isValidRole = false;
+      
+      String[] strArray = roleName.split("\\.");
+      
+      try
+      {      
+        if (strArray.length == 5)
+        {        
+          String cgrRoleNamespace = strArray[0];
+          cgrRoleNamespace += "."+strArray[1];
+          
+          if (cgrRoleNamespace.equals(RegistryRole.Type.REGISTRY_ROOT_ORG_ROLE))
+          {
+            // Assume the org code is valid
+            // Assume the geo object type code is valid
+            String roleSuffix = strArray[4];
+          
+            if (roleSuffix.equals(RegistryRole.Type.RC.name()))
+            {
+              isValidRole = true;
+            }
+          }
+        }
+      }
+      catch (StringIndexOutOfBoundsException e) {}
+      
+      return isValidRole;
+    }
+
+    /**
+     * Returns true if the given role name is an {@link RegistryRole.Type#AC} role, false otherwise.
+     * 
+     * Precondition: assumes the {@link OrganizationDTO} code in the role name is valid.
+     * Precondition: assumes the {@link GeoObjectType} code in the role name is valid.
+     * 
+     * @param roleName
+     * 
+     * @return true if the given role name is an {@link RegistryRole.Type#AC} role, false otherwise.
+     */
+    public static boolean isAC_Role(String roleName)
+    {
+      boolean isValidRole = false;
+      
+      String[] strArray = roleName.split("\\.");
+      
+      try
+      {      
+        if (strArray.length == 5)
+        {        
+          String cgrRoleNamespace = strArray[0];
+          cgrRoleNamespace += "."+strArray[1];
+          
+          if (cgrRoleNamespace.equals(RegistryRole.Type.REGISTRY_ROOT_ORG_ROLE))
+          {
+            // Assume the org code is valid
+            // Assume the geo object type code is valid
+            String roleSuffix = strArray[4];
+          
+            if (roleSuffix.equals(RegistryRole.Type.AC.name()))
+            {
+              isValidRole = true;
+            }
+          }
+        }
+      }
+      catch (StringIndexOutOfBoundsException e) {}
+      
+      return isValidRole;
     }
     
     /**
@@ -122,7 +374,7 @@ public class RegistryRole implements Serializable
      */
     public static String getAC_RoleName(String organizationCode, String geoObjectTypeCode)
     {
-      String organizationRoleName = RegistryRole.Type.getRoleName(organizationCode);
+      String organizationRoleName = RegistryRole.Type.getRootOrgRoleName(organizationCode);
 
       return organizationRoleName + "." + geoObjectTypeCode+"."+Type.AC.name();
     }

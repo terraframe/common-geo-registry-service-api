@@ -27,6 +27,7 @@ import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -329,7 +330,13 @@ public class HierarchyType implements Serializable
     String code = oJson.get(JSON_CODE).getAsString();
     LocalizedValue label = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_LABEL).getAsJsonObject());
     LocalizedValue description = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
-    String organizationCode = oJson.get(JSON_ORGANIZARION_CODE).getAsString();
+
+    String organizationCode = null;
+    JsonElement jsonOrganization = oJson.get(JSON_ORGANIZARION_CODE);
+    if (jsonOrganization != null)
+    {
+      organizationCode = jsonOrganization.getAsString();
+    }
 
     HierarchyType ht = new HierarchyType(code, label, description, organizationCode);
 

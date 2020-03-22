@@ -482,8 +482,8 @@ public class GeoObjectType implements Serializable
     LocalizedValue description = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
     GeometryType geometryType = GeometryType.valueOf(oJson.get(JSON_GEOMETRY_TYPE).getAsString());
     Boolean isGeometryEditable = new Boolean(oJson.get(JSON_IS_GEOMETRY_EDITABLE).getAsBoolean());
-    String organizationCode = null;
 
+    String organizationCode = null;
     JsonElement jsonOrganization = oJson.get(JSON_ORGANIZARION_CODE);
 
     if (jsonOrganization != null)
