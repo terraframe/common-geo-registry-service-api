@@ -202,6 +202,7 @@ public class SerializationTest
   {
     // SRA
     RegistryRole sra1 = RegistryRole.createSRA(new LocalizedValue("Super Registry Administrator"));
+    sra1.setAssigned(true);
     String sraJSON1 = sra1.toJSON().toString();
     
     RegistryRole sra2 = RegistryRole.fromJSON(sraJSON1);

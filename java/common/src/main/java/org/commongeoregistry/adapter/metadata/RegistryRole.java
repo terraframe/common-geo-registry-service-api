@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -396,6 +397,8 @@ public class RegistryRole implements Serializable
   
   public static final String         JSON_GEO_OBJECT_TYPE_CODE   = "geoObjectTypeCode";
   
+  public static final String         JSON_ASSIGNED               = "assigned";
+ 
   private Type                       type;
   
   private String                     name;
@@ -405,6 +408,8 @@ public class RegistryRole implements Serializable
   private String                     organizationCode;
   
   private String                     geoObjectTypeCode;
+  
+  private boolean                    assigned;
   
   /**
    * Precondition: Parameters form a valid role with the following rules:
@@ -417,10 +422,11 @@ public class RegistryRole implements Serializable
    * @param organizationCode the organization the role belongs to (if any)
    * @param geoObjectTypeCode the {@link GeoObjectType} that the role is associated with (if any);
    */
-  private RegistryRole(Type type, String name, LocalizedValue label, String organizationCode, String geoObjectTypeCode)
+  private RegistryRole(Type type, String name, LocalizedValue label, String organizationCode, String geoObjectTypeCode, boolean assigned)
   {
     this.type              = type;
     this.label             = label;
+    this.assigned          = assigned;
 
     if (this.type.equals(Type.SRA))
     {
@@ -473,7 +479,7 @@ public class RegistryRole implements Serializable
   {
     String roleName = RegistryRole.Type.getSRA_RoleName();
     
-    return new RegistryRole(RegistryRole.Type.SRA, roleName, label, "", "");
+    return new RegistryRole(RegistryRole.Type.SRA, roleName, label, "", "", false);
   }
   
   /**
@@ -487,7 +493,7 @@ public class RegistryRole implements Serializable
   {
     String roleName = RegistryRole.Type.getRA_RoleName(organizationCode);
     
-    return new RegistryRole(RegistryRole.Type.RA, roleName, label, organizationCode, "");
+    return new RegistryRole(RegistryRole.Type.RA, roleName, label, organizationCode, "", false);
   }
   
   /**
@@ -503,7 +509,7 @@ public class RegistryRole implements Serializable
   {
     String roleName = RegistryRole.Type.getRM_RoleName(organizationCode, geoObjectTypeCode);
     
-    return new RegistryRole(RegistryRole.Type.RM, roleName, label, organizationCode, geoObjectTypeCode);
+    return new RegistryRole(RegistryRole.Type.RM, roleName, label, organizationCode, geoObjectTypeCode, false);
   }
   
   /**
@@ -519,7 +525,7 @@ public class RegistryRole implements Serializable
   {
     String roleName = RegistryRole.Type.getRC_RoleName(organizationCode, geoObjectTypeCode);
     
-    return new RegistryRole(RegistryRole.Type.RC, roleName, label, organizationCode, geoObjectTypeCode);
+    return new RegistryRole(RegistryRole.Type.RC, roleName, label, organizationCode, geoObjectTypeCode, false);
   }
   
   /**
@@ -535,7 +541,7 @@ public class RegistryRole implements Serializable
   {
     String roleName = RegistryRole.Type.getAC_RoleName(organizationCode, geoObjectTypeCode);
     
-    return new RegistryRole(RegistryRole.Type.RC, roleName, label, organizationCode, geoObjectTypeCode);
+    return new RegistryRole(RegistryRole.Type.AC, roleName, label, organizationCode, geoObjectTypeCode, false);
   }
   
   /**
@@ -617,6 +623,26 @@ public class RegistryRole implements Serializable
   }
   
   /**
+   * This is used in the context to represent whether a user is assigned to this role.
+   * 
+   * @return true if it is assigned in the context in which it is called, false otherwise.
+   */
+  public boolean getAssigned()
+  {
+    return this.assigned;
+  }
+  
+  /**
+   * Sets whether the role is assigned in the context this object is being used.
+   * 
+   * @param assigned
+   */
+  public void setAssigned(boolean assigned)
+  {
+    this.assigned = assigned;
+  }
+  
+  /**
    * Creates a {@link RegistryRole} from the given JSON string.
    * 
    * Precondition: 
@@ -641,7 +667,16 @@ public class RegistryRole implements Serializable
     
     String geoObjectTypeCode = oJson.get(JSON_GEO_OBJECT_TYPE_CODE).getAsString();
     
-    RegistryRole registryRole = new RegistryRole(Type.valueOf(type), name, label, organizationCode, geoObjectTypeCode);
+    JsonElement assignedElement = oJson.get(JSON_ASSIGNED);
+    
+    boolean assigned = false;
+
+    if (assignedElement != null)
+    {
+      assigned = assignedElement.getAsBoolean();
+    }
+    
+    RegistryRole registryRole = new RegistryRole(Type.valueOf(type), name, label, organizationCode, geoObjectTypeCode, assigned);
     
     return registryRole;
   }
