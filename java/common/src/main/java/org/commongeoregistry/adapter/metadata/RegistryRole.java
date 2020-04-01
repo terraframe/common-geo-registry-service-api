@@ -395,7 +395,11 @@ public class RegistryRole implements Serializable
   
   public static final String         JSON_ORG_CODE               = "orgCode";
   
+  public static final String         JSON_ORG_LABEL              = "orgLabel";
+  
   public static final String         JSON_GEO_OBJECT_TYPE_CODE   = "geoObjectTypeCode";
+  
+  public static final String         JSON_GEO_OBJECT_TYPE_LABEL  = "geoObjectTypeLabel";
   
   public static final String         JSON_ASSIGNED               = "assigned";
  
@@ -407,7 +411,11 @@ public class RegistryRole implements Serializable
   
   private String                     organizationCode;
   
+  private LocalizedValue             organizationLabel;
+  
   private String                     geoObjectTypeCode;
+  
+  private LocalizedValue             geoObjectTypeLabel;
   
   private boolean                    assigned;
   
@@ -424,9 +432,11 @@ public class RegistryRole implements Serializable
    */
   private RegistryRole(Type type, String name, LocalizedValue label, String organizationCode, String geoObjectTypeCode, boolean assigned)
   {
-    this.type              = type;
-    this.label             = label;
-    this.assigned          = assigned;
+    this.type               = type;
+    this.label              = label;
+    this.assigned           = assigned;
+    this.organizationLabel  = LocalizedValue.createEmptyLocalizedValue();
+    this.geoObjectTypeLabel = LocalizedValue.createEmptyLocalizedValue();
 
     if (this.type.equals(Type.SRA))
     {
@@ -613,6 +623,43 @@ public class RegistryRole implements Serializable
   }
   
   /**
+   * Returns the localized label of the {@link OrganizationDTO}.
+   * 
+   * @return the localized label of the {@link OrganizationDTO}.
+   */
+  public LocalizedValue getOrganizationLabel()
+  {
+    return this.organizationLabel;
+  }
+  
+  /**
+   * Sets the localized display label of this {@link OrganizationDTO}.
+   * 
+   * Precondition: label may not be null
+   * 
+   * @param label
+   */
+  public void setOrganizationLabel(LocalizedValue label)
+  {
+    this.organizationLabel = label;
+  }
+  
+  
+  /**
+   * Sets the localized display label of the {@link OrganizationDTO}.
+   * 
+   * Precondition: key may not be null
+   * Precondition: key must represent a valid locale that has been defined on the back-end
+   * 
+   * @param key string of the locale name.
+   * @param value value for the given locale.
+   */
+  public void setOrganizationLabel(String key, String value)
+  {
+    this.organizationLabel.setValue(key, value);
+  }
+  
+  /**
    * Returns the {@link GeoObjectType} code of this {@link RegistryRole} or an empty string if there is none.
    * 
    * @return the {@link GeoObjectType} code of this {@link RegistryRole} or an empty string if there is none.
@@ -620,6 +667,44 @@ public class RegistryRole implements Serializable
   public String getGeoObjectTypeCode()
   {
     return this.geoObjectTypeCode;
+  }
+  
+  
+  /**
+   * Returns the localized label of the {@link GeoObjectType}.
+   * 
+   * @return the localized label of the {@link GeoObjectType}.
+   */
+  public LocalizedValue getGeoObjectTypeLabel()
+  {
+    return this.geoObjectTypeLabel;
+  }
+  
+  /**
+   * Sets the localized display label of this {@link GeoObjectType}.
+   * 
+   * Precondition: label may not be null
+   * 
+   * @param label
+   */
+  public void setGeoObjectTypeLabel(LocalizedValue label)
+  {
+    this.geoObjectTypeLabel = label;
+  }
+  
+  
+  /**
+   * Sets the localized display label of the {@link GeoObjectType}.
+   * 
+   * Precondition: key may not be null
+   * Precondition: key must represent a valid locale that has been defined on the back-end
+   * 
+   * @param key string of the locale name.
+   * @param value value for the given locale.
+   */
+  public void setGeoObjectTypeLabel(String key, String value)
+  {
+    this.geoObjectTypeLabel.setValue(key, value);
   }
   
   /**
@@ -678,6 +763,20 @@ public class RegistryRole implements Serializable
     
     RegistryRole registryRole = new RegistryRole(Type.valueOf(type), name, label, organizationCode, geoObjectTypeCode, assigned);
     
+    JsonElement orgLabelElement = oJson.get(JSON_ORG_LABEL);
+    if (orgLabelElement != null)
+    {
+      LocalizedValue orgLabel = LocalizedValue.fromJSON(orgLabelElement.getAsJsonObject());
+      registryRole.setOrganizationLabel(orgLabel);
+    }
+    
+    JsonElement geoObjTypeLabelElement = oJson.get(JSON_GEO_OBJECT_TYPE_LABEL);
+    if (geoObjTypeLabelElement != null)
+    {
+      LocalizedValue geoOrgTypeLabel = LocalizedValue.fromJSON(geoObjTypeLabelElement.getAsJsonObject());
+      registryRole.setGeoObjectTypeLabel(geoOrgTypeLabel);
+    }
+    
     return registryRole;
   }
   
@@ -713,7 +812,11 @@ public class RegistryRole implements Serializable
     
     json.addProperty(JSON_ORG_CODE, this.getOrganizationCode());
     
+    json.add(JSON_ORG_LABEL, this.getOrganizationLabel().toJSON(serializer));
+    
     json.addProperty(JSON_GEO_OBJECT_TYPE_CODE, this.getGeoObjectTypeCode());
+    
+    json.add(JSON_GEO_OBJECT_TYPE_LABEL, this.getGeoObjectTypeLabel().toJSON(serializer));
 
     return json;
   }

@@ -59,6 +59,16 @@ public class LocalizedValue
     this.localeValues = localeValues;
   }
 
+  /**
+   * Returns an empty {@link LocalizedValue} object.
+   * 
+   * @return an empty {@link LocalizedValue} object.
+   */
+  public static LocalizedValue createEmptyLocalizedValue()
+  {
+    return new LocalizedValue("", new HashMap<String, String>());
+  }
+  
   public String getValue()
   {
     return localizedValue;

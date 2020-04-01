@@ -221,6 +221,8 @@ public class SerializationTest
     
     // RM
     RegistryRole rm1 = RegistryRole.createRM(new LocalizedValue("Super Registry Administrator"), "MOH", "Village");
+    rm1.setOrganizationLabel("DEFAULT", "Ministry of Health");
+    rm1.setGeoObjectTypeLabel("DEFAULT", "Village");
     String rmJSON1 = rm1.toJSON().toString();
     
     RegistryRole rm2 = RegistryRole.fromJSON(rmJSON1);
@@ -236,7 +238,6 @@ public class SerializationTest
     String rcJSON2 = rc2.toJSON().toString();
     
     Assert.assertEquals(rcJSON1, rcJSON2);
-    
   }
   
   @Test
