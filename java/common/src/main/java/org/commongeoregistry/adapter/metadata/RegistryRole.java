@@ -712,7 +712,7 @@ public class RegistryRole implements Serializable
    * 
    * @return true if it is assigned in the context in which it is called, false otherwise.
    */
-  public boolean getAssigned()
+  public boolean isAssigned()
   {
     return this.assigned;
   }
@@ -817,6 +817,10 @@ public class RegistryRole implements Serializable
     json.addProperty(JSON_GEO_OBJECT_TYPE_CODE, this.getGeoObjectTypeCode());
     
     json.add(JSON_GEO_OBJECT_TYPE_LABEL, this.getGeoObjectTypeLabel().toJSON(serializer));
+    
+    json.add(JSON_GEO_OBJECT_TYPE_LABEL, this.getGeoObjectTypeLabel().toJSON(serializer));
+    
+    json.addProperty(JSON_ASSIGNED, this.isAssigned());
 
     return json;
   }
