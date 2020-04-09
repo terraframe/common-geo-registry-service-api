@@ -79,6 +79,24 @@ public class RegistryRole implements Serializable
     }
     
     /**
+     * Returns the code for the {@link GeoObjectType} that is in the role name.
+     * 
+     * Precondition: the given role name represents a role that has a GeoObjectType code in it.
+     * 
+     * @param roleName
+     * 
+     * @return the code for the {@link GeoObjectType} that is in the role name.
+     */
+    public static String parseGotCode(String roleName)
+    {
+      String[] strArray = roleName.split("\\.");
+      
+      String gotCode = strArray[3];
+      
+      return gotCode;
+    }
+    
+    /**
      * Returns the code for the {@link OrganizationDTO} that is in the role name.
      * 
      * Precondition: the given role name represents a role that has an organization code in it.
