@@ -19,6 +19,8 @@
 package org.commongeoregistry.adapter.metadata;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -86,9 +88,11 @@ public class MetadataCache implements Serializable
     return Optional.of(this.organizationMap.get(code));
   }
   
-  public OrganizationDTO[] getAllOrganizations()
+  public List<OrganizationDTO> getAllOrganizations()
   {
-    return this.organizationMap.values().toArray(new OrganizationDTO[this.organizationMap.values().size()]);
+//    return this.organizationMap.values().toArray(new OrganizationDTO[this.organizationMap.values().size()]);
+    
+    return new ArrayList<OrganizationDTO>(this.organizationMap.values());
   }
   
   public void removeOrganization(String code)
@@ -126,44 +130,52 @@ public class MetadataCache implements Serializable
     this.hierarchyTypeMap.remove(code);
   }
 
-  public OrganizationDTO[] getAllOrganizationsTypes()
+  public List<OrganizationDTO> getAllOrganizationsTypes()
   {
-    return this.organizationMap.values().toArray(new OrganizationDTO[this.organizationMap.values().size()]);
+//    return this.organizationMap.values().toArray(new OrganizationDTO[this.organizationMap.values().size()]);
+    
+    return new ArrayList<OrganizationDTO>(this.organizationMap.values());
   }
   
-  public String[] getAllOrganizationCodes()
+  public List<String> getAllOrganizationCodes()
   {
-    OrganizationDTO[] organizations = this.getAllOrganizationsTypes();
-    String[] codes = new String[organizations.length];
+    List<OrganizationDTO> organizations = this.getAllOrganizationsTypes();
     
-    for (int i = 0; i < organizations.length; ++i)
+    List<String> codes = new ArrayList<String>(organizations.size());
+    
+    for (int i = 0; i < organizations.size(); ++i)
     {
-      codes[i] = organizations[i].getCode();
+      codes.add(organizations.get(i).getCode());
     }
  
     return codes;
   }
   
-  public GeoObjectType[] getAllGeoObjectTypes()
+  public List<GeoObjectType> getAllGeoObjectTypes()
   {
-    return this.geoGeoObjectTypeMap.values().toArray(new GeoObjectType[this.geoGeoObjectTypeMap.values().size()]);
+//    return this.geoGeoObjectTypeMap.values().toArray(new GeoObjectType[this.geoGeoObjectTypeMap.values().size()]);
+    
+    return new ArrayList<GeoObjectType>(this.geoGeoObjectTypeMap.values());
   }
   
-  public String[] getAllGeoObjectTypeCodes()
+  public List<String> getAllGeoObjectTypeCodes()
   {
-    GeoObjectType[] gots = this.getAllGeoObjectTypes();
-    String[] codes = new String[gots.length];
+    List<GeoObjectType> gots = this.getAllGeoObjectTypes();
     
-    for (int i = 0; i < gots.length; ++i)
+    List<String> codes = new ArrayList<String>(gots.size());
+    
+    for (int i = 0; i < gots.size(); ++i)
     {
-      codes[i] = gots[i].getCode();
+      codes.add(gots.get(i).getCode());
     }
     
     return codes;
   }
 
-  public HierarchyType[] getAllHierarchyTypes()
+  public List<HierarchyType> getAllHierarchyTypes()
   {
-    return this.hierarchyTypeMap.values().toArray(new HierarchyType[this.hierarchyTypeMap.values().size()]);
+//    return this.hierarchyTypeMap.values().toArray(new HierarchyType[this.hierarchyTypeMap.values().size()]);
+    
+    return new ArrayList<HierarchyType>(this.hierarchyTypeMap.values());
   }
 }
