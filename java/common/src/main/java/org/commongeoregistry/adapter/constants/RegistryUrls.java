@@ -103,6 +103,7 @@ public class RegistryUrls
   
   public static final String GEO_OBJECT_TYPE_GET_ALL  = "geoobjecttype/get-all";
   public static final String GEO_OBJECT_TYPE_GET_ALL_PARAM_TYPES  = "types";
+  public static final String GEO_OBJECT_TYPE_GET_ALL_PARAM_HIERARCHIES = "hierarchies";
   
   public static final String GEO_OBJECT_TYPE_CREATE   = "geoobjecttype/create";
   public static final String GEO_OBJECT_TYPE_CREATE_PARAM_GOT   = "gtJSON";

@@ -104,7 +104,7 @@ public class HttpRegistryClient extends RegistryAdapter
   {
     this.getMetadataCache().rebuild();
     
-    GeoObjectType[] gots = this.getGeoObjectTypes(new String[]{});
+    GeoObjectType[] gots = this.getGeoObjectTypes(new String[]{}, new String[]{});
 
     for (GeoObjectType got : gots)
     {
@@ -617,7 +617,7 @@ public class HttpRegistryClient extends RegistryAdapter
     * @returns
    * @throws
    **/
-  public GeoObjectType[] getGeoObjectTypes(String[] codes) throws AuthenticationException, ServerResponseException, IOException
+  public GeoObjectType[] getGeoObjectTypes(String[] codes, String[] hierarchies) throws AuthenticationException, ServerResponseException, IOException
   {
     if (codes == null)
     {
@@ -630,8 +630,20 @@ public class HttpRegistryClient extends RegistryAdapter
       types.add(code);
     }
     
+    if (hierarchies == null)
+    {
+      hierarchies = new String[]{};
+    }
+    
+    JsonArray jaHierarchies = new JsonArray();
+    for (String hierarchy : hierarchies)
+    {
+      jaHierarchies.add(hierarchy);
+    }
+    
     HashMap<String, String> params = new HashMap<String, String>();
     params.put(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL_PARAM_TYPES, types.toString());
+    params.put(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL_PARAM_HIERARCHIES, jaHierarchies.toString());
     
     HttpResponse resp = this.connector.httpGet(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, params);
     ResponseProcessor.validateStatusCode(resp);

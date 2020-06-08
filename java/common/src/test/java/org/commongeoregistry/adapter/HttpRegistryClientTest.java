@@ -82,7 +82,7 @@ public class HttpRegistryClientTest
      * Validate request
      */
     Assert.assertEquals(RegistryUrls.GEO_OBJECT_TYPE_GET_ALL, req1.getUrl());
-    Assert.assertEquals(1, req1.getParams().size());
+    Assert.assertEquals(2, req1.getParams().size());
 
     /*
      * Validate response
