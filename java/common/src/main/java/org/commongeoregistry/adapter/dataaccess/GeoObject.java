@@ -34,9 +34,9 @@ import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
 import org.commongeoregistry.adapter.metadata.DefaultSerializer;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
-import org.wololo.jts2geojson.GeoJSONReader;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -58,21 +58,13 @@ public class GeoObject implements Serializable
 
   public static final String     DISPLAY_LABEL    = DefaultAttribute.DISPLAY_LABEL.getName();
 
-  public static final String     JSON_PROPERTIES  = "properties";
-
-  public static final String     JSON_TYPE        = "type";
-
-  public static final String     JSON_GEOMETRY    = "geometry";
-
-  public static final String     JSON_FEATURE     = "Feature";
-
   private GeoObjectType          geoObjectType;
 
   private GeometryType           geometryType;
 
   private Geometry               geometry;
 
-  private Map<String, Attribute> attributeMap;
+  Map<String, Attribute> attributeMap;
 
   /**
    * Use the factory method on the {@link RegistryAdapter} to create new
@@ -367,41 +359,10 @@ public class GeoObject implements Serializable
    */
   public static GeoObject fromJSON(RegistryAdapter registry, String sJson)
   {
-    JsonParser parser = new JsonParser();
-
-    JsonObject oJson = parser.parse(sJson).getAsJsonObject();
-    JsonObject oJsonProps = oJson.getAsJsonObject(JSON_PROPERTIES);
-
-    GeoObject geoObj;
-    if (oJsonProps.has("uid"))
-    {
-      geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString(), false);
-    }
-    else
-    {
-      geoObj = registry.newGeoObjectInstance(oJsonProps.get(JSON_TYPE).getAsString(), true);
-    }
-
-    JsonElement oGeom = oJson.get(JSON_GEOMETRY);
-    if (oGeom != null)
-    {
-      GeoJSONReader reader = new GeoJSONReader();
-      Geometry jtsGeom = reader.read(oGeom.toString());
-
-      geoObj.setGeometry(jtsGeom);
-    }
-
-    for (String key : geoObj.attributeMap.keySet())
-    {
-      Attribute attr = geoObj.attributeMap.get(key);
-
-      if (oJsonProps.has(key) && !oJsonProps.get(key).isJsonNull())
-      {
-        attr.fromJSON(oJsonProps.get(key), registry);
-      }
-    }
-
-    return geoObj;
+    GsonBuilder builder = new GsonBuilder();
+    builder.registerTypeAdapter(GeoObject.class, new GeoObjectJsonAdapters.GeoObjectDeserializer(registry));
+    
+    return builder.create().fromJson(sJson, GeoObject.class);
   }
 
   public JsonObject toJSON()
@@ -411,67 +372,10 @@ public class GeoObject implements Serializable
 
   public JsonObject toJSON(CustomSerializer serializer)
   {
-    JsonObject jsonObj = new JsonObject();
-
-    // It's assumed that GeoObjects are simple features rather than
-    // FeatureCollections.
-    // Spec reference: https://tools.ietf.org/html/rfc7946#section-3.3
-    jsonObj.addProperty(JSON_TYPE, JSON_FEATURE);
-
-    if (this.getGeometry() != null)
-    {
-      GeoJSONWriter gw = new GeoJSONWriter();
-      org.wololo.geojson.Geometry gJSON = gw.write(this.getGeometry());
-
-      JsonParser parser = new JsonParser();
-      JsonObject geomObj = parser.parse(gJSON.toString()).getAsJsonObject();
-
-      jsonObj.add(JSON_GEOMETRY, geomObj);
-    }
-
-    JsonObject props = new JsonObject();
-    for (String key : this.attributeMap.keySet())
-    {
-      Attribute attr = this.attributeMap.get(key);
-
-      JsonElement value = attr.toJSON(serializer);
-      if (!value.isJsonNull())
-      {
-        props.add(attr.getName(), value);
-      }
-
-      // if(attr instanceof AttributeTerm)
-      // {
-      // attrs.add(key, attr.toJSON());
-      // }
-      // else
-      // {
-      //
-      // System.out.println(attr.toJSON());
-      //
-      // // TODO: All these attributes are required by the CGR spec. Adding an
-      // // empty string is a temporary step for me to work on another area of
-      // // the adapter. Ensure that Values are always present and handle
-      // // NULLs as errors.
-      // if(attr.getValue() == null )
-      // {
-      // attrs.addProperty(key, "");
-      // }
-      // else
-      // {
-      // attrs.addProperty(key, attr.getValue().toString() );
-      // }
-      // }
-
-      // JsonParser attrParser = new JsonParser();
-      // JsonObject geomObj =
-      // attrParser.parse(attr.toJSON().toString()).getAsJsonObject();
-
-    }
-
-    jsonObj.add(JSON_PROPERTIES, props);
-
-    return jsonObj;
+    GsonBuilder builder = new GsonBuilder();
+    builder.registerTypeAdapter(GeoObject.class, new GeoObjectJsonAdapters.GeoObjectSerializer(serializer));
+    
+    return (JsonObject) builder.create().toJsonTree(this);
   }
 
   public void printAttributes()
