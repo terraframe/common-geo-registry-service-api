@@ -19,6 +19,7 @@
 package org.commongeoregistry.adapter.dataaccess;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,12 +35,9 @@ import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.CustomSerializer;
 import org.commongeoregistry.adapter.metadata.DefaultSerializer;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
-import org.wololo.jts2geojson.GeoJSONWriter;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
@@ -229,6 +227,26 @@ public class GeoObject implements Serializable
   public Attribute getAttribute(String attributeName)
   {
     return this.attributeMap.get(attributeName);
+  }
+
+  /**
+   * Returns the create date of this {@link GeoObject}
+   * 
+   * @return the create date of this {@link GeoObject}
+   */
+  public Date getCreateDate()
+  {
+    return (Date) this.attributeMap.get(DefaultAttribute.CREATE_DATE.getName()).getValue();
+  }
+  
+  /**
+   * Returns the last update date of this {@link GeoObject}
+   * 
+   * @return the last update date of this {@link GeoObject}
+   */
+  public Date getLastUpdateDate()
+  {
+    return (Date) this.attributeMap.get(DefaultAttribute.LAST_UPDATE_DATE.getName()).getValue();
   }
 
   /**
