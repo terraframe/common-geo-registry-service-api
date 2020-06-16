@@ -155,12 +155,16 @@ public class LocalizedValue
     for (int i = 0; i < locales.size(); i++)
     {
       JsonObject locale = locales.get(i).getAsJsonObject();
-      final JsonElement element = locale.get(VALUE);
-
-      String key = locale.get(LOCALE).getAsString();
-      String value = !element.isJsonNull() ? element.getAsString() : null;
-
-      map.put(key, value);
+      
+      if (locale.has(VALUE) && locale.has(LOCALE)) // See ticket #293 if you wonder how it may not have a value
+      {
+        final JsonElement element = locale.get(VALUE);
+  
+        String key = locale.get(LOCALE).getAsString();
+        String value = !element.isJsonNull() ? element.getAsString() : null;
+  
+        map.put(key, value);
+      }
     }
 
     return new LocalizedValue(localizedValue, map);
