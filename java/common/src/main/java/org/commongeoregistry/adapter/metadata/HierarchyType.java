@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.metadata;
 
@@ -45,6 +46,8 @@ public class HierarchyType implements Serializable
 
   public static final String  JSON_CODE                  = "code";
 
+  public static final String  JSON_INHERITED             = "inherited";
+
   public static final String  JSON_LOCALIZED_LABEL       = "label";
 
   public static final String  JSON_LOCALIZED_DESCRIPTION = "description";
@@ -54,9 +57,10 @@ public class HierarchyType implements Serializable
   public static final String  JSON_GEOOBJECTTYPE         = "geoObjectType";
 
   public static final String  JSON_CHILDREN              = "children";
-  
+
   /**
-   * Invariant: Is either an empty string or is the code of a valid {@link OrganizationDTO}.
+   * Invariant: Is either an empty string or is the code of a valid
+   * {@link OrganizationDTO}.
    */
   public static final String  JSON_ORGANIZARION_CODE     = "organizationCode";
 
@@ -74,14 +78,14 @@ public class HierarchyType implements Serializable
    * The localized description of the hierarchy type for the presentation tier.
    */
   private LocalizedValue      description;
-  
+
   /**
-   * The organization responsible for this {@link HierarchyType}. This can be null.
+   * The organization responsible for this {@link HierarchyType}. This can be
+   * null.
    */
   private String              organizationCode;
 
   private List<HierarchyNode> rootGeoObjectTypes;
-
 
   public HierarchyType(String code, LocalizedValue label, LocalizedValue description, String organizationCode)
   {
@@ -119,27 +123,30 @@ public class HierarchyType implements Serializable
 
   /**
    * 
-   * @return the code of the {@link OrganizationDTO} (Optional) that manages this {@link HierarchyType}, 
-   * or NULL if not managed by an {@link OrganizationDTO}.
+   * @return the code of the {@link OrganizationDTO} (Optional) that manages
+   *         this {@link HierarchyType}, or NULL if not managed by an
+   *         {@link OrganizationDTO}.
    */
   public String getOrganizationCode()
   {
     return this.organizationCode;
-  } 
-  
+  }
+
   /**
-   * Sets the {@link OrganizationDTO} (Optional) that manages this {@link HierarchyType}.
+   * Sets the {@link OrganizationDTO} (Optional) that manages this
+   * {@link HierarchyType}.
    * 
    * Precondition: The organization code is valid
    * 
-   * @param organizationCode code of the {@link OrganizationDTO} that manages this {@link HierarchyType}, 
-   * or NULL if none.
+   * @param organizationCode
+   *          code of the {@link OrganizationDTO} that manages this
+   *          {@link HierarchyType}, or NULL if none.
    */
   public void setOrganizationCode(String organizationCode)
   {
     this.organizationCode = organizationCode;
   }
-  
+
   public List<HierarchyNode> getRootGeoObjectTypes()
   {
     return this.rootGeoObjectTypes;
@@ -176,13 +183,30 @@ public class HierarchyType implements Serializable
     private List<HierarchyNode> children;
 
     /**
+     * Read-only flag that indicates if this node was inherited from a different
+     * hierarchy
+     */
+    private Boolean             inherited;
+
+    /**
      * 
      * @param _geoObjectType
      *          {@link GeoObjectType} in the hierarchies node.
      */
     public HierarchyNode(GeoObjectType _geoObjectType)
     {
+      this(_geoObjectType, false);
+    }
+
+    /**
+     * 
+     * @param _geoObjectType
+     *          {@link GeoObjectType} in the hierarchies node.
+     */
+    public HierarchyNode(GeoObjectType _geoObjectType, Boolean _inherited)
+    {
       this.geoObjectType = _geoObjectType;
+      this.inherited = _inherited;
       this.children = Collections.synchronizedList(new LinkedList<HierarchyNode>());
     }
 
@@ -218,6 +242,15 @@ public class HierarchyType implements Serializable
     }
 
     /**
+     * @return If this node represents a geoObjectType which was inherited from
+     *         a different hierarchy
+     */
+    public Boolean getInherited()
+    {
+      return inherited;
+    }
+
+    /**
      * Generates JSON for this object.
      * 
      * @return JSON representation of this object.
@@ -227,6 +260,7 @@ public class HierarchyType implements Serializable
       JsonObject jsonObj = new JsonObject();
 
       jsonObj.addProperty(JSON_GEOOBJECTTYPE, geoObjectType.getCode());
+      jsonObj.addProperty(JSON_INHERITED, this.getInherited());
 
       JsonArray jaChildren = new JsonArray();
       for (int i = 0; i < children.size(); ++i)
@@ -296,8 +330,7 @@ public class HierarchyType implements Serializable
       organizationString = this.organizationCode;
     }
     jsonObj.addProperty(JSON_ORGANIZARION_CODE, organizationString);
-    
-    
+
     JsonArray jaRoots = new JsonArray();
     for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
     {
@@ -306,7 +339,6 @@ public class HierarchyType implements Serializable
       jaRoots.add(hnode.toJSON());
     }
 
-    
     jsonObj.add(JSON_ROOT_GEOOBJECTTYPES, jaRoots);
 
     serializer.configure(this, jsonObj);
