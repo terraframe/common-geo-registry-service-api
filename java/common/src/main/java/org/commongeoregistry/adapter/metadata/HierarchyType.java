@@ -219,6 +219,27 @@ public class HierarchyType implements Serializable
     {
       return this.geoObjectType;
     }
+    
+    /**
+     * Returns true if the hierarchy (this node or all children) contains the provided GeoObjectType.
+     */
+    public boolean hierarchyHasGeoObjectType(String typeCode)
+    {
+      if (this.geoObjectType.getCode().equals(typeCode))
+      {
+        return true;
+      }
+      
+      for (HierarchyNode node : this.children)
+      {
+        if (node.hierarchyHasGeoObjectType(typeCode))
+        {
+          return true;
+        }
+      }
+      
+      return false;
+    }
 
     /**
      * Add the given child {@link GeoObjectType} to this node in the hierarchy.
