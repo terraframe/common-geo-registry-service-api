@@ -46,7 +46,7 @@ public class HierarchyType implements Serializable
 
   public static final String  JSON_CODE                  = "code";
 
-  public static final String  JSON_INHERITED             = "inherited";
+  public static final String  JSON_INHERITED_HIER_CODE   = "inheritedHierarchyCode";
 
   public static final String  JSON_LOCALIZED_LABEL       = "label";
 
@@ -183,10 +183,10 @@ public class HierarchyType implements Serializable
     private List<HierarchyNode> children;
 
     /**
-     * Read-only flag that indicates if this node was inherited from a different
-     * hierarchy
+     * If the node is from an inherited hierarchy, this is the code of that hierarchy. If the node
+     * is not inherited, this field will be null.
      */
-    private Boolean             inherited;
+    private String             inheritedHierarchyCode;
 
     /**
      * 
@@ -195,7 +195,7 @@ public class HierarchyType implements Serializable
      */
     public HierarchyNode(GeoObjectType _geoObjectType)
     {
-      this(_geoObjectType, false);
+      this(_geoObjectType, null);
     }
 
     /**
@@ -203,10 +203,10 @@ public class HierarchyType implements Serializable
      * @param _geoObjectType
      *          {@link GeoObjectType} in the hierarchies node.
      */
-    public HierarchyNode(GeoObjectType _geoObjectType, Boolean _inherited)
+    public HierarchyNode(GeoObjectType _geoObjectType, String _inheritedHierarchyCode)
     {
       this.geoObjectType = _geoObjectType;
-      this.inherited = _inherited;
+      this.inheritedHierarchyCode = _inheritedHierarchyCode;
       this.children = Collections.synchronizedList(new LinkedList<HierarchyNode>());
     }
 
@@ -223,16 +223,16 @@ public class HierarchyType implements Serializable
     /**
      * Returns true if the hierarchy (this node or all children) contains the provided GeoObjectType.
      */
-    public boolean hierarchyHasGeoObjectType(String typeCode)
+    public boolean hierarchyHasGeoObjectType(String typeCode, boolean excludeInherited)
     {
-      if (this.geoObjectType.getCode().equals(typeCode))
+      if ((!excludeInherited || (excludeInherited && this.inheritedHierarchyCode == null)) && this.geoObjectType.getCode().equals(typeCode))
       {
         return true;
       }
       
       for (HierarchyNode node : this.children)
       {
-        if (node.hierarchyHasGeoObjectType(typeCode))
+        if (node.hierarchyHasGeoObjectType(typeCode, excludeInherited))
         {
           return true;
         }
@@ -263,12 +263,12 @@ public class HierarchyType implements Serializable
     }
 
     /**
-     * @return If this node represents a geoObjectType which was inherited from
-     *         a different hierarchy
+     * @return The code of the hierarchy which this node is inherited from, if the node is inherited.
+     * If the node is not inherited, then this will return null.
      */
-    public Boolean getInherited()
+    public String getInheritedHierarchyCode()
     {
-      return inherited;
+      return this.inheritedHierarchyCode;
     }
 
     /**
@@ -281,7 +281,7 @@ public class HierarchyType implements Serializable
       JsonObject jsonObj = new JsonObject();
 
       jsonObj.addProperty(JSON_GEOOBJECTTYPE, geoObjectType.getCode());
-      jsonObj.addProperty(JSON_INHERITED, this.getInherited());
+      jsonObj.addProperty(JSON_INHERITED_HIER_CODE, this.getInheritedHierarchyCode());
 
       JsonArray jaChildren = new JsonArray();
       for (int i = 0; i < children.size(); ++i)
