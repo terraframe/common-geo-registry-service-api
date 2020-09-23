@@ -52,6 +52,14 @@ public class HierarchyType implements Serializable
 
   public static final String  JSON_LOCALIZED_DESCRIPTION = "description";
 
+  public static final String  JSON_ABSTRACT_DESCRIPTION  = "abstractDescription";
+
+  public static final String  JSON_PROGRESS              = "progress";
+
+  public static final String  JSON_ACKNOWLEDGEMENT       = "acknowledgement";
+
+  public static final String  JSON_CONTACT               = "contact";
+
   public static final String  JSON_ROOT_GEOOBJECTTYPES   = "rootGeoObjectTypes";
 
   public static final String  JSON_GEOOBJECTTYPE         = "geoObjectType";
@@ -84,6 +92,14 @@ public class HierarchyType implements Serializable
    * null.
    */
   private String              organizationCode;
+
+  private String              abstractDescription;
+
+  private String              progress;
+
+  private String              acknowledgement;
+
+  private String              contact;
 
   private List<HierarchyNode> rootGeoObjectTypes;
 
@@ -147,6 +163,46 @@ public class HierarchyType implements Serializable
     this.organizationCode = organizationCode;
   }
 
+  public String getAbstractDescription()
+  {
+    return abstractDescription;
+  }
+
+  public void setAbstractDescription(String abstractDescription)
+  {
+    this.abstractDescription = abstractDescription;
+  }
+
+  public String getProgress()
+  {
+    return progress;
+  }
+
+  public void setProgress(String progress)
+  {
+    this.progress = progress;
+  }
+
+  public String getAcknowledgement()
+  {
+    return acknowledgement;
+  }
+
+  public void setAcknowledgement(String acknowledgement)
+  {
+    this.acknowledgement = acknowledgement;
+  }
+
+  public String getContact()
+  {
+    return contact;
+  }
+
+  public void setContact(String contact)
+  {
+    this.contact = contact;
+  }
+
   public List<HierarchyNode> getRootGeoObjectTypes()
   {
     return this.rootGeoObjectTypes;
@@ -183,10 +239,10 @@ public class HierarchyType implements Serializable
     private List<HierarchyNode> children;
 
     /**
-     * If the node is from an inherited hierarchy, this is the code of that hierarchy. If the node
-     * is not inherited, this field will be null.
+     * If the node is from an inherited hierarchy, this is the code of that
+     * hierarchy. If the node is not inherited, this field will be null.
      */
-    private String             inheritedHierarchyCode;
+    private String              inheritedHierarchyCode;
 
     /**
      * 
@@ -219,17 +275,18 @@ public class HierarchyType implements Serializable
     {
       return this.geoObjectType;
     }
-    
+
     /**
-     * Returns true if the hierarchy (this node or all children) contains the provided GeoObjectType.
+     * Returns true if the hierarchy (this node or all children) contains the
+     * provided GeoObjectType.
      */
     public boolean hierarchyHasGeoObjectType(String typeCode, boolean excludeInherited)
     {
-      if ((!excludeInherited || (excludeInherited && this.inheritedHierarchyCode == null)) && this.geoObjectType.getCode().equals(typeCode))
+      if ( ( !excludeInherited || ( excludeInherited && this.inheritedHierarchyCode == null ) ) && this.geoObjectType.getCode().equals(typeCode))
       {
         return true;
       }
-      
+
       for (HierarchyNode node : this.children)
       {
         if (node.hierarchyHasGeoObjectType(typeCode, excludeInherited))
@@ -237,7 +294,7 @@ public class HierarchyType implements Serializable
           return true;
         }
       }
-      
+
       return false;
     }
 
@@ -263,8 +320,9 @@ public class HierarchyType implements Serializable
     }
 
     /**
-     * @return The code of the hierarchy which this node is inherited from, if the node is inherited.
-     * If the node is not inherited, then this will return null.
+     * @return The code of the hierarchy which this node is inherited from, if
+     *         the node is inherited. If the node is not inherited, then this
+     *         will return null.
      */
     public String getInheritedHierarchyCode()
     {
@@ -352,6 +410,28 @@ public class HierarchyType implements Serializable
     }
     jsonObj.addProperty(JSON_ORGANIZARION_CODE, organizationString);
 
+    if (this.abstractDescription != null)
+    {
+      jsonObj.addProperty(JSON_ABSTRACT_DESCRIPTION, this.abstractDescription);
+    }
+
+    if (this.progress != null)
+    {
+      jsonObj.addProperty(JSON_PROGRESS, this.progress);
+    }
+
+    if (this.acknowledgement != null)
+    {
+      jsonObj.addProperty(JSON_ACKNOWLEDGEMENT, this.acknowledgement);
+    }
+
+    if (this.contact != null)
+    {
+      jsonObj.addProperty(JSON_CONTACT, this.contact);
+    }
+
+    jsonObj.addProperty(JSON_ORGANIZARION_CODE, organizationString);
+
     JsonArray jaRoots = new JsonArray();
     for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
     {
@@ -384,7 +464,13 @@ public class HierarchyType implements Serializable
     LocalizedValue label = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_LABEL).getAsJsonObject());
     LocalizedValue description = LocalizedValue.fromJSON(oJson.get(JSON_LOCALIZED_DESCRIPTION).getAsJsonObject());
 
+    String abstractDescription = oJson.has(JSON_ABSTRACT_DESCRIPTION) ? oJson.get(JSON_ABSTRACT_DESCRIPTION).getAsString() : null;
+    String progress = oJson.has(JSON_PROGRESS) ? oJson.get(JSON_PROGRESS).getAsString() : null;
+    String acknowledgement = oJson.has(JSON_ACKNOWLEDGEMENT) ? oJson.get(JSON_ACKNOWLEDGEMENT).getAsString() : null;
+    String contact = oJson.has(JSON_CONTACT) ? oJson.get(JSON_CONTACT).getAsString() : null;
+
     String organizationCode = null;
+
     JsonElement jsonOrganization = oJson.get(JSON_ORGANIZARION_CODE);
     if (jsonOrganization != null)
     {
@@ -392,6 +478,10 @@ public class HierarchyType implements Serializable
     }
 
     HierarchyType ht = new HierarchyType(code, label, description, organizationCode);
+    ht.setAbstractDescription(abstractDescription);
+    ht.setProgress(progress);
+    ht.setAcknowledgement(acknowledgement);
+    ht.setContact(contact);
 
     JsonArray rootGeoObjectTypes = oJson.getAsJsonArray(JSON_ROOT_GEOOBJECTTYPES);
     if (rootGeoObjectTypes != null)
