@@ -399,38 +399,11 @@ public class HierarchyType implements Serializable
 
     jsonObj.add(JSON_LOCALIZED_DESCRIPTION, this.getDescription().toJSON(serializer));
 
-    String organizationString;
-    if (this.organizationCode == null)
-    {
-      organizationString = "";
-    }
-    else
-    {
-      organizationString = this.organizationCode;
-    }
-    jsonObj.addProperty(JSON_ORGANIZARION_CODE, organizationString);
-
-    if (this.abstractDescription != null)
-    {
-      jsonObj.addProperty(JSON_ABSTRACT_DESCRIPTION, this.abstractDescription);
-    }
-
-    if (this.progress != null)
-    {
-      jsonObj.addProperty(JSON_PROGRESS, this.progress);
-    }
-
-    if (this.acknowledgement != null)
-    {
-      jsonObj.addProperty(JSON_ACKNOWLEDGEMENT, this.acknowledgement);
-    }
-
-    if (this.contact != null)
-    {
-      jsonObj.addProperty(JSON_CONTACT, this.contact);
-    }
-
-    jsonObj.addProperty(JSON_ORGANIZARION_CODE, organizationString);
+    jsonObj.addProperty(JSON_ORGANIZARION_CODE, this.organizationCode == null ? "" : this.organizationCode);
+    jsonObj.addProperty(JSON_ABSTRACT_DESCRIPTION, this.abstractDescription == null ? "" : this.abstractDescription);
+    jsonObj.addProperty(JSON_PROGRESS, this.progress == null ? "" : this.progress);
+    jsonObj.addProperty(JSON_ACKNOWLEDGEMENT, this.acknowledgement == null ? "" : this.acknowledgement);
+    jsonObj.addProperty(JSON_CONTACT, this.contact == null ? "" : this.contact);
 
     JsonArray jaRoots = new JsonArray();
     for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
