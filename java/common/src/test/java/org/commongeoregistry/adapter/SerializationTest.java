@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter;
 
@@ -84,7 +85,7 @@ public class SerializationTest
     Assert.assertEquals("Colorado Display Label", geoObject2.getDisplayLabel(null).getValue(LocalizedValue.DEFAULT_LOCALE));
     Assert.assertEquals(geoObject.getStatus(null).getCode(), geoObject2.getStatus(null).getCode());
   }
-  
+
   @Test
   public void testTerm()
   {
@@ -172,23 +173,23 @@ public class SerializationTest
   public void testOrganizationSerialization()
   {
     RegistryAdapterServer registryServerInterface = new RegistryAdapterServer(new MockIdService());
-    
+
     String code = "MOH";
 
     OrganizationDTO orgOriginal = MetadataFactory.newOrganization(code, new LocalizedValue("Ministry of Health"), new LocalizedValue("Contact Joe at 555-555-5555"), registryServerInterface);
-    
+
     JsonObject orgJSON = orgOriginal.toJSON();
     String sJson = orgJSON.toString();
 
     OrganizationDTO orgNew = OrganizationDTO.fromJSON(sJson);
     String sJson2 = orgNew.toJSON().toString();
-    
+
     try
     {
       Assert.assertEquals(orgOriginal.getCode(), orgNew.getCode());
       Assert.assertEquals(orgOriginal.getLabel().getValue(), orgNew.getLabel().getValue());
       Assert.assertEquals(orgOriginal.getContactInfo().getValue(), orgNew.getContactInfo().getValue());
-      
+
       Assert.assertEquals(sJson, sJson2);
     }
     finally
@@ -196,7 +197,7 @@ public class SerializationTest
       registryServerInterface.getMetadataCache().removeOrganization(orgOriginal.getCode());
     }
   }
-  
+
   @Test
   public void testRoleSerialization()
   {
@@ -204,42 +205,42 @@ public class SerializationTest
     RegistryRole sra1 = RegistryRole.createSRA(new LocalizedValue("Super Registry Administrator"));
     sra1.setAssigned(true);
     String sraJSON1 = sra1.toJSON().toString();
-    
+
     RegistryRole sra2 = RegistryRole.fromJSON(sraJSON1);
     String sraJSON2 = sra2.toJSON().toString();
-    
+
     Assert.assertEquals(sraJSON1, sraJSON2);
- 
+
     // RA
     RegistryRole ra1 = RegistryRole.createRA(new LocalizedValue("Super Registry Administrator"), "MOH");
     String raJSON1 = ra1.toJSON().toString();
-    
+
     RegistryRole ra2 = RegistryRole.fromJSON(raJSON1);
     String raJSON2 = ra2.toJSON().toString();
-    
+
     Assert.assertEquals(raJSON1, raJSON2);
-    
+
     // RM
     RegistryRole rm1 = RegistryRole.createRM(new LocalizedValue("Super Registry Administrator"), "MOH", "Village");
     rm1.setOrganizationLabel("DEFAULT", "Ministry of Health");
     rm1.setGeoObjectTypeLabel("DEFAULT", "Village");
     String rmJSON1 = rm1.toJSON().toString();
-    
+
     RegistryRole rm2 = RegistryRole.fromJSON(rmJSON1);
     String rmJSON2 = rm2.toJSON().toString();
-    
+
     Assert.assertEquals(rmJSON1, rmJSON2);
-    
+
     // RC
     RegistryRole rc1 = RegistryRole.createRC(new LocalizedValue("Super Registry Administrator"), "MOH", "Village");
     String rcJSON1 = rc1.toJSON().toString();
-    
+
     RegistryRole rc2 = RegistryRole.fromJSON(rcJSON1);
     String rcJSON2 = rc2.toJSON().toString();
-    
+
     Assert.assertEquals(rcJSON1, rcJSON2);
   }
-  
+
   @Test
   public void testGeoObjectType()
   {
@@ -260,9 +261,10 @@ public class SerializationTest
   {
     OrganizationDTO orgOriginal = null;
     GeoObjectType state = null;
-    
+
     String code = "MOH";
-    
+    String parentCode = "PARENT_CODE";
+
     RegistryAdapterServer registryServerInterface = new RegistryAdapterServer(new MockIdService());
 
     try
@@ -270,6 +272,8 @@ public class SerializationTest
       orgOriginal = MetadataFactory.newOrganization(code, new LocalizedValue("Ministry of Health"), new LocalizedValue("Contact Joe at 555-555-5555"), registryServerInterface);
 
       state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, orgOriginal.getCode(), registryServerInterface);
+      state.setIsAbstract(true);
+      state.setParentTypeCode(parentCode);
 
       String sJson = state.toJSON().toString();
 
@@ -278,6 +282,8 @@ public class SerializationTest
 
       Assert.assertEquals(sJson, sJson2);
       Assert.assertEquals(code, state2.getOrganizationCode());
+      Assert.assertEquals(parentCode, state2.getParentTypeCode());
+      Assert.assertTrue(state2.getIsAbstract());
     }
     finally
     {
@@ -285,14 +291,14 @@ public class SerializationTest
       {
         registryServerInterface.getMetadataCache().removeGeoObjectType(state.getCode());
       }
-      
+
       if (orgOriginal != null)
       {
         registryServerInterface.getMetadataCache().removeOrganization(orgOriginal.getCode());
       }
     }
   }
-    
+
   @SuppressWarnings("unchecked")
   @Test
   public void testGeoObjectCustomAttributes()
@@ -438,9 +444,9 @@ public class SerializationTest
   {
     OrganizationDTO orgOriginal = null;
     HierarchyType hierarchyType = null;
-  
+
     String code = "MOH";
-  
+
     RegistryAdapterServer registryServerInterface = new RegistryAdapterServer(new MockIdService());
 
     try
@@ -463,15 +469,14 @@ public class SerializationTest
       {
         registryServerInterface.getMetadataCache().removeHierarchyType(hierarchyType.getCode());
       }
-    
+
       if (orgOriginal != null)
       {
         registryServerInterface.getMetadataCache().removeOrganization(orgOriginal.getCode());
       }
     }
   }
-  
-  
+
   @Test
   public void testChildTreeNode()
   {

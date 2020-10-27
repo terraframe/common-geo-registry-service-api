@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.metadata;
 
@@ -69,8 +70,12 @@ public class GeoObjectType implements Serializable
   public static final String         JSON_IS_GEOMETRY_EDITABLE  = "isGeometryEditable";
 
   public static final String         JSON_IS_DEFAULT            = "isDefault";
-  
+
   public static final String         JSON_ORGANIZARION_CODE     = "organizationCode";
+
+  public static final String         JSON_IS_ABSTRACT           = "isAbstract";
+
+  public static final String         JSON_PARENT_TYPE_CODE      = "parentTypeCode";
 
   /**
    * Unique but human readable identifier. It could be VILLAGE or HOUSEHOLD.
@@ -99,9 +104,20 @@ public class GeoObjectType implements Serializable
    * Indicates if geometries can be modified through the web interface.
    */
   private Boolean                    isGeometryEditable;
-  
+
   /**
-   * The organization responsible for this {@link GeoObjectType}. This can be null.
+   * Indicates if the type is abstract.
+   */
+  private Boolean                    isAbstract;
+
+  /**
+   * The abstract parent type ofthis {@link GeoObjectType}. This can be null.
+   */
+  private String                     parentTypeCode;
+
+  /**
+   * The organization responsible for this {@link GeoObjectType}. This can be
+   * null.
    */
   private String                     organizationCode;
 
@@ -185,13 +201,13 @@ public class GeoObjectType implements Serializable
     this.geometryType = geometryType;
 
     this.isGeometryEditable = isGeometryEditable;
-    
+
     this.organizationCode = organizationCode;
   }
 
   /**
-   * Creates a new instance of the current object and copies the attributes
-   * from the given {@link GeoObject} into this object.
+   * Creates a new instance of the current object and copies the attributes from
+   * the given {@link GeoObject} into this object.
    * 
    * @param gotSource
    *          {@link GeoObject} with attributes to copy into this attribute.
@@ -205,12 +221,11 @@ public class GeoObjectType implements Serializable
     newGeoObjt.code = gotSource.getCode();
     newGeoObjt.label = gotSource.getLabel();
     newGeoObjt.description = gotSource.getDescription();
-
     newGeoObjt.geometryType = gotSource.getGeometryType();
-
     newGeoObjt.isGeometryEditable = gotSource.isGeometryEditable();
-    
     newGeoObjt.organizationCode = gotSource.getOrganizationCode();
+    newGeoObjt.isAbstract = gotSource.getIsAbstract();
+    newGeoObjt.parentTypeCode = gotSource.getParentTypeCode();
 
     return newGeoObjt;
   }
@@ -234,6 +249,11 @@ public class GeoObjectType implements Serializable
   public GeometryType getGeometryType()
   {
     return this.geometryType;
+  }
+  
+  public void setGeometryType(GeometryType geometryType)
+  {
+    this.geometryType = geometryType;
   }
 
   /**
@@ -260,11 +280,13 @@ public class GeoObjectType implements Serializable
   /**
    * Sets the localized display label of this {@link GeoObjectType}.
    * 
-   * Precondition: key may not be null
-   * Precondition: key must represent a valid locale that has been defined on the back-end
+   * Precondition: key may not be null Precondition: key must represent a valid
+   * locale that has been defined on the back-end
    * 
-   * @param key string of the locale name.
-   * @param value value for the given locale.
+   * @param key
+   *          string of the locale name.
+   * @param value
+   *          value for the given locale.
    */
   public void setLabel(String key, String value)
   {
@@ -325,27 +347,50 @@ public class GeoObjectType implements Serializable
 
   /**
    * 
-   * @return the code of the {@link OrganizationDTO} (Optional) that manages this {@link GeoObjectType}, 
-   * or NULL if not managed by an {@link OrganizationDTO}.
+   * @return the code of the {@link OrganizationDTO} (Optional) that manages
+   *         this {@link GeoObjectType}, or NULL if not managed by an
+   *         {@link OrganizationDTO}.
    */
   public String getOrganizationCode()
   {
     return this.organizationCode;
-  } 
-  
+  }
+
   /**
-   * Sets the {@link OrganizationDTO} (Optional) that manages this {@link GeoObjectType}.
+   * Sets the {@link OrganizationDTO} (Optional) that manages this
+   * {@link GeoObjectType}.
    * 
    * Precondition: The organization code is valid
    * 
-   * @param organizationCode code of the {@link OrganizationDTO} that manages this {@link GeoObjectType}, 
-   * or NULL if none.
+   * @param organizationCode
+   *          code of the {@link OrganizationDTO} that manages this
+   *          {@link GeoObjectType}, or NULL if none.
    */
   public void setOrganizationCode(String organizationCode)
   {
     this.organizationCode = organizationCode;
   }
-  
+
+  public Boolean getIsAbstract()
+  {
+    return ( isAbstract != null ? this.isAbstract : Boolean.FALSE );
+  }
+
+  public void setIsAbstract(Boolean isAbstract)
+  {
+    this.isAbstract = isAbstract;
+  }
+
+  public String getParentTypeCode()
+  {
+    return parentTypeCode;
+  }
+
+  public void setParentTypeCode(String parentTypeCode)
+  {
+    this.parentTypeCode = parentTypeCode;
+  }
+
   /**
    * Returns the {@link AttributeType} defined on this {@link GeoObjectType}
    * with the given name.
@@ -353,8 +398,8 @@ public class GeoObjectType implements Serializable
    * @param name
    *          Name of the attribute {@code AttributeType#getName()}.
    * 
-   * Precondition: Attribute with the given name is defined on this
-   *      {@link GeoObjectType}.
+   *          Precondition: Attribute with the given name is defined on this
+   *          {@link GeoObjectType}.
    * 
    * @return Name of the attributes.
    */
@@ -435,12 +480,15 @@ public class GeoObjectType implements Serializable
     Term rootStatusTerm = registry.getMetadataCache().getTerm(DefaultTerms.GeoObjectStatusTerm.ROOT.code).get();
     status.setRootTerm(rootStatusTerm);
     defaultAttributeMap.put(DefaultAttribute.STATUS.getName(), status);
-    
-//    AttributeCharacterType organization = (AttributeCharacterType) DefaultAttribute.ORGANIZATION.createAttributeType();
-//    defaultAttributeMap.put(DefaultAttribute.ORGANIZATION.getName(), organization);
-//    
-//    AttributeGeometryType geometry = (AttributeGeometryType) DefaultAttribute.GEOMETRY.createAttributeType();
-//    defaultAttributeMap.put(DefaultAttribute.GEOMETRY.getName(), geometry);
+
+    // AttributeCharacterType organization = (AttributeCharacterType)
+    // DefaultAttribute.ORGANIZATION.createAttributeType();
+    // defaultAttributeMap.put(DefaultAttribute.ORGANIZATION.getName(),
+    // organization);
+    //
+    // AttributeGeometryType geometry = (AttributeGeometryType)
+    // DefaultAttribute.GEOMETRY.createAttributeType();
+    // defaultAttributeMap.put(DefaultAttribute.GEOMETRY.getName(), geometry);
 
     return defaultAttributeMap;
   }
@@ -504,6 +552,16 @@ public class GeoObjectType implements Serializable
     // TODO Need to validate that the default attributes are still defined.
     GeoObjectType geoObjType = new GeoObjectType(code, geometryType, label, description, isGeometryEditable, organizationCode, attributeMap);
 
+    if (oJson.has(JSON_PARENT_TYPE_CODE))
+    {
+      geoObjType.setParentTypeCode(oJson.get(JSON_PARENT_TYPE_CODE).getAsString());
+    }
+
+    if (oJson.has(JSON_IS_ABSTRACT))
+    {
+      geoObjType.setIsAbstract(oJson.get(JSON_IS_ABSTRACT).getAsBoolean());
+    }
+
     return geoObjType;
   }
 
@@ -541,7 +599,7 @@ public class GeoObjectType implements Serializable
     json.addProperty(JSON_GEOMETRY_TYPE, this.geometryType.name());
 
     json.addProperty(JSON_IS_GEOMETRY_EDITABLE, this.isGeometryEditable());
-    
+
     String organizationString;
     if (this.organizationCode == null)
     {
@@ -552,6 +610,13 @@ public class GeoObjectType implements Serializable
       organizationString = this.organizationCode;
     }
     json.addProperty(JSON_ORGANIZARION_CODE, organizationString);
+
+    json.addProperty(JSON_PARENT_TYPE_CODE, this.parentTypeCode != null ? this.parentTypeCode : "");
+
+    if (this.isAbstract != null && this.isAbstract)
+    {
+      json.addProperty(JSON_IS_ABSTRACT, this.isAbstract);
+    }
 
     Collection<AttributeType> attributes = serializer.attributes(this);
 
