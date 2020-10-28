@@ -273,7 +273,7 @@ public class SerializationTest
 
       state = MetadataFactory.newGeoObjectType("State", GeometryType.POLYGON, new LocalizedValue("State"), new LocalizedValue("State"), true, orgOriginal.getCode(), registryServerInterface);
       state.setIsAbstract(true);
-      state.setParentTypeCode(parentCode);
+      state.setSuperTypeCode(parentCode);
 
       String sJson = state.toJSON().toString();
 
@@ -282,7 +282,7 @@ public class SerializationTest
 
       Assert.assertEquals(sJson, sJson2);
       Assert.assertEquals(code, state2.getOrganizationCode());
-      Assert.assertEquals(parentCode, state2.getParentTypeCode());
+      Assert.assertEquals(parentCode, state2.getSuperTypeCode());
       Assert.assertTrue(state2.getIsAbstract());
     }
     finally

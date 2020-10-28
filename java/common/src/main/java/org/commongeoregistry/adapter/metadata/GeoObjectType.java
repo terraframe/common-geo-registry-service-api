@@ -75,7 +75,7 @@ public class GeoObjectType implements Serializable
 
   public static final String         JSON_IS_ABSTRACT           = "isAbstract";
 
-  public static final String         JSON_PARENT_TYPE_CODE      = "parentTypeCode";
+  public static final String         JSON_SUPER_TYPE_CODE       = "superTypeCode";
 
   /**
    * Unique but human readable identifier. It could be VILLAGE or HOUSEHOLD.
@@ -113,7 +113,7 @@ public class GeoObjectType implements Serializable
   /**
    * The abstract parent type ofthis {@link GeoObjectType}. This can be null.
    */
-  private String                     parentTypeCode;
+  private String                     superTypeCode;
 
   /**
    * The organization responsible for this {@link GeoObjectType}. This can be
@@ -225,7 +225,7 @@ public class GeoObjectType implements Serializable
     newGeoObjt.isGeometryEditable = gotSource.isGeometryEditable();
     newGeoObjt.organizationCode = gotSource.getOrganizationCode();
     newGeoObjt.isAbstract = gotSource.getIsAbstract();
-    newGeoObjt.parentTypeCode = gotSource.getParentTypeCode();
+    newGeoObjt.superTypeCode = gotSource.getSuperTypeCode();
 
     return newGeoObjt;
   }
@@ -250,7 +250,7 @@ public class GeoObjectType implements Serializable
   {
     return this.geometryType;
   }
-  
+
   public void setGeometryType(GeometryType geometryType)
   {
     this.geometryType = geometryType;
@@ -381,14 +381,14 @@ public class GeoObjectType implements Serializable
     this.isAbstract = isAbstract;
   }
 
-  public String getParentTypeCode()
+  public String getSuperTypeCode()
   {
-    return parentTypeCode;
+    return superTypeCode;
   }
 
-  public void setParentTypeCode(String parentTypeCode)
+  public void setSuperTypeCode(String superTypeCode)
   {
-    this.parentTypeCode = parentTypeCode;
+    this.superTypeCode = superTypeCode;
   }
 
   /**
@@ -552,9 +552,9 @@ public class GeoObjectType implements Serializable
     // TODO Need to validate that the default attributes are still defined.
     GeoObjectType geoObjType = new GeoObjectType(code, geometryType, label, description, isGeometryEditable, organizationCode, attributeMap);
 
-    if (oJson.has(JSON_PARENT_TYPE_CODE))
+    if (oJson.has(JSON_SUPER_TYPE_CODE))
     {
-      geoObjType.setParentTypeCode(oJson.get(JSON_PARENT_TYPE_CODE).getAsString());
+      geoObjType.setSuperTypeCode(oJson.get(JSON_SUPER_TYPE_CODE).getAsString());
     }
 
     if (oJson.has(JSON_IS_ABSTRACT))
@@ -611,7 +611,7 @@ public class GeoObjectType implements Serializable
     }
     json.addProperty(JSON_ORGANIZARION_CODE, organizationString);
 
-    json.addProperty(JSON_PARENT_TYPE_CODE, this.parentTypeCode != null ? this.parentTypeCode : "");
+    json.addProperty(JSON_SUPER_TYPE_CODE, this.superTypeCode != null ? this.superTypeCode : "");
 
     if (this.isAbstract != null && this.isAbstract)
     {
