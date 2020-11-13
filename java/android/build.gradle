@@ -22,7 +22,7 @@ allprojects {
         jcenter()
         mavenLocal()
         maven {
-            url 'http://nexus.terraframe.com/content/repositories/releases'
+            url 'https://nexus.terraframe.com/content/repositories/releases'
         }
         maven {
             url 'http://download.osgeo.org/webdav/geotools'
