@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.metadata;
 
@@ -57,6 +58,10 @@ public class HierarchyType implements Serializable
 
   public static final String  JSON_ACKNOWLEDGEMENT       = "acknowledgement";
 
+  public static final String  JSON_ACCESS_CONSTRAINTS    = "accessConstraints";
+
+  public static final String  JSON_USE_CONSTRAINTS       = "useConstraints";
+
   public static final String  JSON_CONTACT               = "contact";
 
   public static final String  JSON_ROOT_GEOOBJECTTYPES   = "rootGeoObjectTypes";
@@ -97,6 +102,10 @@ public class HierarchyType implements Serializable
   private String              progress;
 
   private String              acknowledgement;
+
+  private String              accessConstraints;
+
+  private String              useConstraints;
 
   private String              contact;
 
@@ -200,6 +209,26 @@ public class HierarchyType implements Serializable
   public void setContact(String contact)
   {
     this.contact = contact;
+  }
+
+  public String getAccessConstraints()
+  {
+    return accessConstraints;
+  }
+
+  public void setAccessConstraints(String accessConstraints)
+  {
+    this.accessConstraints = accessConstraints;
+  }
+
+  public String getUseConstraints()
+  {
+    return useConstraints;
+  }
+
+  public void setUseConstraints(String useConstraints)
+  {
+    this.useConstraints = useConstraints;
   }
 
   public List<HierarchyNode> getRootGeoObjectTypes()
@@ -403,6 +432,8 @@ public class HierarchyType implements Serializable
     jsonObj.addProperty(JSON_PROGRESS, this.progress == null ? "" : this.progress);
     jsonObj.addProperty(JSON_ACKNOWLEDGEMENT, this.acknowledgement == null ? "" : this.acknowledgement);
     jsonObj.addProperty(JSON_CONTACT, this.contact == null ? "" : this.contact);
+    jsonObj.addProperty(JSON_ACCESS_CONSTRAINTS, this.accessConstraints == null ? "" : this.accessConstraints);
+    jsonObj.addProperty(JSON_USE_CONSTRAINTS, this.useConstraints == null ? "" : this.useConstraints);
 
     JsonArray jaRoots = new JsonArray();
     for (int i = 0; i < rootGeoObjectTypes.size(); ++i)
@@ -440,6 +471,8 @@ public class HierarchyType implements Serializable
     String progress = oJson.has(JSON_PROGRESS) ? oJson.get(JSON_PROGRESS).getAsString() : null;
     String acknowledgement = oJson.has(JSON_ACKNOWLEDGEMENT) ? oJson.get(JSON_ACKNOWLEDGEMENT).getAsString() : null;
     String contact = oJson.has(JSON_CONTACT) ? oJson.get(JSON_CONTACT).getAsString() : null;
+    String accessConstraints = oJson.has(JSON_ACCESS_CONSTRAINTS) ? oJson.get(JSON_ACCESS_CONSTRAINTS).getAsString() : null;
+    String useConstraints = oJson.has(JSON_USE_CONSTRAINTS) ? oJson.get(JSON_USE_CONSTRAINTS).getAsString() : null;
 
     String organizationCode = null;
 
@@ -454,6 +487,8 @@ public class HierarchyType implements Serializable
     ht.setProgress(progress);
     ht.setAcknowledgement(acknowledgement);
     ht.setContact(contact);
+    ht.setAccessConstraints(accessConstraints);
+    ht.setUseConstraints(useConstraints);
 
     JsonArray rootGeoObjectTypes = oJson.getAsJsonArray(JSON_ROOT_GEOOBJECTTYPES);
     if (rootGeoObjectTypes != null)
