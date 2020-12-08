@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter;
 
@@ -60,7 +61,7 @@ public class TestFixture
     GeoObjectType commune = MetadataFactory.newGeoObjectType(COMMUNE, GeometryType.POLYGON, new LocalizedValue("Commune"), new LocalizedValue(""), true, null, registry);
 
     GeoObjectType village = MetadataFactory.newGeoObjectType(VILLAGE, GeometryType.POLYGON, new LocalizedValue("Village"), new LocalizedValue(""), true, null, registry);
-    
+
     GeoObjectType household = MetadataFactory.newGeoObjectType(HOUSEHOLD, GeometryType.POLYGON, new LocalizedValue("Household"), new LocalizedValue(""), true, null, registry);
 
     // GeoObjectType focusArea = MetadataFactory.newGeoObjectType(FOCUS_AREA,
@@ -71,9 +72,17 @@ public class TestFixture
     healthFacility.addAttribute(createHealthFacilityTypeAttribute(registry));
 
     String organizationCode = "";
-    
+
     // Define Geopolitical Hierarchy Type
     HierarchyType geoPolitical = MetadataFactory.newHierarchyType(GEOPOLITICAL, new LocalizedValue("Geopolitical"), new LocalizedValue("Geopolitical Hierarchy"), organizationCode, registry);
+    geoPolitical.setAccessConstraints("Test Access");
+    geoPolitical.setUseConstraints("Test use");
+    geoPolitical.setAcknowledgement("Test acknowledgement");
+    geoPolitical.setDisclaimer("Test disclaimer");
+    geoPolitical.setContact("Test contact");
+    geoPolitical.setPhoneNumber("Test phone number");
+    geoPolitical.setEmail("Test email");
+
     HierarchyNode geoProvinceNode = new HierarchyType.HierarchyNode(province);
     HierarchyNode geoDistrictNode = new HierarchyType.HierarchyNode(district);
     HierarchyNode geoCommuneNode = new HierarchyType.HierarchyNode(commune);

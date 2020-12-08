@@ -432,6 +432,12 @@ public class SerializationTest
 
     Assert.assertEquals(geoPoliticalJson, geoPoliticalJson2);
     Assert.assertEquals(geoPolitical.getCode(), geoPolitical2.getCode());
+    Assert.assertEquals(geoPolitical.getAccessConstraints(), geoPolitical2.getAccessConstraints());
+    Assert.assertEquals(geoPolitical.getUseConstraints(), geoPolitical2.getUseConstraints());
+    Assert.assertEquals(geoPolitical.getAcknowledgement(), geoPolitical2.getAcknowledgement());
+    Assert.assertEquals(geoPolitical.getDisclaimer(), geoPolitical2.getDisclaimer());
+    Assert.assertEquals(geoPolitical.getContact(), geoPolitical2.getContact());
+    Assert.assertEquals(geoPolitical.getPhoneNumber(), geoPolitical2.getPhoneNumber());
     Assert.assertEquals(geoPolitical.getDescription().getValue(), geoPolitical2.getDescription().getValue());
     Assert.assertEquals(geoPolitical.getLabel().getValue(), geoPolitical2.getLabel().getValue());
     Assert.assertEquals(geoPolitical.getRootGeoObjectTypes().size(), geoPolitical2.getRootGeoObjectTypes().size());

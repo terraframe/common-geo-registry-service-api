@@ -58,11 +58,17 @@ public class HierarchyType implements Serializable
 
   public static final String  JSON_ACKNOWLEDGEMENT       = "acknowledgement";
 
+  public static final String  JSON_DISCLAIMER            = "disclaimer";
+
   public static final String  JSON_ACCESS_CONSTRAINTS    = "accessConstraints";
 
   public static final String  JSON_USE_CONSTRAINTS       = "useConstraints";
 
   public static final String  JSON_CONTACT               = "contact";
+
+  public static final String  JSON_PHONE_NUMBER          = "phoneNumber";
+
+  public static final String  JSON_EMAIL                 = "email";
 
   public static final String  JSON_ROOT_GEOOBJECTTYPES   = "rootGeoObjectTypes";
 
@@ -103,11 +109,17 @@ public class HierarchyType implements Serializable
 
   private String              acknowledgement;
 
+  private String              disclaimer;
+
   private String              accessConstraints;
 
   private String              useConstraints;
 
   private String              contact;
+
+  private String              phoneNumber;
+
+  private String              email;
 
   private List<HierarchyNode> rootGeoObjectTypes;
 
@@ -229,6 +241,36 @@ public class HierarchyType implements Serializable
   public void setUseConstraints(String useConstraints)
   {
     this.useConstraints = useConstraints;
+  }
+
+  public String getDisclaimer()
+  {
+    return disclaimer;
+  }
+
+  public void setDisclaimer(String disclaimer)
+  {
+    this.disclaimer = disclaimer;
+  }
+
+  public String getPhoneNumber()
+  {
+    return phoneNumber;
+  }
+
+  public void setPhoneNumber(String phoneNumber)
+  {
+    this.phoneNumber = phoneNumber;
+  }
+
+  public String getEmail()
+  {
+    return email;
+  }
+
+  public void setEmail(String email)
+  {
+    this.email = email;
   }
 
   public List<HierarchyNode> getRootGeoObjectTypes()
@@ -431,7 +473,10 @@ public class HierarchyType implements Serializable
     jsonObj.addProperty(JSON_ABSTRACT_DESCRIPTION, this.abstractDescription == null ? "" : this.abstractDescription);
     jsonObj.addProperty(JSON_PROGRESS, this.progress == null ? "" : this.progress);
     jsonObj.addProperty(JSON_ACKNOWLEDGEMENT, this.acknowledgement == null ? "" : this.acknowledgement);
+    jsonObj.addProperty(JSON_DISCLAIMER, this.disclaimer == null ? "" : this.disclaimer);
     jsonObj.addProperty(JSON_CONTACT, this.contact == null ? "" : this.contact);
+    jsonObj.addProperty(JSON_PHONE_NUMBER, this.phoneNumber == null ? "" : this.phoneNumber);
+    jsonObj.addProperty(JSON_EMAIL, this.email == null ? "" : this.email);
     jsonObj.addProperty(JSON_ACCESS_CONSTRAINTS, this.accessConstraints == null ? "" : this.accessConstraints);
     jsonObj.addProperty(JSON_USE_CONSTRAINTS, this.useConstraints == null ? "" : this.useConstraints);
 
@@ -470,7 +515,10 @@ public class HierarchyType implements Serializable
     String abstractDescription = oJson.has(JSON_ABSTRACT_DESCRIPTION) ? oJson.get(JSON_ABSTRACT_DESCRIPTION).getAsString() : null;
     String progress = oJson.has(JSON_PROGRESS) ? oJson.get(JSON_PROGRESS).getAsString() : null;
     String acknowledgement = oJson.has(JSON_ACKNOWLEDGEMENT) ? oJson.get(JSON_ACKNOWLEDGEMENT).getAsString() : null;
+    String disclaimer = oJson.has(JSON_DISCLAIMER) ? oJson.get(JSON_DISCLAIMER).getAsString() : null;
     String contact = oJson.has(JSON_CONTACT) ? oJson.get(JSON_CONTACT).getAsString() : null;
+    String phoneNumber = oJson.has(JSON_PHONE_NUMBER) ? oJson.get(JSON_PHONE_NUMBER).getAsString() : null;
+    String email = oJson.has(JSON_EMAIL) ? oJson.get(JSON_EMAIL).getAsString() : null;
     String accessConstraints = oJson.has(JSON_ACCESS_CONSTRAINTS) ? oJson.get(JSON_ACCESS_CONSTRAINTS).getAsString() : null;
     String useConstraints = oJson.has(JSON_USE_CONSTRAINTS) ? oJson.get(JSON_USE_CONSTRAINTS).getAsString() : null;
 
@@ -486,7 +534,10 @@ public class HierarchyType implements Serializable
     ht.setAbstractDescription(abstractDescription);
     ht.setProgress(progress);
     ht.setAcknowledgement(acknowledgement);
+    ht.setDisclaimer(disclaimer);
     ht.setContact(contact);
+    ht.setPhoneNumber(phoneNumber);
+    ht.setEmail(email);
     ht.setAccessConstraints(accessConstraints);
     ht.setUseConstraints(useConstraints);
 
