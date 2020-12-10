@@ -75,6 +75,8 @@ public class GeoObjectType implements Serializable
   public static final String         JSON_IS_ABSTRACT           = "isAbstract";
 
   public static final String         JSON_SUPER_TYPE_CODE       = "superTypeCode";
+  
+  public static final String         JSON_IS_PRIVATE            = "isPrivate";
 
   /**
    * Unique but human readable identifier. It could be VILLAGE or HOUSEHOLD.
@@ -119,6 +121,11 @@ public class GeoObjectType implements Serializable
    * null.
    */
   private String                     organizationCode;
+  
+  /**
+   * Whether or not the GeoObjectType is publicly viewable, or restricted to their organization.
+   */
+  private Boolean                    isPrivate = false;
 
   /**
    * Collection of {@link AttributeType} metadata attributes.
@@ -225,6 +232,7 @@ public class GeoObjectType implements Serializable
     newGeoObjt.organizationCode = gotSource.getOrganizationCode();
     newGeoObjt.isAbstract = gotSource.getIsAbstract();
     newGeoObjt.superTypeCode = gotSource.getSuperTypeCode();
+    newGeoObjt.isPrivate = gotSource.getIsPrivate();
 
     return newGeoObjt;
   }
@@ -237,6 +245,16 @@ public class GeoObjectType implements Serializable
   public String getCode()
   {
     return this.code;
+  }
+  
+  public Boolean getIsPrivate()
+  {
+    return isPrivate;
+  }
+
+  public void setIsPrivate(Boolean isPrivate)
+  {
+    this.isPrivate = isPrivate;
   }
 
   /**
@@ -560,6 +578,11 @@ public class GeoObjectType implements Serializable
     {
       geoObjType.setIsAbstract(oJson.get(JSON_IS_ABSTRACT).getAsBoolean());
     }
+    
+    if (oJson.has(JSON_IS_PRIVATE))
+    {
+      geoObjType.setIsPrivate(oJson.get(JSON_IS_PRIVATE).getAsBoolean());
+    }
 
     return geoObjType;
   }
@@ -598,6 +621,8 @@ public class GeoObjectType implements Serializable
     json.addProperty(JSON_GEOMETRY_TYPE, this.geometryType.name());
 
     json.addProperty(JSON_IS_GEOMETRY_EDITABLE, this.isGeometryEditable());
+    
+    json.addProperty(JSON_IS_PRIVATE, this.getIsPrivate());
 
     String organizationString;
     if (this.organizationCode == null)
