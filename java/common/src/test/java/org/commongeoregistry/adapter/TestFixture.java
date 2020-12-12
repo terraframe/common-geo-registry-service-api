@@ -25,8 +25,8 @@ import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
 import org.commongeoregistry.adapter.metadata.AttributeTermType;
 import org.commongeoregistry.adapter.metadata.AttributeType;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
+import org.commongeoregistry.adapter.metadata.HierarchyNode;
 import org.commongeoregistry.adapter.metadata.HierarchyType;
-import org.commongeoregistry.adapter.metadata.HierarchyType.HierarchyNode;
 import org.commongeoregistry.adapter.metadata.MetadataFactory;
 
 public class TestFixture
@@ -83,11 +83,11 @@ public class TestFixture
     geoPolitical.setPhoneNumber("Test phone number");
     geoPolitical.setEmail("Test email");
 
-    HierarchyNode geoProvinceNode = new HierarchyType.HierarchyNode(province);
-    HierarchyNode geoDistrictNode = new HierarchyType.HierarchyNode(district);
-    HierarchyNode geoCommuneNode = new HierarchyType.HierarchyNode(commune);
-    HierarchyNode geoVillageNode = new HierarchyType.HierarchyNode(village);
-    HierarchyNode geoHouseholdNode = new HierarchyType.HierarchyNode(household);
+    HierarchyNode geoProvinceNode = new HierarchyNode(province);
+    HierarchyNode geoDistrictNode = new HierarchyNode(district);
+    HierarchyNode geoCommuneNode = new HierarchyNode(commune);
+    HierarchyNode geoVillageNode = new HierarchyNode(village);
+    HierarchyNode geoHouseholdNode = new HierarchyNode(household);
 
     geoProvinceNode.addChild(geoDistrictNode);
     geoDistrictNode.addChild(geoCommuneNode);
@@ -98,10 +98,10 @@ public class TestFixture
 
     // Define Health Administrative
     HierarchyType healthAdministrative = MetadataFactory.newHierarchyType(TestFixture.HEALTH_ADMINISTRATIVE, new LocalizedValue("Health Administrative"), new LocalizedValue("Health Administrative Hierarchy"), organizationCode, registry);
-    HierarchyNode healthProvinceNode = new HierarchyType.HierarchyNode(province);
-    HierarchyNode healthDistrictNode = new HierarchyType.HierarchyNode(district);
-    HierarchyNode healthCommuneNode = new HierarchyType.HierarchyNode(commune);
-    HierarchyNode healthFacilityNode = new HierarchyType.HierarchyNode(healthFacility);
+    HierarchyNode healthProvinceNode = new HierarchyNode(province);
+    HierarchyNode healthDistrictNode = new HierarchyNode(district);
+    HierarchyNode healthCommuneNode = new HierarchyNode(commune);
+    HierarchyNode healthFacilityNode = new HierarchyNode(healthFacility);
 
     healthProvinceNode.addChild(healthDistrictNode);
     healthDistrictNode.addChild(healthCommuneNode);
