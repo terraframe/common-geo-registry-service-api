@@ -83,7 +83,14 @@ public abstract class RegistryAdapter implements Serializable
    */
   public GeoObject newGeoObjectInstance(String geoObjectTypeCode, boolean genId) throws EmptyIdCacheException
   {
-    GeoObjectType geoObjectType = this.getMetadataCache().getGeoObjectType(geoObjectTypeCode).get();
+    Optional<GeoObjectType> opGOT = this.getMetadataCache().getGeoObjectType(geoObjectTypeCode);
+    
+    if (!opGOT.isPresent())
+    {
+      throw new GeoObjectTypeNotFoundException(geoObjectTypeCode);
+    }
+    
+    GeoObjectType geoObjectType = opGOT.get();
 
     Map<String, Attribute> attributeMap = GeoObject.buildAttributeMap(geoObjectType);
 
