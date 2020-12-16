@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.dataaccess;
 
@@ -38,18 +39,18 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class GeoObjectJsonAdapters
 {
-  public static final String     JSON_PROPERTIES  = "properties";
+  public static final String JSON_PROPERTIES = "properties";
 
-  public static final String     JSON_TYPE        = "type";
+  public static final String JSON_TYPE       = "type";
 
-  public static final String     JSON_GEOMETRY    = "geometry";
+  public static final String JSON_GEOMETRY   = "geometry";
 
-  public static final String     JSON_FEATURE     = "Feature";
-  
+  public static final String JSON_FEATURE    = "Feature";
+
   public static class GeoObjectDeserializer implements JsonDeserializer<GeoObject>
   {
     private RegistryAdapter registry;
-    
+
     public GeoObjectDeserializer(RegistryAdapter registry)
     {
       this.registry = registry;
@@ -93,21 +94,21 @@ public class GeoObjectJsonAdapters
       return geoObj;
     }
   }
-  
+
   public static class GeoObjectSerializer implements JsonSerializer<GeoObject>
   {
     private CustomSerializer serializer;
-    
+
     public GeoObjectSerializer(CustomSerializer serializer)
     {
       this.serializer = serializer;
     }
-    
+
     public GeoObjectSerializer()
     {
       this.serializer = new DefaultSerializer();
     }
-    
+
     @Override
     public JsonElement serialize(GeoObject go, Type typeOfSrc, JsonSerializationContext context)
     {
@@ -166,6 +167,12 @@ public class GeoObjectJsonAdapters
         // JsonParser attrParser = new JsonParser();
         // JsonObject geomObj =
         // attrParser.parse(attr.toJSON().toString()).getAsJsonObject();
+
+      }
+
+      if (go.getWritable() != null)
+      {
+        props.addProperty("writable", go.getWritable());
 
       }
 

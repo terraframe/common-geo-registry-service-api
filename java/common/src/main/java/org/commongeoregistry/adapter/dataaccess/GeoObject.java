@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.dataaccess;
 
@@ -48,21 +49,23 @@ public class GeoObject implements Serializable
   /**
    * 
    */
-  private static final long      serialVersionUID = 7686140708200106783L;
+  private static final long  serialVersionUID = 7686140708200106783L;
 
-  public static final String     UID              = DefaultAttribute.UID.getName();
+  public static final String UID              = DefaultAttribute.UID.getName();
 
-  public static final String     CODE             = DefaultAttribute.CODE.getName();
+  public static final String CODE             = DefaultAttribute.CODE.getName();
 
-  public static final String     DISPLAY_LABEL    = DefaultAttribute.DISPLAY_LABEL.getName();
+  public static final String DISPLAY_LABEL    = DefaultAttribute.DISPLAY_LABEL.getName();
 
-  private GeoObjectType          geoObjectType;
+  private GeoObjectType      geoObjectType;
 
-  private GeometryType           geometryType;
+  private GeometryType       geometryType;
 
-  private Geometry               geometry;
+  private Geometry           geometry;
 
-  Map<String, Attribute> attributeMap;
+  private Boolean            writable;
+
+  Map<String, Attribute>     attributeMap;
 
   /**
    * Use the factory method on the {@link RegistryAdapter} to create new
@@ -106,7 +109,7 @@ public class GeoObject implements Serializable
       {
         continue;
       }
-      
+
       Attribute attribute = Attribute.attributeFactory(attributeType);
 
       attributeMap.put(attribute.getName(), attribute);
@@ -155,6 +158,16 @@ public class GeoObject implements Serializable
   public void setGeometry(Geometry geometry)
   {
     this.geometry = geometry;
+  }
+  
+  public Boolean getWritable()
+  {
+    return writable;
+  }
+  
+  public void setWritable(Boolean writable)
+  {
+    this.writable = writable;
   }
 
   /**
@@ -238,7 +251,7 @@ public class GeoObject implements Serializable
   {
     return (Date) this.attributeMap.get(DefaultAttribute.CREATE_DATE.getName()).getValue();
   }
-  
+
   /**
    * Returns the last update date of this {@link GeoObject}
    * 
@@ -379,7 +392,7 @@ public class GeoObject implements Serializable
   {
     GsonBuilder builder = new GsonBuilder();
     builder.registerTypeAdapter(GeoObject.class, new GeoObjectJsonAdapters.GeoObjectDeserializer(registry));
-    
+
     return builder.create().fromJson(sJson, GeoObject.class);
   }
 
@@ -392,7 +405,7 @@ public class GeoObject implements Serializable
   {
     GsonBuilder builder = new GsonBuilder();
     builder.registerTypeAdapter(GeoObject.class, new GeoObjectJsonAdapters.GeoObjectSerializer(serializer));
-    
+
     return (JsonObject) builder.create().toJsonTree(this);
   }
 
@@ -405,17 +418,17 @@ public class GeoObject implements Serializable
 
     System.out.println("Geometry: " + this.geometry);
   }
-  
+
   @Override
   public boolean equals(Object obj)
   {
-    if (!(obj instanceof GeoObject))
+    if (! ( obj instanceof GeoObject ))
     {
       return false;
     }
-    
+
     GeoObject go = (GeoObject) obj;
-    
+
     return this.getCode().equals(go.getCode()) && this.getType().getCode().equals(go.getType().getCode());
   }
 }
