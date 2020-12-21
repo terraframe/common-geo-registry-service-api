@@ -187,7 +187,13 @@ public class HierarchyNode
 
     GeoObjectType got = registry.getMetadataCache().getGeoObjectType(oJson.get(HierarchyType.JSON_GEOOBJECTTYPE).getAsString()).get();
 
-    HierarchyNode node = new HierarchyNode(got);
+    String inheritedHierarchyCode = null;
+    if (oJson.has(HierarchyType.JSON_INHERITED_HIER_CODE) && !oJson.get(HierarchyType.JSON_INHERITED_HIER_CODE).isJsonNull())
+    {
+      inheritedHierarchyCode = oJson.get(HierarchyType.JSON_INHERITED_HIER_CODE).getAsString();
+    }
+    
+    HierarchyNode node = new HierarchyNode(got, inheritedHierarchyCode);
 
     JsonArray jaChildren = oJson.getAsJsonArray(HierarchyType.JSON_CHILDREN);
     for (int i = 0; i < jaChildren.size(); ++i)
@@ -198,7 +204,7 @@ public class HierarchyNode
 
       node.addChild(hnChild);
     }
-
+    
     return node;
   }
   
