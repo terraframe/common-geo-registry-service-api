@@ -353,8 +353,22 @@ public class GeoObject implements Serializable
     {
       AttributeTermType attributeTermType = (AttributeTermType) optionalAttributeType.get();
 
+      Object value = this.getValue(DefaultAttribute.STATUS.getName());
+      
+      if (value == null)
+      {
+        return null;
+      }
+      
       @SuppressWarnings("unchecked")
-      String termCode = ( (Iterator<String>) this.getValue(DefaultAttribute.STATUS.getName()) ).next();
+      Iterator<String> it = (Iterator<String>) value;
+      
+      if (!it.hasNext())
+      {
+        return null;
+      }
+      
+      String termCode = it.next();
       Optional<Term> optionalTerm = attributeTermType.getTermByCode(termCode);
 
       if (optionalTerm.isPresent())
@@ -368,7 +382,16 @@ public class GeoObject implements Serializable
 
   public void setStatus(Term status)
   {
-    this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(status.getCode());
+    Attribute attr = this.getAttribute(DefaultAttribute.STATUS.getName());
+    
+    if (status == null)
+    {
+      attr.setValue(null);
+    }
+    else
+    {
+      attr.setValue(status.getCode());
+    }
   }
 
   public void setStatus(String statusCode)
