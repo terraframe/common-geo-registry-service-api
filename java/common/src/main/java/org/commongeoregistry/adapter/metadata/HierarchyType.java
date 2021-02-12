@@ -286,6 +286,11 @@ public class HierarchyType implements Serializable
   {
     this.rootGeoObjectTypes.add(hierarchyNode);
   }
+  
+  public void clearRootGeoObjectTypes()
+  {
+    this.rootGeoObjectTypes.clear();
+  }
 
   public JsonObject toJSON()
   {
