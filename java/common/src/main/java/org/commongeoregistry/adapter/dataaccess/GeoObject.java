@@ -45,9 +45,6 @@ import com.vividsolutions.jts.io.WKTReader;
 public class GeoObject implements Serializable
 {
 
-  /**
-   * 
-   */
   private static final long  serialVersionUID = 7686140708200106783L;
 
   public static final String UID              = DefaultAttribute.UID.getName();

@@ -54,6 +54,24 @@ public class GeoObjectJsonAdapters
     {
       this.registry = registry;
     }
+    
+    public static String getCode(String goJson)
+    {
+      JsonObject jo = new JsonParser().parse(goJson).getAsJsonObject();
+      
+      JsonObject properties = jo.get(GeoObjectJsonAdapters.JSON_PROPERTIES).getAsJsonObject();
+      
+      return properties.get(GeoObjectJsonAdapters.JSON_TYPE).getAsString();
+    }
+    
+    public static String getTypeCode(String goJson)
+    {
+      JsonObject jo = new JsonParser().parse(goJson).getAsJsonObject();
+      
+      JsonObject properties = jo.get(GeoObjectJsonAdapters.JSON_PROPERTIES).getAsJsonObject();
+      
+      return properties.get(GeoObjectJsonAdapters.JSON_TYPE).getAsString();
+    }
 
     @Override
     public GeoObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException

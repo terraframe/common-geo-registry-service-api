@@ -36,6 +36,7 @@ import org.commongeoregistry.adapter.metadata.CustomSerializer;
 import org.commongeoregistry.adapter.metadata.DefaultSerializer;
 import org.commongeoregistry.adapter.metadata.GeoObjectType;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -47,20 +48,18 @@ public class GeoObjectOverTime implements Serializable
 
   private static final long serialVersionUID = 6218261169426542019L;
   
-  public static final String     JSON_ATTRIBUTES  = "attributes";
-  
-  private GeoObjectType          geoObjectType;
+  GeoObjectType          geoObjectType;
   
   /**
    * For attributes that do change over time, they will be stored here.
    */
-  private Map<String, ValueOverTimeCollectionDTO> votAttributeMap;
+  Map<String, ValueOverTimeCollectionDTO> votAttributeMap;
   
   /**
    * Not all attributes are stored with change-over-time properties. You can check the AttributeType
    * to see if the attribute changes over time.
    */
-  private Map<String, Attribute> attributeMap;
+  Map<String, Attribute> attributeMap;
   
   private AttributeGeometryType geometryAttributeType;
   
@@ -417,54 +416,10 @@ public class GeoObjectOverTime implements Serializable
    */
   public static GeoObjectOverTime fromJSON(RegistryAdapter registry, String sJson)
   {
-    JsonParser parser = new JsonParser();
+    GsonBuilder builder = new GsonBuilder();
+    builder.registerTypeAdapter(GeoObjectOverTime.class, new GeoObjectOverTimeJsonAdapters.GeoObjectDeserializer(registry));
 
-    JsonObject joGO = parser.parse(sJson).getAsJsonObject();
-    JsonObject joAttrs = joGO.getAsJsonObject(JSON_ATTRIBUTES);
-    
-    String type = joAttrs.get(DefaultAttribute.TYPE.getName()).getAsString();
-
-    GeoObjectOverTime geoObj;
-    if (joAttrs.has("uid"))
-    {
-      geoObj = registry.newGeoObjectOverTimeInstance(type, false);
-    }
-    else
-    {
-      geoObj = registry.newGeoObjectOverTimeInstance(type, true);
-    }
-
-    for (String key : geoObj.votAttributeMap.keySet())
-    {
-      ValueOverTimeCollectionDTO votc = geoObj.votAttributeMap.get(key);
-      votc.clear();
-
-      if (joAttrs.has(key) && !joAttrs.get(key).isJsonNull())
-      {
-        JsonObject attributeOverTime = joAttrs.get(key).getAsJsonObject();
-        
-        JsonArray jaValues = attributeOverTime.get("values").getAsJsonArray();
-        
-        for (int i = 0; i < jaValues.size(); ++i)
-        {
-          ValueOverTimeDTO vot = ValueOverTimeDTO.fromJSON(jaValues.get(i).toString(), votc, registry);
-          
-          votc.add(vot);
-        }
-      }
-    }
-    
-    for (String key : geoObj.attributeMap.keySet())
-    {
-      Attribute attr = geoObj.attributeMap.get(key);
-
-      if (joAttrs.has(key) && !joAttrs.get(key).isJsonNull())
-      {
-        attr.fromJSON(joAttrs.get(key), registry);
-      }
-    }
-    
-    return geoObj;
+    return builder.create().fromJson(sJson, GeoObjectOverTime.class);
   }
 
   public JsonObject toJSON()
@@ -474,44 +429,10 @@ public class GeoObjectOverTime implements Serializable
 
   public JsonObject toJSON(CustomSerializer serializer)
   {
-    JsonObject jsonObj = new JsonObject();
-    
-    JsonObject attrs = new JsonObject();
-    for (String key : this.votAttributeMap.keySet())
-    {
-      ValueOverTimeCollectionDTO votc = this.votAttributeMap.get(key);
-      AttributeType type = votc.getAttributeType();
-      
-      JsonObject attributeOverTime = new JsonObject();
-      attributeOverTime.addProperty("name", type.getName());
-      attributeOverTime.addProperty("type", type.getType());
-      
-      JsonArray values = new JsonArray();
-      
-      for (ValueOverTimeDTO vot : votc)
-      {
-        values.add(vot.toJSON(serializer));
-      }
-      
-      attributeOverTime.add("values", values);
-      
-      attrs.add(type.getName(), attributeOverTime);
-    }
-    
-    for (String key : this.attributeMap.keySet())
-    {
-      Attribute attr = this.attributeMap.get(key);
-      
-      JsonElement value = attr.toJSON(serializer);
-      if (!value.isJsonNull())
-      {
-        attrs.add(attr.getName(), value);
-      }
-    }
+    GsonBuilder builder = new GsonBuilder();
+    builder.registerTypeAdapter(GeoObjectOverTime.class, new GeoObjectOverTimeJsonAdapters.GeoObjectSerializer());
 
-    jsonObj.add(JSON_ATTRIBUTES, attrs);
-
-    return jsonObj;
+    return (JsonObject) builder.create().toJsonTree(this);
   }
   
 }
