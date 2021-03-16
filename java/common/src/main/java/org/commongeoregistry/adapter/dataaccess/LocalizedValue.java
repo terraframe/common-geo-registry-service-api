@@ -169,4 +169,50 @@ public class LocalizedValue
 
     return new LocalizedValue(localizedValue, map);
   }
+  
+  /**
+   * This equals behaviour is required for proper operation of ticket #568.
+   * This method is invoked in VertexServerGeoObject.areValuesEqual.
+   * You can run RegistryVersionTest to make sure this functionality still
+   * works after changing this method.
+   */
+  @Override
+  public boolean equals(Object obj)
+  {
+    if (obj instanceof LocalizedValue)
+    {
+      LocalizedValue lv = (LocalizedValue) obj;
+      
+      if (lv.localeValues.size() != this.localeValues.size())
+      {
+        return false;
+      }
+      
+      for (Entry<String,String> entry : lv.localeValues.entrySet())
+      {
+        if (
+            entry.getKey() != null && this.localeValues.get(entry.getKey()) != null &&
+            !this.localeValues.get(entry.getKey()).equals(entry.getValue()))
+        {
+          return false;
+        }
+      }
+      
+      if (this.localeValues.size() == 0)
+      {
+        if (this.localizedValue != null)
+        {
+          return this.localizedValue.equals(lv.localizedValue);
+        }
+        else if (lv.localizedValue != null)
+        {
+          return lv.localizedValue.equals(this.localizedValue);
+        }
+      }
+      
+      return true;
+    }
+    
+    return false;
+  }
 }

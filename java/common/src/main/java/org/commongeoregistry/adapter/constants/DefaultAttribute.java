@@ -32,7 +32,7 @@ public enum DefaultAttribute {
 
   CODE("code", "Code", "Human readable unique identified", AttributeCharacterType.TYPE, true, true, false, false),
 
-  DISPLAY_LABEL("displayLabel", "Display Label", "Label of the location", AttributeLocalType.TYPE, true, true, false, true),
+  DISPLAY_LABEL("displayLabel", "Display Label", "Label of the location", AttributeLocalType.TYPE, true, false, false, true),
 
   TYPE("type", "Type", "The type of the GeoObject", AttributeCharacterType.TYPE, true, false, false, false),
 
