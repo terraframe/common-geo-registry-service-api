@@ -215,4 +215,9 @@ public class LocalizedValue
     
     return false;
   }
+
+  public boolean isNull()
+  {
+    return this.localizedValue == null && (this.localeValues == null || this.localeValues.size() == 0);
+  }
 }
