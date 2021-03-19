@@ -99,10 +99,17 @@ public class AttributeGeometry extends Attribute
   
   public void setGeometryAsGeoJson(String geoJson)
   {
-    GeoJSONReader reader = new GeoJSONReader();
-    Geometry jtsGeom = reader.read(geoJson);
-
-    this.setValue(jtsGeom);
+    if (geoJson == null || geoJson.length() == 0)
+    {
+      this.setValue(null);
+    }
+    else
+    {
+      GeoJSONReader reader = new GeoJSONReader();
+      Geometry jtsGeom = reader.read(geoJson);
+  
+      this.setValue(jtsGeom);
+    }
   }
   
   @Override
@@ -124,7 +131,14 @@ public class AttributeGeometry extends Attribute
   @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-    this.setGeometryAsGeoJson(jValue.toString());
+    if (jValue == null || jValue.isJsonNull())
+    {
+      this.setValue(null);
+    }
+    else
+    {
+      this.setGeometryAsGeoJson(jValue.toString());
+    }
   }
 
 }
