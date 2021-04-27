@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.dataaccess;
 
@@ -33,8 +34,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class AttributeTerm extends Attribute
-{ 
-  private Set<String>      termCodes;
+{
+  private Set<String>       termCodes;
 
   /**
    * 
@@ -55,16 +56,16 @@ public class AttributeTerm extends Attribute
   @Override
   public void setValue(Object value)
   {
-	if (value instanceof Term)
-	{
-      this.setValue((Term)value);
-	}
-	else
-	{
-      this.setTerm((String)value);
-	}
+    if (value instanceof Term)
+    {
+      this.setValue((Term) value);
+    }
+    else
+    {
+      this.setTerm((String) value);
+    }
   }
-  
+
   /**
    * Clears any existing term references and sets it to the given reference
    * 
@@ -74,21 +75,19 @@ public class AttributeTerm extends Attribute
     this.setTerm(term.getCode());
   }
 
-
   public void setTerm(String termCode)
   {
     this.termCodes.clear();
-	this.addTerm((String) termCode);
+    this.addTerm((String) termCode);
   }
-  
-  
+
   public void addTerm(String termCode)
   {
     // TODO add validation to ensure that the provided term is one of the
     // allowed terms on this type
     this.termCodes.add(termCode);
   }
-  
+
   /**
    * 
    * 
@@ -112,63 +111,66 @@ public class AttributeTerm extends Attribute
 
   @Override
   public JsonElement toJSON(CustomSerializer serializer)
-  {    
+  {
     JsonArray termCodesJson = new JsonArray();
 
     if (this.termCodes.size() > 0)
-    {      
+    {
       for (String termCode : this.termCodes)
       {
-    	termCodesJson.add(termCode);
+        termCodesJson.add(termCode);
       }
     }
-    
+
     return termCodesJson;
   }
-  
-  
+
   @Override
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
-    if (!(jValue.isJsonArray() || (jValue.isJsonPrimitive() && jValue.getAsJsonPrimitive().isString())))
+    if (! ( jValue.isJsonArray() || ( jValue.isJsonPrimitive() && jValue.getAsJsonPrimitive().isString() ) ))
     {
       this.clearTerms();
       return;
     }
-    
+
     this.clearTerms();
-    
+
     if (jValue.isJsonPrimitive() && jValue.getAsJsonPrimitive().isString())
     {
       String termCode = jValue.getAsString();
-      
+
       this.addTerm(termCode);
     }
     else
     {
       JsonArray termCodesJson = jValue.getAsJsonArray();
-      
+
       for (JsonElement jsonElement : termCodesJson)
       {
-        this.addTerm(jsonElement.getAsString());
+        if (!jsonElement.isJsonNull())
+        {
+          this.addTerm(jsonElement.getAsString());
+        }
       }
     }
 
-//    JsonObject jTerm = jValue.getAsJsonObject();
-//    String code = jTerm.get("code").getAsString();
-//    
-//    Optional<Term> opTerm = registry.getMetadataCache().getTerm(code);
-//    
-//    if (opTerm.isPresent())
-//    {
-//      this.terms = Collections.synchronizedList(new LinkedList<Term>());
-//      
-//      this.terms.add(opTerm.get());
-//    }
-//    else
-//    {
-//      throw new RuntimeException("Unable to find term with code [" + code + "].");
-//    }
+    // JsonObject jTerm = jValue.getAsJsonObject();
+    // String code = jTerm.get("code").getAsString();
+    //
+    // Optional<Term> opTerm = registry.getMetadataCache().getTerm(code);
+    //
+    // if (opTerm.isPresent())
+    // {
+    // this.terms = Collections.synchronizedList(new LinkedList<Term>());
+    //
+    // this.terms.add(opTerm.get());
+    // }
+    // else
+    // {
+    // throw new RuntimeException("Unable to find term with code [" + code +
+    // "].");
+    // }
   }
 
   @Override
