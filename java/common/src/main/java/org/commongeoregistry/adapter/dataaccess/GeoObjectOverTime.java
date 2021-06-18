@@ -316,6 +316,26 @@ public class GeoObjectOverTime implements Serializable
   }
   
   /**
+   * Sets the invalid of this {@link GeoObject}.
+   * 
+   * @param code
+   */
+  public void setInvalid(Boolean invalid)
+  {
+    this.attributeMap.get(DefaultAttribute.INVALID.getName()).setValue(invalid);
+  }
+
+  /**
+   * Returns the invalid of this {@link GeoObject}
+   * 
+   * @return the invalid of this {@link GeoObject}
+   */
+  public Boolean getInvalid()
+  {
+    return (Boolean) this.attributeMap.get(DefaultAttribute.INVALID.getName()).getValue();
+  }
+  
+  /**
    * Sets the display label of this {@link GeoObject}. If endDate is null then it is assumed to
    * expand as far as possible into the future. If startDate is null then it will grab the latest
    * available value and set it. If one does not exist one will be created.

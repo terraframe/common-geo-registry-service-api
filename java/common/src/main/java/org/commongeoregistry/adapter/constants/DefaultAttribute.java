@@ -19,6 +19,7 @@
 package org.commongeoregistry.adapter.constants;
 
 import org.commongeoregistry.adapter.dataaccess.LocalizedValue;
+import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
 import org.commongeoregistry.adapter.metadata.AttributeCharacterType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeGeometryType;
@@ -31,6 +32,8 @@ public enum DefaultAttribute {
   UID("uid", "UID", "The internal globally unique identifier ID", AttributeCharacterType.TYPE, true, true, false, false),
 
   CODE("code", "Code", "Human readable unique identified", AttributeCharacterType.TYPE, true, true, false, false),
+  
+  INVALID("invalid", "Invalid", "This Geo-Object is no longer valid.", AttributeBooleanType.TYPE, true, true, false, false),
 
   DISPLAY_LABEL("displayLabel", "Display Label", "Label of the location", AttributeLocalType.TYPE, true, false, false, true),
 

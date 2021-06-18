@@ -101,6 +101,8 @@ public abstract class RegistryAdapter implements Serializable
 
     Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
     geoObject.getAttribute(DefaultAttribute.STATUS.getName()).setValue(newStatus);
+    
+    geoObject.getAttribute(DefaultAttribute.INVALID.getName()).setValue(false);
 
     if (genId)
     {
@@ -133,7 +135,7 @@ public abstract class RegistryAdapter implements Serializable
    */
   public GeoObjectOverTime newGeoObjectOverTimeInstance(String geoObjectTypeCode, boolean genId) throws EmptyIdCacheException
   {
-    final Date createDate = new Date(); // TODO : This probably isn't desirable for whatever your usecase is
+    final Date createDate = new Date();
     
     GeoObjectType geoObjectType = this.getMetadataCache().getGeoObjectType(geoObjectTypeCode).get();
 
@@ -147,6 +149,8 @@ public abstract class RegistryAdapter implements Serializable
 
     Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
     geoObject.setValue(DefaultAttribute.STATUS.getName(), newStatus, createDate, null);
+    
+    geoObject.setInvalid(false);
 
     if (genId)
     {

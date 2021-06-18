@@ -50,6 +50,8 @@ public class GeoObject implements Serializable
   public static final String UID              = DefaultAttribute.UID.getName();
 
   public static final String CODE             = DefaultAttribute.CODE.getName();
+  
+  public static final String INVALID         = DefaultAttribute.INVALID.getName();
 
   public static final String DISPLAY_LABEL    = DefaultAttribute.DISPLAY_LABEL.getName();
 
@@ -276,6 +278,26 @@ public class GeoObject implements Serializable
   public String getCode()
   {
     return (String) this.attributeMap.get(CODE).getValue();
+  }
+  
+  /**
+   * Sets the invalid of this {@link GeoObject}.
+   * 
+   * @param code
+   */
+  public void setInvalid(Boolean invalid)
+  {
+    this.attributeMap.get(INVALID).setValue(invalid);
+  }
+
+  /**
+   * Returns the invalid of this {@link GeoObject}
+   * 
+   * @return the invalid of this {@link GeoObject}
+   */
+  public Boolean getInvalid()
+  {
+    return (Boolean) this.attributeMap.get(INVALID).getValue();
   }
 
   /**
