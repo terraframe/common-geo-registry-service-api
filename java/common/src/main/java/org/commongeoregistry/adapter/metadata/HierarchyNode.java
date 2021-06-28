@@ -36,6 +36,7 @@ import com.google.gson.JsonParser;
  * the {@link HierarchyType}.
  * 
  * @author nathan
+ * @author rrowlands
  *
  */
 public class HierarchyNode

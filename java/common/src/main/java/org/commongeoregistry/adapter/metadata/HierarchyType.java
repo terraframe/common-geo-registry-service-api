@@ -19,7 +19,9 @@
 package org.commongeoregistry.adapter.metadata;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -275,6 +277,25 @@ public class HierarchyType implements Serializable
   public List<HierarchyNode> getRootGeoObjectTypes()
   {
     return this.rootGeoObjectTypes;
+  }
+  
+  public Iterator<HierarchyNode> getAllNodesIterator()
+  {
+    return this.getAllNodes().iterator(); // TODO : There's definitely a better way to do this but I don't really have time
+  }
+  
+  public List<HierarchyNode> getAllNodes()
+  {
+    ArrayList<HierarchyNode> descends = new ArrayList<HierarchyNode>();
+    
+    for (HierarchyNode child : this.getRootGeoObjectTypes())
+    {
+      descends.add(child);
+      
+      descends.addAll(child.getAllDescendants());
+    }
+    
+    return descends;
   }
 
   /**
