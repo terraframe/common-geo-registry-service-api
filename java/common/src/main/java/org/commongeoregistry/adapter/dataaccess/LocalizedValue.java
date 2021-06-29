@@ -110,6 +110,15 @@ public class LocalizedValue
   {
     return this.localeValues.containsKey(locale.toString());
   }
+  
+  /**
+   * Returns a map where the key is the (locale.toString()) and the value is
+   * the localized value for that locale.
+   */
+  public Map<String, String> getLocaleMap()
+  {
+    return this.localeValues;
+  }
 
   public JsonObject toJSON()
   {

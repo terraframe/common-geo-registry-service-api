@@ -20,8 +20,11 @@ package org.commongeoregistry.adapter.dataaccess;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
+import org.commongeoregistry.adapter.metadata.CustomSerializer;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonPrimitive;
 
 public class AttributeBoolean extends Attribute
 {
@@ -60,6 +63,19 @@ public class AttributeBoolean extends Attribute
   public void fromJSON(JsonElement jValue, RegistryAdapter registry)
   {
     this.setValue(Boolean.valueOf(jValue.getAsString()));
+  }
+  
+  @Override
+  public JsonElement toJSON(CustomSerializer serializer)
+  {
+    Boolean value = this.getValue();
+    
+    if (value == null)
+    {
+      return JsonNull.INSTANCE;
+    }
+
+    return new JsonPrimitive(value);
   }
   
 }
