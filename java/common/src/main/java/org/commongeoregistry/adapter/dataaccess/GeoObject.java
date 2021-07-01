@@ -358,64 +358,23 @@ public class GeoObject implements Serializable
   }
 
   /**
-   * Returns the status code
+   * Returns exists value
    * 
    * @return
    */
-  public Term getStatus()
+  public Boolean getExists()
   {
-    Term term = null;
-
-    Optional<AttributeType> optionalAttributeType = this.getType().getAttribute(DefaultAttribute.STATUS.getName());
-
-    if (optionalAttributeType.isPresent())
-    {
-      AttributeTermType attributeTermType = (AttributeTermType) optionalAttributeType.get();
-
-      Object value = this.getValue(DefaultAttribute.STATUS.getName());
-      
-      if (value == null)
-      {
-        return null;
-      }
-      
-      @SuppressWarnings("unchecked")
-      Iterator<String> it = (Iterator<String>) value;
-      
-      if (!it.hasNext())
-      {
-        return null;
-      }
-      
-      String termCode = it.next();
-      Optional<Term> optionalTerm = attributeTermType.getTermByCode(termCode);
-
-      if (optionalTerm.isPresent())
-      {
-        term = optionalTerm.get();
-      }
-    }
-
-    return term;
+    return (Boolean) this.getAttribute(DefaultAttribute.EXISTS.getName()).getValue();
   }
 
-  public void setStatus(Term status)
+  /**
+   * Sets exists value
+   * 
+   * @return
+   */
+  public void setExists(Boolean exists)
   {
-    Attribute attr = this.getAttribute(DefaultAttribute.STATUS.getName());
-    
-    if (status == null)
-    {
-      attr.setValue(null);
-    }
-    else
-    {
-      attr.setValue(status.getCode());
-    }
-  }
-
-  public void setStatus(String statusCode)
-  {
-    this.getAttribute(DefaultAttribute.STATUS.getName()).setValue(statusCode);
+    this.getAttribute(DefaultAttribute.EXISTS.getName()).setValue(exists);
   }
 
   /**

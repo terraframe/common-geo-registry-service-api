@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.Map;
 
 import org.commongeoregistry.adapter.constants.DefaultAttribute;
-import org.commongeoregistry.adapter.constants.DefaultTerms.GeoObjectStatusTerm;
 import org.commongeoregistry.adapter.dataaccess.Attribute;
 import org.commongeoregistry.adapter.dataaccess.GeoObject;
 import org.commongeoregistry.adapter.dataaccess.GeoObjectOverTime;
@@ -99,8 +98,7 @@ public abstract class RegistryAdapter implements Serializable
     // Set some default values
     // geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(geoObjectTypeCode);
 
-    Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
-    geoObject.getAttribute(DefaultAttribute.STATUS.getName()).setValue(newStatus);
+    geoObject.getAttribute(DefaultAttribute.EXISTS.getName()).setValue(true);
     
     geoObject.getAttribute(DefaultAttribute.INVALID.getName()).setValue(false);
 
@@ -146,9 +144,6 @@ public abstract class RegistryAdapter implements Serializable
 
     // Set some default values
     // geoObject.getAttribute(DefaultAttribute.TYPE.getName()).setValue(geoObjectTypeCode);
-
-    Term newStatus = this.getMetadataCache().getTerm(GeoObjectStatusTerm.NEW.code).get();
-    geoObject.setValue(DefaultAttribute.STATUS.getName(), newStatus, createDate, null);
     
     geoObject.setInvalid(false);
 

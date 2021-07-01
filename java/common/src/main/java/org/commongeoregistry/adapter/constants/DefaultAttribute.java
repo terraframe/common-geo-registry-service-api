@@ -39,7 +39,7 @@ public enum DefaultAttribute {
 
   TYPE("type", "Type", "The type of the GeoObject", AttributeCharacterType.TYPE, true, false, false, false),
 
-  STATUS("status", "Status", "The status of the GeoObject", AttributeTermType.TYPE, true, false, false, true),
+  EXISTS("exists", "Exists", "Does this GeoObject exist", AttributeBooleanType.TYPE, true, false, false, true),
 
   SEQUENCE("sequence", "Sequence", "The sequence number of the GeoObject that is incremented when the object is updated", AttributeIntegerType.TYPE, true, false, false, false),
 
