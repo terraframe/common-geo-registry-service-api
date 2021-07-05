@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.dataaccess;
 
@@ -22,6 +23,7 @@ import java.io.Serializable;
 
 import org.commongeoregistry.adapter.RegistryAdapter;
 import org.commongeoregistry.adapter.metadata.AttributeBooleanType;
+import org.commongeoregistry.adapter.metadata.AttributeClassificationType;
 import org.commongeoregistry.adapter.metadata.AttributeDateType;
 import org.commongeoregistry.adapter.metadata.AttributeFloatType;
 import org.commongeoregistry.adapter.metadata.AttributeGeometryType;
@@ -65,7 +67,7 @@ public abstract class Attribute implements Serializable
   {
     return this.type;
   }
-  
+
   public void validate(AttributeType attributeType, Object _value)
   {
     // Stub method for optional validation
@@ -95,6 +97,10 @@ public abstract class Attribute implements Serializable
     {
       attribute = new AttributeTerm(attributeType.getName());
     }
+    else if (attributeType instanceof AttributeClassificationType)
+    {
+      attribute = new AttributeClassification(attributeType.getName());
+    }
     else if (attributeType instanceof AttributeBooleanType)
     {
       attribute = new AttributeBoolean(attributeType.getName());
@@ -123,7 +129,7 @@ public abstract class Attribute implements Serializable
   public JsonElement toJSON(CustomSerializer serializer)
   {
     Object value = this.getValue();
-    
+
     if (value == null)
     {
       return JsonNull.INSTANCE;

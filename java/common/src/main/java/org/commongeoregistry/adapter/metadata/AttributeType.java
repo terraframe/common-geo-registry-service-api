@@ -3,18 +3,19 @@
  *
  * This file is part of Common Geo Registry Adapter(tm).
  *
- * Common Geo Registry Adapter(tm) is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Common Geo Registry Adapter(tm) is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- * Common Geo Registry Adapter(tm) is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Common Geo Registry Adapter(tm) is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with Common Geo Registry Adapter(tm).  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Common Geo Registry Adapter(tm). If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.commongeoregistry.adapter.metadata;
 
@@ -52,7 +53,7 @@ public abstract class AttributeType implements Serializable
   public static final String JSON_REQUIRED              = "required";
 
   public static final String JSON_UNIQUE                = "unique";
-  
+
   public static final String JSON_IS_CHANGE             = "isChangeOverTime";
 
   /**
@@ -90,7 +91,7 @@ public abstract class AttributeType implements Serializable
    * Flag denoting if the attribute value is unique
    */
   private boolean            unique;
-  
+
   private boolean            isChangeOverTime;
 
   public AttributeType(String _name, LocalizedValue _label, LocalizedValue _description, String _type, boolean _isDefault, boolean _required, boolean _unique)
@@ -242,7 +243,7 @@ public abstract class AttributeType implements Serializable
   {
     return this.toJSON(new DefaultSerializer());
   }
-  
+
   public boolean isChangeOverTime()
   {
     return isChangeOverTime;
@@ -316,6 +317,10 @@ public abstract class AttributeType implements Serializable
     {
       attributeType = new AttributeTermType(_name, _label, _description, _isDefault, _required, _unique);
     }
+    else if (_type.equals(AttributeClassificationType.TYPE))
+    {
+      attributeType = new AttributeClassificationType(_name, _label, _description, _isDefault, _required, _unique);
+    }
     else if (_type.equals(AttributeBooleanType.TYPE))
     {
       attributeType = new AttributeBooleanType(_name, _label, _description, _isDefault, _required, _unique);
@@ -324,7 +329,7 @@ public abstract class AttributeType implements Serializable
     {
       attributeType = new AttributeGeometryType(_name, _label, _description, _isDefault, _required, _unique);
     }
-    
+
     attributeType.setIsChangeOverTime(_isChange);
 
     return attributeType;
@@ -342,7 +347,7 @@ public abstract class AttributeType implements Serializable
 
     AttributeType attrType = AttributeType.factory(name, attributeLabel, attributeDescription, joAttr.get(AttributeType.JSON_TYPE).getAsString(), required, unique, isChange);
     attrType.fromJSON(joAttr);
-    
+
     return attrType;
   }
 
