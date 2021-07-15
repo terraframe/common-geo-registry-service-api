@@ -274,6 +274,17 @@ public class GeoObjectOverTime implements Serializable
     vot.setEndDate(endDate);
     vot.setValue(_value);
   }
+  
+  /**
+   * Allows for bulk setting of all values for a given attribute. Be careful when
+   * using this method as it is quite powerful and not for everyday usecases.
+   * 
+   * @param attributeName
+   */
+  public void setValueCollection(String attributeName, ValueOverTimeCollectionDTO collection)
+  {
+    this.votAttributeMap.put(attributeName, collection);
+  }
 
   /**
    * Returns the geometry of this {@link GeoObject}
