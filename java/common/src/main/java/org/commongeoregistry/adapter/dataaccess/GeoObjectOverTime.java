@@ -295,7 +295,7 @@ public class GeoObjectOverTime implements Serializable
   {
     return (Geometry) this.getValue(DefaultAttribute.GEOMETRY.getName(), date);
   }
-
+  
   /**
    * Set the {@link Geometry} on this {@link GeoObject}
    * 
@@ -304,6 +304,11 @@ public class GeoObjectOverTime implements Serializable
   public void setGeometry(Geometry geometry, Date startDate, Date endDate)
   {
     this.setValue(DefaultAttribute.GEOMETRY.getName(), geometry, startDate, endDate);
+  }
+  
+  public AttributeGeometryType getGeometryAttributeType()
+  {
+    return this.geometryAttributeType;
   }
   
   /**
